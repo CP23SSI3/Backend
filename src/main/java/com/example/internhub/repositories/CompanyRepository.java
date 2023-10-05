@@ -1,5 +1,6 @@
-package com.example.internhub;
+package com.example.internhub.repositories;
 
+import com.example.internhub.entities.Company;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
