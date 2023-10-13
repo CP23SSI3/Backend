@@ -13,7 +13,7 @@ import java.time.Instant;
 @Setter
 public class Company {
     @Id
-    @Column(name = "compId", nullable = false, length = 64)
+    @Column(name = "compId", nullable = false, length = 36)
     private String id;
 
     @Column(name = "compName", nullable = false, length = 100)

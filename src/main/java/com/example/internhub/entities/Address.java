@@ -14,7 +14,7 @@ import javax.persistence.Table;
 @Setter
 public class Address {
     @Id
-    @Column(name = "addressId", nullable = false, length = 64)
+    @Column(name = "addressId", nullable = false, length = 36)
     private String addressId;
 
     @Column(name = "country", nullable = false, length = 50)
