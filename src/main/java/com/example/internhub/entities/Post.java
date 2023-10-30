@@ -31,8 +31,9 @@ public class Post {
     @Column(name = "totalView", nullable = false, precision = 10)
     private BigDecimal totalView;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 10)
-    private String status;
+    private PostStatus status;
 
     @Column(name = "postDesc", nullable = false, length = 500)
     private String postDesc;
