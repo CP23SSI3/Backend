@@ -32,6 +32,17 @@ public class MySQLPostService implements PostService{
     public ResponseObject getAllPostPagination(int pageNumber, int pageSize) {
         Page<Post> postList = postRepository.findAll(PageRequest.of(pageNumber,pageSize));
         PostPagination postPagination = modelMapper.map(postList, PostPagination.class);
-        return new ResponseObject(200, "The post is succesfullysended", postPagination);
+        return new ResponseObject(200, "The post's list is succesfully sended", postPagination);
+    }
+
+//    @Override
+//    public Post getPostById(String postId) {
+//        return postRepository.findById(postId).orElseThrow();
+//    }
+
+    @Override
+    public ResponseObject getPostById(String postId) {
+        Post post = postRepository.findById(postId).orElseThrow();
+        return new ResponseObject(200, "The post is successfully sended", post);
     }
 }

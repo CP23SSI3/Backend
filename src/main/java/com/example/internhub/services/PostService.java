@@ -8,4 +8,5 @@ import java.util.List;
 public interface PostService {
     public List<Post> getAllPost();
     public ResponseObject getAllPostPagination(int pageNumber, int pageSize);
+    public ResponseObject getPostById(String postId);
 }

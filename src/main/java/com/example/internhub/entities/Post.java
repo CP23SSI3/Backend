@@ -1,5 +1,6 @@
 package com.example.internhub.entities;
 
+import com.example.internhub.responses.ResponseData;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,7 +16,7 @@ import java.util.Set;
 @Entity
 @Table(name = "posts")
 @Getter @Setter
-public class Post {
+public class Post extends ResponseData {
     @Id
     @Column(name = "postId", nullable = false, length = 36)
     private String postId;
