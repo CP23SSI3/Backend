@@ -1,5 +1,6 @@
 package com.example.internhub.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,6 +8,9 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalTime;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "posts")
@@ -76,4 +80,25 @@ public class Post {
     @Column(name = "workType", nullable = false, length = 20)
     private String workType;
 
+//    @OneToMany(mappedBy = "post", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+//    @OneToMany(mappedBy= "postId", fetch = FetchType.EAGER)
+//    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+//    @JoinColumn(name = "postId")
+
+//    @OneToMany(mappedBy = "post")
+    @OneToMany
+    @JoinColumn(name = "openPositionId", referencedColumnName = "postId")
+    private List<OpenPosition> openPositionList;
+
+//    @JsonIgnore
+//    @OneToMany(mappedBy = "post")
+//    private Set<OpenPosition> openPositionList = new LinkedHashSet<>();
+//
+//    public Set<OpenPosition> getOpenPosition() {
+//        return openPositionList;
+//    }
+
+//    @JsonIgnore
+//    @OneToMany(mappedBy = "office")
+//    private Set<Employee> employees = new LinkedHashSet<>();
 }
