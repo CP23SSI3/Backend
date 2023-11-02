@@ -1,5 +1,6 @@
 package com.example.internhub.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,6 +24,7 @@ public class OpenPosition {
     @Column(name = "openPositionDesc", nullable = false, length = 300)
     private String openPositionDesc;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "postId", nullable = false)
     private Post post;

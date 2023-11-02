@@ -12,6 +12,7 @@ public class InternhubApplication {
 		SpringApplication.run(InternhubApplication.class, args);
 		System.out.println(UUID.randomUUID());
 		System.out.println(UUID.randomUUID());
+
 //		System.out.println("hello MAIN");
 	}
 

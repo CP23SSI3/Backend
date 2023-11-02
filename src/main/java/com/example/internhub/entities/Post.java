@@ -85,9 +85,9 @@ public class Post {
 //    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 //    @JoinColumn(name = "postId")
 
-//    @OneToMany(mappedBy = "post")
-    @OneToMany
-    @JoinColumn(name = "openPositionId", referencedColumnName = "postId")
+    @OneToMany(mappedBy = "post")
+//    @OneToMany
+//    @JoinColumn(name = "openPositionId", referencedColumnName = "postId")
     private List<OpenPosition> openPositionList;
 
 //    @JsonIgnore
