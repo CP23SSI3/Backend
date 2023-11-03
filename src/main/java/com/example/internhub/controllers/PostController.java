@@ -26,7 +26,6 @@ public class PostController {
 
     @GetMapping("/{postId}")
     public ResponseObject getPostById(@PathVariable String postId) {
-        System.out.println(postId);
         return postService.getPostById(postId);
     }
 

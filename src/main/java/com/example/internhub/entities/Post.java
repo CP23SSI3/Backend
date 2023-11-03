@@ -8,6 +8,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -25,13 +26,13 @@ public class Post extends ResponseData {
     private String title;
 
     @Column(name = "createdDate", nullable = false)
-    private Instant createdDate;
+    private LocalDateTime createdDate;
 
     @Column(name = "lastUpdateDate", nullable = false)
-    private Instant lastUpdateDate;
+    private LocalDateTime lastUpdateDate;
 
     @Column(name = "closedDate")
-    private Instant closedDate;
+    private LocalDateTime closedDate;
 
     @Column(name = "totalView", nullable = false, precision = 10)
     private BigDecimal totalView;
@@ -81,25 +82,7 @@ public class Post extends ResponseData {
     @Column(name = "workType", nullable = false, length = 20)
     private String workType;
 
-//    @OneToMany(mappedBy = "post", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-//    @OneToMany(mappedBy= "postId", fetch = FetchType.EAGER)
-//    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-//    @JoinColumn(name = "postId")
-
     @OneToMany(mappedBy = "post")
-//    @OneToMany
-//    @JoinColumn(name = "openPositionId", referencedColumnName = "postId")
     private List<OpenPosition> openPositionList;
 
-//    @JsonIgnore
-//    @OneToMany(mappedBy = "post")
-//    private Set<OpenPosition> openPositionList = new LinkedHashSet<>();
-//
-//    public Set<OpenPosition> getOpenPosition() {
-//        return openPositionList;
-//    }
-
-//    @JsonIgnore
-//    @OneToMany(mappedBy = "office")
-//    private Set<Employee> employees = new LinkedHashSet<>();
 }
