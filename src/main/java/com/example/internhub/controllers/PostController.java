@@ -8,15 +8,11 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/posts")
+@CrossOrigin(origins = "${cors.allow.origin}")
 public class PostController {
 
     @Autowired
     private PostService postService;
-
-//    @GetMapping("")
-//    public List<Post> getAllPosts(){
-//        return postService.getAllPost();
-//    }
 
     @GetMapping("")
     public ResponseObject getAllPosts(@RequestParam(defaultValue = "0") int page,
@@ -28,10 +24,5 @@ public class PostController {
     public ResponseObject getPostById(@PathVariable String postId) {
         return postService.getPostById(postId);
     }
-
-//    @GetMapping("/{postId}")
-//    public ResponseObject getPostById(@PathVariable("postId") String postId) {
-//        return postService.getPostById(postId);
-//    }
 
 }
