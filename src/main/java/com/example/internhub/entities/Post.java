@@ -2,8 +2,7 @@ package com.example.internhub.entities;
 
 import com.example.internhub.responses.ResponseData;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -17,6 +16,8 @@ import java.util.Set;
 @Entity
 @Table(name = "posts")
 @Getter @Setter
+@ToString
+@NoArgsConstructor @AllArgsConstructor
 public class Post extends ResponseData {
     @Id
     @Column(name = "postId", nullable = false, length = 36)
@@ -35,7 +36,7 @@ public class Post extends ResponseData {
     private LocalDateTime closedDate;
 
     @Column(name = "totalView", nullable = false, precision = 10)
-    private BigDecimal totalView;
+    private long totalView;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 10)
@@ -79,8 +80,9 @@ public class Post extends ResponseData {
     @Column(name = "workDay", nullable = false, length = 30)
     private String workDay;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "workType", nullable = false, length = 20)
-    private String workType;
+    private WorkType workType;
 
     @OneToMany(mappedBy = "post")
     private List<OpenPosition> openPositionList;

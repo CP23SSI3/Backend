@@ -20,4 +20,9 @@ public class MySQLCompanyService implements CompanyService{
         return companyRepository.findAll();
     }
 
+    @Override
+    public Company getCompanyById(String id) {
+        return companyRepository.getById(id);
+    }
+
 }

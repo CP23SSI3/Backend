@@ -1,5 +1,6 @@
 package com.example.internhub.controllers;
 
+import com.example.internhub.dtos.CreatePostDTO;
 import com.example.internhub.entities.Post;
 import com.example.internhub.responses.ResponseObject;
 import com.example.internhub.services.PostService;
@@ -25,4 +26,8 @@ public class PostController {
         return postService.getPostById(postId);
     }
 
+    @PostMapping("")
+    public Post createPost(@RequestBody CreatePostDTO post){
+        return postService.createPost(post);
+    }
 }

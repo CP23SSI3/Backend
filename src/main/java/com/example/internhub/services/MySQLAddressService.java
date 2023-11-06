@@ -20,4 +20,9 @@ public class MySQLAddressService implements AddressService{
         return addressRepository.findAll();
     }
 
+    @Override
+    public Address getAddressById(String addressId) {
+        return addressRepository.getById(addressId);
+    }
+
 }

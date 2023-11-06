@@ -9,4 +9,5 @@ import java.util.List;
 
 public interface AddressService {
     public List<Address> getAllAddresses();
+    public Address getAddressById(String addressId);
 }

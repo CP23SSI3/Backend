@@ -9,4 +9,5 @@ import java.util.List;
 
 public interface CompanyService {
     public List<Company> getAllCompanies();
+    public Company getCompanyById(String id);
 }
