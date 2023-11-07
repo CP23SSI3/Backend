@@ -1,8 +1,6 @@
 package com.example.internhub.entities;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.Instant;
@@ -11,6 +9,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "companies")
 @Getter @Setter @ToString
+@AllArgsConstructor @NoArgsConstructor
 public class Company {
     @Id
     @Column(name = "compId", nullable = false, length = 36)

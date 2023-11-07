@@ -8,9 +8,11 @@ import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.UUID;
 
 @Getter @Setter @ToString
 public class CreatePostDTO extends ResponseData {
+    String postId = UUID.randomUUID().toString();
     String title;
     LocalDateTime closedDate;
     String postDesc;
@@ -21,9 +23,10 @@ public class CreatePostDTO extends ResponseData {
     String tel;
     String email;
     CreateAddressPostDTO address;
-    CompanyIdDTO comp;
+//    CompanyIdDTO comp;
     LocalTime workStartTime;
     LocalTime workEndTime;
     String workDay;
     String workType;
+    CreateOpenPositionDTO[] openPositionList;
 }

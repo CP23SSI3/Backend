@@ -1,6 +1,8 @@
 package com.example.internhub.entities;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Column;
@@ -13,6 +15,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "addresses")
 @Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
 public class Address {
     @Id
     @Column(name = "addressId", nullable = false, length = 36)
