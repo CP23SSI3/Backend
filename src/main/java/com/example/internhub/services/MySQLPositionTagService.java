@@ -20,4 +20,9 @@ public class MySQLPositionTagService implements PositionTagService {
     public List<PositionTag> getAllPositionTag() {
         return positionTagRepository.findAll();
     }
+
+    @Override
+    public PositionTag getPositionTagById(String positionTagId) {
+        return positionTagRepository.getById(positionTagId);
+    }
 }

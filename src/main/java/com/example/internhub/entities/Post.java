@@ -84,7 +84,7 @@ public class Post extends ResponseData {
     @Column(name = "workType", nullable = false, length = 20)
     private WorkType workType;
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<OpenPosition> openPositionList;
 
 }

@@ -6,6 +6,8 @@ import com.example.internhub.entities.Address;
 import com.example.internhub.entities.Company;
 import com.example.internhub.entities.Post;
 import com.example.internhub.entities.PostStatus;
+import com.example.internhub.repositories.AddressRepository;
+import com.example.internhub.repositories.OpenPositionRepository;
 import com.example.internhub.repositories.PostRepository;
 import com.example.internhub.responses.ResponseObject;
 import org.apache.tomcat.jni.Local;
@@ -26,8 +28,6 @@ import java.util.UUID;
 @Primary
 public class MySQLPostService implements PostService{
 
-    private String compId = "8e20782f-2807-4f13-a11e-0fb9ff955488";
-
     @Autowired
     private ModelMapper modelMapper;
 
@@ -37,6 +37,10 @@ public class MySQLPostService implements PostService{
     private CompanyService companyService;
     @Autowired
     private AddressService addressService;
+    @Autowired
+    private AddressRepository addressRepository;
+    @Autowired
+    private OpenPositionRepository openPositionRepository;
 
     @Override
     public List<Post> getAllPost() {
@@ -65,13 +69,10 @@ public class MySQLPostService implements PostService{
         Company company = companyService.getCompanyById("8e20782f-2807-4f13-a11e-0fb9ff955488");
         Post post = modelMapper.map(postDTO, Post.class);
         LocalDateTime now = LocalDateTime.now();
-//        post.setPostId(UUID.randomUUID().toString());
         post.setCreatedDate(now);
         post.setLastUpdateDate(now);
         post.setStatus(PostStatus.OPENED);
-//        post.getAddress().setAddressId(UUID.randomUUID().toString());
         Address address = addressService.getAddressById("9346a466-4a82-4037-ab00-72ba24fa50bf");
-//        Address address2 = modelMapper.map(address, Address.class);
         Address address1 = new Address(address.getAddressId(),
                 address.getCountry(), address.getPostalCode(),
                 address.getCity(), address.getDistrict(),
@@ -82,16 +83,13 @@ public class MySQLPostService implements PostService{
                 company.getDefaultWelfare(), company.getCreatedDate(),
                 company.getLastUpdate(), company.getLastActive(),
                 company.getCompUrl(), address1);
-//        Company company2 = modelMapper.map(company, Company.class);
-//        Company company1 = company;
-//        Company comp = new Company();
-//        comp.setCompId(company.getCompId());
-//        comp.setCompName(company.getCompName());
-//        comp.setCompLogoKey(company.getCompLogoKey());
-//        comp.setCompDesc(company.getCompDesc());
-
-//        comp.setAddress(address);
         post.setComp(comp1);
+//        System.out.println(postDTO.getOpenPositionList().get(0).getOpenPositionId());
+//        System.out.println(post.getOpenPositionList().get(0).getOpenPositionId());
+        openPositionRepository.save(post.getOpenPositionList().get(0));
+//        addressRepository.save(post.getAddress());
+//        postRepository.save(post);
+//        openPositionRepository.save(post.getOpenPositionList().get(0));
         return post;
     }
 }

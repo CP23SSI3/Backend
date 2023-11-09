@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface PositionTagService {
     public List<PositionTag> getAllPositionTag();
+    public PositionTag getPositionTagById(String positionTagId);
 }

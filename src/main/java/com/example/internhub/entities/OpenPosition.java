@@ -29,7 +29,7 @@ public class OpenPosition {
     @JoinColumn(name = "postId", nullable = false)
     private Post post;
 
-    @OneToOne(fetch = FetchType.EAGER, optional = false)
+    @OneToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "positionTagId", nullable = false)
     private PositionTag positionTag;
 
