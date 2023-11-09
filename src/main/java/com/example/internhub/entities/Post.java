@@ -87,4 +87,12 @@ public class Post extends ResponseData {
     @OneToMany(mappedBy = "post")
     private List<OpenPosition> openPositionList;
 
+    public String[] getWorkDay(){
+        return workDay.split(",");
+    }
+
+    public String[] getDocuments(){
+        return documents.split(",");
+    }
+
 }
