@@ -23,7 +23,7 @@ public class CreatePostDTO extends ResponseData {
     String tel;
     String email;
     CreateAddressPostDTO address;
-//    CompanyIdDTO comp;
+    CompanyIdDTO comp;
     LocalTime workStartTime;
     LocalTime workEndTime;
     String workDay;
