@@ -6,7 +6,7 @@ import lombok.Setter;
 import java.util.UUID;
 
 @Getter @Setter
-public class CreateAddressPostDTO {
+public class CreateAddressDTO {
     String addressId = UUID.randomUUID().toString();
     String country;
     String postalCode;

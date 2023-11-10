@@ -87,4 +87,8 @@ public class Post extends ResponseData {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<OpenPosition> openPositionList;
 
+    public void addOpenPosition(OpenPosition openPosition){
+        openPositionList.add(openPosition);
+        openPosition.setPost(this);
+    }
 }

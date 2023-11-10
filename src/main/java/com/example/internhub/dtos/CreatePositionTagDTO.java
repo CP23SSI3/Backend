@@ -4,6 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-public class CreatePositionTag {
+public class CreatePositionTagDTO {
     String positionTagId;
 }

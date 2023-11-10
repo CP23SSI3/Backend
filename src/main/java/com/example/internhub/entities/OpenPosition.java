@@ -3,6 +3,7 @@ package com.example.internhub.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -10,6 +11,7 @@ import java.math.BigDecimal;
 @Entity
 @Table(name = "openpositions")
 @Getter @Setter
+@ToString
 public class OpenPosition {
     @Id
     @Column(name = "openPositionId", nullable = false, length = 36)

@@ -1,18 +1,13 @@
 package com.example.internhub.dtos;
 
-import com.example.internhub.entities.PositionTag;
-import com.example.internhub.repositories.PositionTagRepository;
-import com.example.internhub.services.PositionTagService;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
-@Getter @Setter
+@Getter @Setter @ToString
 public class CreateOpenPositionDTO {
 //    @Autowired
 //    private PositionTagService positionTagService;
@@ -25,7 +20,7 @@ public class CreateOpenPositionDTO {
     String openPositionDesc;
     Integer workMonth;
     BigDecimal salary;
-    CreatePositionTag positionTag;
+    CreatePositionTagDTO positionTag;
 
 //    @JsonIgnore
 //    PositionTag positionTag = positionTagRepository.getById(positionTagId);

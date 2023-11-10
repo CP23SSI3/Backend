@@ -4,6 +4,8 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -28,13 +30,13 @@ public class Company {
     private String defaultWelfare;
 
     @Column(name = "createdDate", nullable = false)
-    private Instant createdDate;
+    private LocalDateTime createdDate;
 
     @Column(name = "lastUpdate", nullable = false)
-    private Instant lastUpdate;
+    private LocalDateTime lastUpdate;
 
     @Column(name = "lastActive", nullable = false)
-    private Instant lastActive;
+    private LocalDateTime lastActive;
 
     @Column(name = "compUrl", nullable = false)
     private String compUrl;

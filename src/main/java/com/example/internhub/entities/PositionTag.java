@@ -1,9 +1,6 @@
 package com.example.internhub.entities;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,7 +9,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "positiontags")
-@Getter @Setter
+@Getter @Setter @ToString
 @AllArgsConstructor @NoArgsConstructor
 public class PositionTag {
     @Id
