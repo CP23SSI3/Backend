@@ -19,10 +19,8 @@ public class MySQLOpenPositionService implements OpenPositionService {
     private ModelMapper modelMapper;
     @Autowired
     private PositionTagService positionTagService;
-
     @Autowired
     private OpenPositionRepository openPositionRepository;
-
 
     @Override
     public List<OpenPosition> getAllOpenPositions() {

@@ -42,4 +42,11 @@ public class Address {
     @Column(name = "longitude", nullable = false, precision = 11, scale = 8)
     private BigDecimal longitude;
 
+    public Address(Address address) {
+        new Address(address.getAddressId(), address.getCountry(),
+                address.getPostalCode(), address.getCity(),
+                address.getDistrict(), address.getSubDistrict(),
+                address.getArea(), address.getLatitude(), address.getLongitude());
+    }
+
 }

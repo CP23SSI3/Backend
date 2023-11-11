@@ -20,14 +20,14 @@ public class OpenPosition {
     @Column(name = "openPositionTitle", nullable = false, length = 50)
     private String openPositionTitle;
 
-    @Column(name = "openPositionNum", nullable = false, precision = 10)
+    @Column(name = "openPositionNum", precision = 10)
     private BigDecimal openPositionNum;
 
     @Column(name = "openPositionDesc", nullable = false, length = 300)
     private String openPositionDesc;
 
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "postId", nullable = false)
     private Post post;
 

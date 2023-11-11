@@ -11,4 +11,5 @@ public interface CompanyService {
     public List<Company> getAllCompanies();
     public Company getCompanyById(String id);
     public Company createCompany();
+    public Company getCompany(Company company);
 }

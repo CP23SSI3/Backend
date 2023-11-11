@@ -38,4 +38,12 @@ public class MySQLAddressService implements AddressService{
         return address;
     }
 
+    @Override
+    public Address getAddress(Address address) {
+        return new Address(address.getAddressId(), address.getCountry(),
+                address.getPostalCode(), address.getCity(),
+                address.getDistrict(), address.getSubDistrict(),
+                address.getArea(), address.getLatitude(), address.getLongitude());
+    }
+
 }

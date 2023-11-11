@@ -16,7 +16,7 @@ import java.util.Set;
 @Entity
 @Table(name = "posts")
 @Getter @Setter
-@ToString
+//@ToString
 @NoArgsConstructor @AllArgsConstructor
 public class Post extends ResponseData {
     @Id
@@ -67,7 +67,7 @@ public class Post extends ResponseData {
     @Column(name = "email", nullable = false, length = 80)
     private String email;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "addressId", nullable = false)
     private Address address;
 
@@ -89,6 +89,8 @@ public class Post extends ResponseData {
 
     public void addOpenPosition(OpenPosition openPosition){
         openPositionList.add(openPosition);
+//        System.out.println(this);
         openPosition.setPost(this);
+        System.out.println(openPosition);
     }
 }

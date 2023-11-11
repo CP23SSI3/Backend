@@ -9,4 +9,5 @@ public interface AddressService {
     public List<Address> getAllAddresses();
     public Address getAddressById(String addressId);
     public Address createAddress(CreateAddressDTO createAddressPostDTO);
+    public Address getAddress(Address address);
 }
