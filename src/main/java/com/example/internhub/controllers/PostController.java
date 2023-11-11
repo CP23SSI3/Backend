@@ -7,6 +7,8 @@ import com.example.internhub.services.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+
 @RestController
 @RequestMapping("/api/v1/posts")
 @CrossOrigin(origins = "${cors.allow.origin}")
@@ -27,7 +29,7 @@ public class PostController {
     }
 
     @PostMapping("")
-    public Post createPost(@RequestBody CreatePostDTO post){
-        return postService.createPost(post);
+    public ResponseObject createPost(@RequestBody CreatePostDTO post, HttpServletResponse res){
+        return postService.createPost(post, res);
     }
 }

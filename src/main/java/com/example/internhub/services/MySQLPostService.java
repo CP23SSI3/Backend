@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -60,7 +61,7 @@ public class MySQLPostService implements PostService{
     }
 
     @Override
-    public Post createPost(CreatePostDTO createPostDTO) {
+    public ResponseObject createPost(CreatePostDTO createPostDTO, HttpServletResponse res) {
         try {
             Post post = modelMapper.map(createPostDTO, Post.class);
             LocalDateTime now = LocalDateTime.now();
@@ -71,54 +72,19 @@ public class MySQLPostService implements PostService{
             post.setComp(companyService.getCompany(company));
             List<OpenPosition> openPositionList = post.getOpenPositionList();
             post.setOpenPositionList(new ArrayList<>());
-
             for (OpenPosition openPosition : openPositionList) {
                 System.out.println(openPosition);
                 System.out.println(openPosition.getOpenPositionTitle() + " " + openPosition.getPositionTag().getPositionTagId());
                 PositionTag positionTag = positionTagService.getPositionTagById(openPosition.getPositionTag().getPositionTagId());
-//            openPosition.setPositionTag(positionTag);
                 openPosition.setPositionTag(positionTagService.getPositionTag(positionTag));
                 post.addOpenPosition(openPosition);
-//            System.out.println(openPosition);
             }
-
-//        addressService.createAddress(createPostDTO.getAddress());
             postRepository.save(post);
-//        System.out.println(post.getOpenPositionList().get(0).getPost().getPostId());
-            return post;
+            return new ResponseObject(200, "Create post successfully.", post);
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            res.setStatus(400);
+            return new ResponseObject(400, "Create post failed", null);
         }
     }
 
-
-//    @Override
-//    public Post createPost(CreatePostDTO postDTO) {
-//        Company company = companyService.getCompanyById("8e20782f-2807-4f13-a11e-0fb9ff955488");
-//        Post post = modelMapper.map(postDTO, Post.class);
-//        LocalDateTime now = LocalDateTime.now();
-//        post.setCreatedDate(now);
-//        post.setLastUpdateDate(now);
-//        post.setStatus(PostStatus.OPENED);
-//        Address address = addressService.getAddressById("9346a466-4a82-4037-ab00-72ba24fa50bf");
-//        Address address1 = new Address(address.getAddressId(),
-//                address.getCountry(), address.getPostalCode(),
-//                address.getCity(), address.getDistrict(),
-//                address.getSubDistrict(), address.getArea(),
-//                address.getLatitude(), address.getLongitude());
-//        Company comp1 = new Company(company.getCompId(), company.getCompName(),
-//                company.getCompLogoKey(), company.getCompDesc(),
-//                company.getDefaultWelfare(), company.getCreatedDate(),
-//                company.getLastUpdate(), company.getLastActive(),
-//                company.getCompUrl(), address1);
-//        post.setComp(comp1);
-////        System.out.println(postDTO.getOpenPositionList().get(0).getOpenPositionId());
-////        System.out.println(post.getOpenPositionList().get(0).getOpenPositionId());
-//        openPositionRepository.save(post.getOpenPositionList().get(0));
-////        addressRepository.save(post.getAddress());
-////        postRepository.save(post);
-////        openPositionRepository.save(post.getOpenPositionList().get(0));
-//        return post;
-//    }
 }
