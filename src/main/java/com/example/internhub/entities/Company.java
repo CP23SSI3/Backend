@@ -45,12 +45,4 @@ public class Company {
     @JoinColumn(name = "addressId", nullable = false)
     private Address address;
 
-//    public Company(Company company){
-//        new Company(company.getCompId(), company.getCompName(),
-//                company.getCompLogoKey(), company.getCompDesc(),
-//                company.getDefaultWelfare(), company.getCreatedDate(),
-//                company.getLastUpdate(), company.getLastActive(),
-//                company.getCompUrl(), new Address(company.getAddress()));
-//    }
-
 }

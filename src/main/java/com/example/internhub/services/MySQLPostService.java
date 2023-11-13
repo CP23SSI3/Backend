@@ -32,10 +32,6 @@ public class MySQLPostService implements PostService{
     @Autowired
     private CompanyService companyService;
     @Autowired
-    private AddressService addressService;
-    @Autowired
-    private OpenPositionService openPositionService;
-    @Autowired
     private PositionTagService positionTagService;
 
     @Override
@@ -73,8 +69,6 @@ public class MySQLPostService implements PostService{
             List<OpenPosition> openPositionList = post.getOpenPositionList();
             post.setOpenPositionList(new ArrayList<>());
             for (OpenPosition openPosition : openPositionList) {
-                System.out.println(openPosition);
-                System.out.println(openPosition.getOpenPositionTitle() + " " + openPosition.getPositionTag().getPositionTagId());
                 PositionTag positionTag = positionTagService.getPositionTagById(openPosition.getPositionTag().getPositionTagId());
                 openPosition.setPositionTag(positionTagService.getPositionTag(positionTag));
                 post.addOpenPosition(openPosition);
@@ -82,6 +76,7 @@ public class MySQLPostService implements PostService{
             postRepository.save(post);
             return new ResponseObject(200, "Create post successfully.", post);
         } catch (Exception e) {
+            e.printStackTrace();
             res.setStatus(400);
             return new ResponseObject(400, "Create post failed", null);
         }

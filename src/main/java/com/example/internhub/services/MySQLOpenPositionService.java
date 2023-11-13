@@ -30,12 +30,6 @@ public class MySQLOpenPositionService implements OpenPositionService {
     @Override
     public void createOpenPosition(CreateOpenPositionDTO createOpenPositionDTO) {
         OpenPosition openPosition = modelMapper.map(createOpenPositionDTO, OpenPosition.class);
-        System.out.println(openPosition);
-//        System.out.println(positionTagService.getPositionTagById(openPosition.getPositionTag().getPositionTagId()));
-//        openPosition.setPositionTag(positionTagService.getPositionTagById(openPosition.getPositionTag().getPositionTagId()));
-//        System.out.println(openPosition);
         openPositionRepository.save(openPosition);
-//        System.out.println(openPosition);
-//        System.out.println(createOpenPositionDTO);
     }
 }

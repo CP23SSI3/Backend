@@ -24,7 +24,6 @@ public class CreatePostDTO extends ResponseData {
     String email;
     CreateAddressDTO address;
     CompanyIdDTO comp;
-//    Company comp = companyService.getCompanyById("8e20782f-2807-4f13-a11e-0fb9ff955488");
     LocalTime workStartTime;
     LocalTime workEndTime;
     String workDay;

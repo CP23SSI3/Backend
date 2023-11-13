@@ -21,7 +21,7 @@ public class OpenPosition {
     private String openPositionTitle;
 
     @Column(name = "openPositionNum", precision = 10)
-    private BigDecimal openPositionNum;
+    private Integer openPositionNum;
 
     @Column(name = "openPositionDesc", nullable = false, length = 300)
     private String openPositionDesc;
@@ -36,7 +36,7 @@ public class OpenPosition {
     private PositionTag positionTag;
 
     @Column(name = "workMonth", nullable = false, precision = 10)
-    private BigDecimal workMonth;
+    private Integer workMonth;
 
     @Column(name = "salary", precision = 10)
     private BigDecimal salary;

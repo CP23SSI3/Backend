@@ -89,8 +89,6 @@ public class Post extends ResponseData {
 
     public void addOpenPosition(OpenPosition openPosition){
         openPositionList.add(openPosition);
-//        System.out.println(this);
         openPosition.setPost(this);
-        System.out.println(openPosition);
     }
 }
