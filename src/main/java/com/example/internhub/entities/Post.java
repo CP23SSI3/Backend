@@ -91,4 +91,12 @@ public class Post extends ResponseData {
         openPositionList.add(openPosition);
         openPosition.setPost(this);
     }
+    public String[] getWorkDay(){
+        return workDay.split(",");
+    }
+
+    public String[] getDocuments(){
+        return documents.split(",");
+    }
+
 }
