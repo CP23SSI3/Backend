@@ -1,6 +1,7 @@
 package com.example.internhub.controllers;
 
 import com.example.internhub.entities.OpenPosition;
+import com.example.internhub.responses.ResponseObjectList;
 import com.example.internhub.services.OpenPositionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -19,7 +20,7 @@ public class OpenPositionController {
     private OpenPositionService openPositionService;
 
     @GetMapping("")
-    public List<OpenPosition> getAllOpenPositions(){
+    public ResponseObjectList getAllOpenPositions(){
         return openPositionService.getAllOpenPositions();
     }
 }

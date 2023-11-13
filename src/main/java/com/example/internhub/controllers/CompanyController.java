@@ -1,6 +1,7 @@
 package com.example.internhub.controllers;
 
 import com.example.internhub.entities.Company;
+import com.example.internhub.responses.ResponseObjectList;
 import com.example.internhub.services.CompanyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -19,7 +20,7 @@ public class CompanyController {
     private CompanyService companyService;
 
     @GetMapping("")
-    public List<Company> getAllCompanies(){
+    public ResponseObjectList getAllCompanies(){
         return companyService.getAllCompanies();
     }
 }

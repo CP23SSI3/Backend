@@ -2,6 +2,7 @@ package com.example.internhub.controllers;
 
 import com.example.internhub.entities.PositionTag;
 import com.example.internhub.responses.ResponseObject;
+import com.example.internhub.responses.ResponseObjectList;
 import com.example.internhub.services.PositionTagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -20,7 +21,7 @@ public class PositionTagController {
     private PositionTagService positionTagService;
 
     @GetMapping
-    public ResponseObject getAllPositionTags(){
+    public ResponseObjectList getAllPositionTags(){
         return positionTagService.getAllPositionTag();
     }
 

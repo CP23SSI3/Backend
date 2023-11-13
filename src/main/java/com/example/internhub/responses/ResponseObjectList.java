@@ -13,5 +13,5 @@ import java.util.List;
 public class ResponseObjectList {
     private int status;
     private String message;
-    private List<ResponseData> data;
+    private List<?> data;
 }
