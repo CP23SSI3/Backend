@@ -4,6 +4,7 @@ import com.example.internhub.dtos.CreateAddressDTO;
 import com.example.internhub.entities.Address;
 import com.example.internhub.repositories.AddressRepository;
 import org.modelmapper.ModelMapper;
+import com.example.internhub.responses.ResponseObjectList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -21,8 +22,11 @@ public class MySQLAddressService implements AddressService{
     private AddressRepository addressRepository;
 
     @Override
-    public List<Address> getAllAddresses() {
-        return addressRepository.findAll();
+    public ResponseObjectList getAllAddresses() {
+
+        return new ResponseObjectList(200,
+                "Address's list is successfully sended.",
+                addressRepository.findAll());
     }
 
     @Override

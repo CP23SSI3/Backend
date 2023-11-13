@@ -5,6 +5,7 @@ import com.example.internhub.dtos.CreatePositionTagDTO;
 import com.example.internhub.entities.OpenPosition;
 import com.example.internhub.repositories.OpenPositionRepository;
 import org.modelmapper.ModelMapper;
+import com.example.internhub.responses.ResponseObjectList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -23,8 +24,10 @@ public class MySQLOpenPositionService implements OpenPositionService {
     private OpenPositionRepository openPositionRepository;
 
     @Override
-    public List<OpenPosition> getAllOpenPositions() {
-        return openPositionRepository.findAll();
+    public ResponseObjectList getAllOpenPositions() {
+        return new ResponseObjectList(200,
+                "Open position's list is successfully sended.",
+                openPositionRepository.findAll());
     }
 
     @Override

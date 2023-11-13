@@ -1,6 +1,7 @@
 package com.example.internhub.entities;
 
 import lombok.*;
+import com.example.internhub.responses.ResponseData;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,7 +12,7 @@ import javax.persistence.Table;
 @Table(name = "positiontags")
 @Getter @Setter @ToString
 @AllArgsConstructor @NoArgsConstructor
-public class PositionTag {
+public class PositionTag extends ResponseData {
     @Id
     @Column(name = "positionTagId", nullable = false, length = 36)
     private String positionTagId;
