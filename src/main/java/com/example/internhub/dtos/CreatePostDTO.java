@@ -18,7 +18,7 @@ public class CreatePostDTO extends ResponseData {
     String postDesc;
     String postWelfare;
     String enrolling;
-    String documents;
+    String[] documents;
     String coordinatorName;
     String tel;
     String email;
@@ -26,7 +26,15 @@ public class CreatePostDTO extends ResponseData {
     CompanyIdDTO comp;
     LocalTime workStartTime;
     LocalTime workEndTime;
-    String workDay;
+    String[] workDay;
     String workType;
     List<CreateOpenPositionDTO> openPositionList;
+
+    public String getWorkDay() {
+        return String.join(",", workDay);
+    }
+
+    public String getDocuments() {
+        return String.join(",", documents);
+    }
 }
