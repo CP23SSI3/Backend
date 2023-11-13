@@ -76,7 +76,6 @@ public class MySQLPostService implements PostService{
             postRepository.save(post);
             return new ResponseObject(200, "Create post successfully.", post);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
             res.setStatus(400);
             return new ResponseObject(400, e.getMessage(), null);
         }
