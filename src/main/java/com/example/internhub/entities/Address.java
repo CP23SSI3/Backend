@@ -1,5 +1,6 @@
 package com.example.internhub.entities;
 
+import com.example.internhub.responses.ResponseData;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +17,7 @@ import java.util.UUID;
 @Table(name = "addresses")
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
-public class Address {
+public class Address extends ResponseData {
     @Id
     @Column(name = "addressId", nullable = false, length = 36)
     private String addressId;

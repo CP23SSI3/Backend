@@ -1,5 +1,6 @@
 package com.example.internhub.entities;
 
+import com.example.internhub.responses.ResponseData;
 import lombok.*;
 
 import javax.persistence.*;
@@ -10,7 +11,7 @@ import java.util.UUID;
 @Table(name = "companies")
 @Getter @Setter @ToString
 @AllArgsConstructor @NoArgsConstructor
-public class Company {
+public class Company extends ResponseData {
     @Id
     @Column(name = "compId", nullable = false, length = 36)
     private String compId;
