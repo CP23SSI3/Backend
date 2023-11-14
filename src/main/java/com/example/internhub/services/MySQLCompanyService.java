@@ -3,6 +3,7 @@ package com.example.internhub.services;
 import com.example.internhub.entities.Address;
 import com.example.internhub.entities.Company;
 import com.example.internhub.repositories.CompanyRepository;
+import com.example.internhub.responses.ResponseObject;
 import com.example.internhub.responses.ResponseObjectList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
@@ -30,13 +31,20 @@ public class MySQLCompanyService implements CompanyService{
     }
 
     @Override
-    public Company getCompanyById(String id) {
-        return companyRepository.getById(id);
+    public ResponseObject getCompanyById(String companyId) {
+        return new ResponseObject(200,
+                ("Company id " + companyId + " is successfully sended."),
+                getCompanyByCompanyId(companyId));
+    }
+
+    @Override
+    public Company getCompanyByCompanyId(String companyId) {
+        return companyRepository.getById(companyId);
     }
 
     @Override
     public Company createCompany() {
-        Address address = addressService.getAddressById("5ee4a66e-9750-4340-a9c3-6aff93aa2ad3");
+        Address address = addressService.getAddressByAddressId("5ee4a66e-9750-4340-a9c3-6aff93aa2ad3");
         Company company = new Company(UUID.randomUUID().toString(),
                 "a", "a", "a", "a"
                 , LocalDateTime.now(), LocalDateTime.now(),

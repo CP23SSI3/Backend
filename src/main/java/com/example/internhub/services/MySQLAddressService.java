@@ -3,6 +3,7 @@ package com.example.internhub.services;
 import com.example.internhub.dtos.CreateAddressDTO;
 import com.example.internhub.entities.Address;
 import com.example.internhub.repositories.AddressRepository;
+import com.example.internhub.responses.ResponseObject;
 import org.modelmapper.ModelMapper;
 import com.example.internhub.responses.ResponseObjectList;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,15 +24,16 @@ public class MySQLAddressService implements AddressService{
 
     @Override
     public ResponseObjectList getAllAddresses() {
-
         return new ResponseObjectList(200,
                 "Address's list is successfully sended.",
                 addressRepository.findAll());
     }
 
     @Override
-    public Address getAddressById(String addressId) {
-        return addressRepository.getById(addressId);
+    public ResponseObject getAddressById(String addressId) {
+        return new ResponseObject(200,
+                ("Address id " + addressId + " is successfully sended."),
+                getAddressByAddressId(addressId));
     }
 
     @Override
@@ -40,6 +42,11 @@ public class MySQLAddressService implements AddressService{
         System.out.println(address);
         addressRepository.save(address);
         return address;
+    }
+
+    @Override
+    public Address getAddressByAddressId(String addressId) {
+        return addressRepository.getById(addressId);
     }
 
     @Override

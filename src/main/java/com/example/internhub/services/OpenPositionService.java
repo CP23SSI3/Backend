@@ -8,6 +8,6 @@ import com.example.internhub.responses.ResponseObjectList;
 import java.util.List;
 
 public interface OpenPositionService {
-    public void createOpenPosition(CreateOpenPositionDTO createOpenPositionDTO);
     public ResponseObjectList getAllOpenPositions();
+    public void createOpenPosition(CreateOpenPositionDTO createOpenPositionDTO);
 }

@@ -7,7 +7,8 @@ import com.example.internhub.responses.ResponseObjectList;
 import java.util.List;
 
 public interface PositionTagService {
-    public PositionTag getPositionTagById(String positionTagId);
-    public PositionTag getPositionTag(PositionTag positionTag);
     public ResponseObjectList getAllPositionTag();
+    public ResponseObject getPositionTagById(String positionTagId);
+    public PositionTag getPositionTagByPositionTagId(String positionTagId);
+    public PositionTag getPositionTag(PositionTag positionTag);
 }

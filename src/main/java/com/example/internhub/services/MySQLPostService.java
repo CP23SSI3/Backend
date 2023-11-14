@@ -17,7 +17,6 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -64,12 +63,12 @@ public class MySQLPostService implements PostService{
             post.setCreatedDate(now);
             post.setLastUpdateDate(now);
             post.setStatus(PostStatus.OPENED);
-            Company company = companyService.getCompanyById(post.getComp().getCompId());
+            Company company = companyService.getCompanyByCompanyId(post.getComp().getCompId());
             post.setComp(companyService.getCompany(company));
             List<OpenPosition> openPositionList = post.getOpenPositionList();
             post.setOpenPositionList(new ArrayList<>());
             for (OpenPosition openPosition : openPositionList) {
-                PositionTag positionTag = positionTagService.getPositionTagById(openPosition.getPositionTag().getPositionTagId());
+                PositionTag positionTag = positionTagService.getPositionTagByPositionTagId(openPosition.getPositionTag().getPositionTagId());
                 openPosition.setPositionTag(positionTagService.getPositionTag(positionTag));
                 post.addOpenPosition(openPosition);
             }
