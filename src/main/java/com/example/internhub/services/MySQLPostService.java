@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @Primary
@@ -59,6 +60,10 @@ public class MySQLPostService implements PostService{
     public ResponseObject createPost(CreatePostDTO createPostDTO, HttpServletResponse res) {
         try {
             Post post = modelMapper.map(createPostDTO, Post.class);
+            if (post.getOpenPositionList().size() == 0) {
+                res.setStatus(400);
+                return new ResponseObject(400, "At least one position is required.", null);
+            }
             LocalDateTime now = LocalDateTime.now();
             post.setCreatedDate(now);
             post.setLastUpdateDate(now);
@@ -68,7 +73,13 @@ public class MySQLPostService implements PostService{
             List<OpenPosition> openPositionList = post.getOpenPositionList();
             post.setOpenPositionList(new ArrayList<>());
             for (OpenPosition openPosition : openPositionList) {
-                PositionTag positionTag = positionTagService.getPositionTagByPositionTagId(openPosition.getPositionTag().getPositionTagId());
+                PositionTag positionTag;
+                try {
+                    positionTag = positionTagService.getPositionTagByPositionTagId(openPosition.getPositionTag().getPositionTagId());
+                } catch (Exception e) {
+                    PositionTag position = positionTagService.getPositionTagByPositionTagName(openPosition.getOpenPositionTitle());
+                    positionTag = (position == null) ? new PositionTag(UUID.randomUUID().toString(), openPosition.getOpenPositionTitle()) : position;
+                }
                 openPosition.setPositionTag(positionTagService.getPositionTag(positionTag));
                 post.addOpenPosition(openPosition);
             }

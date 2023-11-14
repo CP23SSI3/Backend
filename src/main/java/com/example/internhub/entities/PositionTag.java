@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.UUID;
 
 @Entity
 @Table(name = "positiontags")
@@ -19,4 +20,8 @@ public class PositionTag extends ResponseData {
 
     @Column(name = "positionName", nullable = false, length = 50)
     private String positionName;
+
+    public PositionTag(String positionName){
+        new PositionTag(UUID.randomUUID().toString(), positionName);
+    }
 }

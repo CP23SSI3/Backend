@@ -31,6 +31,7 @@ public class CreatePostDTO extends ResponseData {
     LocalTime workEndTime;
     WorkDay[] workDay;
     String workType;
+    String postUrl;
     List<CreateOpenPositionDTO> openPositionList;
 
     public String getWorkDay() {

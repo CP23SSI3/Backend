@@ -21,7 +21,7 @@ public class OpenPosition extends ResponseData {
     @Column(name = "openPositionTitle", nullable = false, length = 50)
     private String openPositionTitle;
 
-    @Column(name = "openPositionNum", precision = 10)
+    @Column(name = "openPositionNum", precision = 10, nullable = false)
     private Integer openPositionNum;
 
     @Column(name = "openPositionDesc", nullable = false, length = 300)
