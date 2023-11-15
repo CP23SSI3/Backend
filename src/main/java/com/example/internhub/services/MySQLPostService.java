@@ -72,17 +72,17 @@ public class MySQLPostService implements PostService{
             post.setComp(companyService.getCompany(company));
             List<OpenPosition> openPositionList = post.getOpenPositionList();
             post.setOpenPositionList(new ArrayList<>());
-            for (OpenPosition openPosition : openPositionList) {
-                PositionTag positionTag;
-                try {
-                    positionTag = positionTagService.getPositionTagByPositionTagId(openPosition.getPositionTag().getPositionTagId());
-                } catch (Exception e) {
-                    PositionTag position = positionTagService.getPositionTagByPositionTagName(openPosition.getOpenPositionTitle());
-                    positionTag = (position == null) ? new PositionTag(UUID.randomUUID().toString(), openPosition.getOpenPositionTitle()) : position;
-                }
-                openPosition.setPositionTag(positionTagService.getPositionTag(positionTag));
-                post.addOpenPosition(openPosition);
-            }
+//            for (OpenPosition openPosition : openPositionList) {
+//                PositionTag positionTag;
+//                try {
+//                    positionTag = positionTagService.getPositionTagByPositionTagId(openPosition.getPositionTag().getPositionTagId());
+//                } catch (Exception e) {
+//                    PositionTag position = positionTagService.getPositionTagByPositionTagName(openPosition.getOpenPositionTitle());
+//                    positionTag = (position == null) ? new PositionTag(openPosition.getOpenPositionTitle()) : position;
+//                }
+//                openPosition.setPositionTag(positionTagService.getPositionTag(positionTag));
+//                post.addOpenPosition(openPosition);
+//            }
             postRepository.save(post);
             return new ResponseObject(200, "Create post successfully.", post);
         } catch (Exception e) {

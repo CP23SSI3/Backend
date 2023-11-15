@@ -32,9 +32,9 @@ public class OpenPosition extends ResponseData {
     @JoinColumn(name = "postId", nullable = false)
     private Post post;
 
-    @OneToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
-    @JoinColumn(name = "positionTagId", nullable = false)
-    private PositionTag positionTag;
+//    @OneToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
+//    @JoinColumn(name = "positionTagId", nullable = false)
+//    private PositionTag positionTag;
 
     @Column(name = "workMonth", nullable = false, precision = 10)
     private Integer workMonth;

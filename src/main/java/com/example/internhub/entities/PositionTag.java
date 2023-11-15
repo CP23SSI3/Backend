@@ -12,16 +12,16 @@ import java.util.UUID;
 @Entity
 @Table(name = "positiontags")
 @Getter @Setter @ToString
-@AllArgsConstructor @NoArgsConstructor
+@NoArgsConstructor
 public class PositionTag extends ResponseData {
     @Id
-    @Column(name = "positionTagId", nullable = false, length = 36)
-    private String positionTagId;
+//    @Column(name = "positionTagId", nullable = false, length = 36)
+//    private String positionTagId;
 
-    @Column(name = "positionName", nullable = false, length = 50)
-    private String positionName;
+    @Column(name = "positionTagName", nullable = false, length = 50)
+    private String positionTagName;
 
     public PositionTag(String positionName){
-        new PositionTag(UUID.randomUUID().toString(), positionName);
+        new PositionTag(positionName);
     }
 }

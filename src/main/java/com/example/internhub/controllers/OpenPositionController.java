@@ -23,4 +23,5 @@ public class OpenPositionController {
     public ResponseObjectList getAllOpenPositions(){
         return openPositionService.getAllOpenPositions();
     }
+
 }
