@@ -15,5 +15,5 @@ public class CreateOpenPositionDTO {
     String openPositionDesc;
     Integer workMonth;
     BigDecimal salary;
-    CreatePositionTagDTO positionTag;
+//    CreatePositionTagDTO positionTag;
 }

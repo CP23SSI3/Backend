@@ -56,7 +56,12 @@ public class MySQLCompanyService implements CompanyService{
 
     @Override
     public Company getCompany(Company company){
-        return new Company(company, addressService.getAddress(company.getAddress()));
+        return new Company(addressService.getAddress(company.getAddress()),
+                company.getCompDesc(),
+                company.getCompId(), company.getCompLogoKey(),
+                company.getCompName(), company.getCompUrl(),
+                company.getCreatedDate(), company.getDefaultWelfare(),
+                company.getLastActive(), company.getLastUpdate());
     }
 
 }

@@ -59,6 +59,9 @@ public class Post extends ResponseData {
     @Column(name = "postId", nullable = false, length = 36)
     private String postId;
 
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PostPositionTag> postPositionTagList;
+
     @Column(name = "postUrl")
     private String postUrl;
 

@@ -25,6 +25,7 @@ public class CreatePostDTO extends ResponseData {
     List<CreateOpenPositionDTO> openPositionList;
     String postId = UUID.randomUUID().toString();
     String postDesc;
+    String[] postPositionTag;
     String postUrl;
     String postWelfare;
     String tel;
@@ -49,4 +50,5 @@ public class CreatePostDTO extends ResponseData {
         }
         return String.join(",", documentString);
     }
+
 }

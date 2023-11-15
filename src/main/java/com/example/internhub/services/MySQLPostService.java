@@ -69,10 +69,12 @@ public class MySQLPostService implements PostService{
             post.setLastUpdateDate(now);
             post.setStatus(PostStatus.OPENED);
             Company company = companyService.getCompanyByCompanyId(post.getComp().getCompId());
+            System.out.println(companyService.getCompany(company));
             post.setComp(companyService.getCompany(company));
             List<OpenPosition> openPositionList = post.getOpenPositionList();
             post.setOpenPositionList(new ArrayList<>());
-//            for (OpenPosition openPosition : openPositionList) {
+            for (OpenPosition openPosition : openPositionList) {
+                post.addOpenPosition(openPosition);
 //                PositionTag positionTag;
 //                try {
 //                    positionTag = positionTagService.getPositionTagByPositionTagId(openPosition.getPositionTag().getPositionTagId());
@@ -82,8 +84,8 @@ public class MySQLPostService implements PostService{
 //                }
 //                openPosition.setPositionTag(positionTagService.getPositionTag(positionTag));
 //                post.addOpenPosition(openPosition);
-//            }
-            postRepository.save(post);
+            }
+//            postRepository.save(post);
             return new ResponseObject(200, "Create post successfully.", post);
         } catch (Exception e) {
             res.setStatus(400);
