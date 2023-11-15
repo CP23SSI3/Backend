@@ -15,24 +15,24 @@ import java.util.UUID;
 
 @Getter @Setter @ToString
 public class CreatePostDTO extends ResponseData {
-    String postId = UUID.randomUUID().toString();
-    String title;
-    LocalDateTime closedDate;
-    String postDesc;
-    String postWelfare;
-    String enrolling;
-    Document[] documents;
-    String coordinatorName;
-    String tel;
-    String email;
     CreateAddressDTO address;
+    LocalDateTime closedDate;
     CompanyIdDTO comp;
+    String coordinatorName;
+    Document[] documents;
+    String email;
+    String enrolling;
+    List<CreateOpenPositionDTO> openPositionList;
+    String postId = UUID.randomUUID().toString();
+    String postDesc;
+    String postUrl;
+    String postWelfare;
+    String tel;
+    String title;
     LocalTime workStartTime;
     LocalTime workEndTime;
     WorkDay[] workDay;
     String workType;
-    String postUrl;
-    List<CreateOpenPositionDTO> openPositionList;
 
     public String getWorkDay() {
         List<String> workDayString = new ArrayList<>();

@@ -45,21 +45,18 @@ public class MySQLCompanyService implements CompanyService{
     @Override
     public Company createCompany() {
         Address address = addressService.getAddressByAddressId("5ee4a66e-9750-4340-a9c3-6aff93aa2ad3");
-        Company company = new Company(UUID.randomUUID().toString(),
-                "a", "a", "a", "a"
-                , LocalDateTime.now(), LocalDateTime.now(),
-                LocalDateTime.now(), "a.com", address);
+//        Company company = new Company(UUID.randomUUID().toString(),
+//                "a", "a", "a", "a"
+//                , LocalDateTime.now(), LocalDateTime.now(),
+//                LocalDateTime.now(), "a.com", address);
+        Company company = new Company();
         companyRepository.save(company);
         return company;
     }
 
     @Override
     public Company getCompany(Company company){
-        return new Company(company.getCompId(), company.getCompName(),
-                company.getCompLogoKey(), company.getCompDesc(),
-                company.getDefaultWelfare(), company.getCreatedDate(),
-                company.getLastUpdate(), company.getLastActive(),
-                company.getCompUrl(), addressService.getAddress(company.getAddress()));
+        return new Company(company, addressService.getAddress(company.getAddress()));
     }
 
 }

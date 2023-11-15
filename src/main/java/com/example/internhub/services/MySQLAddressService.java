@@ -51,10 +51,12 @@ public class MySQLAddressService implements AddressService{
 
     @Override
     public Address getAddress(Address address) {
-        return new Address(address.getAddressId(), address.getCountry(),
-                address.getPostalCode(), address.getCity(),
-                address.getDistrict(), address.getSubDistrict(),
-                address.getArea(), address.getLatitude(), address.getLongitude());
+        return new Address(address);
+//        new Address(address.getAddressId(), address.getArea(),
+//                address.getCity(), address.getCountry(),
+//                address.getDistrict(), address.getLatitude(), address.getLongitude(),
+//                address.getPostalCode(),
+//                address.getSubDistrict())
     }
 
 }
