@@ -1,17 +1,13 @@
 package com.example.internhub.entities;
 
 import com.example.internhub.responses.ResponseData;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "posts")
@@ -60,7 +56,7 @@ public class Post extends ResponseData {
     private String postId;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PostPositionTag> postPositionTagList;
+    private List<PostPositionTag> postTagList;
 
     @Column(name = "postUrl")
     private String postUrl;
@@ -106,4 +102,12 @@ public class Post extends ResponseData {
         return documents.split(",");
     }
 
+    public List<String> getPostTagList() {
+        List<String> tagNameList = new LinkedList<>();
+//        String[] tagNameList = String[];
+        for (PostPositionTag tag: postTagList) {
+            tagNameList.add(tag.getPositionTagName().getPositionTagName());
+        }
+        return tagNameList;
+    }
 }
