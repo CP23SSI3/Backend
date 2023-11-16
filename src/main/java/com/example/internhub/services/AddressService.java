@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public interface AddressService {
     public ResponseObjectList getAllAddresses();
     public ResponseObject getAddressById(String addressId);

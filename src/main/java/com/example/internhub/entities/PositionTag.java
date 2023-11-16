@@ -12,7 +12,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "positiontags")
 @Getter @Setter @ToString
-@NoArgsConstructor
+@NoArgsConstructor @AllArgsConstructor
 public class PositionTag extends ResponseData {
     @Id
 //    @Column(name = "positionTagId", nullable = false, length = 36)
@@ -21,7 +21,7 @@ public class PositionTag extends ResponseData {
     @Column(name = "positionTagName", nullable = false, length = 50)
     private String positionTagName;
 
-    public PositionTag(String positionName){
-        new PositionTag(positionName);
-    }
+//    public PositionTag(String positionName){
+//        new PositionTag(positionName);
+//    }
 }

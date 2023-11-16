@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public interface CompanyService {
     public ResponseObjectList getAllCompanies();
     public ResponseObject getCompanyById(String companyId);

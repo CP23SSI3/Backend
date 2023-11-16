@@ -1,16 +1,14 @@
 package com.example.internhub.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 @Entity
 @Table(name = "postpositiontags")
-@Getter @Setter
+@Getter @Setter @ToString
 @AllArgsConstructor @NoArgsConstructor
 public class PostPositionTag {
 
@@ -25,6 +23,20 @@ public class PostPositionTag {
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "positionTagName", nullable = false)
-    private PositionTag positionTagName;
+    private PositionTag positionTag;
+
+//    public PostPositionTag(String positionTagName) {
+//        new PostPositionTag(null, UUID.randomUUID().toString(), new PositionTag(positionTagName));
+//    }
+//
+//    public PostPositionTag(PositionTag positionTag) {
+//        new PostPositionTag(null, UUID.randomUUID().toString(), positionTag);
+//    }
+
+    public String getPositionTag() {
+        return positionTag.getPositionTagName();
+    }
+
+
 
 }

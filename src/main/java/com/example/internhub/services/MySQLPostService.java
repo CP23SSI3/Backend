@@ -4,6 +4,7 @@ import com.example.internhub.dtos.CreatePostDTO;
 import com.example.internhub.dtos.PostPagination;
 import com.example.internhub.entities.*;
 import com.example.internhub.repositories.PostRepository;
+import com.example.internhub.responses.ResponseData;
 import com.example.internhub.responses.ResponseObject;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ import java.util.UUID;
 
 @Service
 @Primary
-public class MySQLPostService implements PostService{
+public class MySQLPostService implements PostService {
 
     @Autowired
     private ModelMapper modelMapper;
@@ -41,7 +42,7 @@ public class MySQLPostService implements PostService{
 
     @Override
     public ResponseObject getAllPostPagination(int pageNumber, int pageSize) {
-        Page<Post> postList = postRepository.findAll(PageRequest.of(pageNumber,pageSize));
+        Page<Post> postList = postRepository.findAll(PageRequest.of(pageNumber, pageSize));
         PostPagination postPagination = modelMapper.map(postList, PostPagination.class);
         return new ResponseObject(200, "The post's list is succesfully sended.", postPagination);
     }
@@ -52,13 +53,14 @@ public class MySQLPostService implements PostService{
             Post post = postRepository.findById(postId).orElseThrow();
             return new ResponseObject(200, "The post is successfully sended.", post);
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Not found");
         }
     }
 
     @Override
     public ResponseObject createPost(CreatePostDTO createPostDTO, HttpServletResponse res) {
         try {
+            System.out.println(createPostDTO.getPostTagList());
             Post post = modelMapper.map(createPostDTO, Post.class);
             if (post.getOpenPositionList().size() == 0) {
                 res.setStatus(400);
@@ -69,24 +71,20 @@ public class MySQLPostService implements PostService{
             post.setLastUpdateDate(now);
             post.setStatus(PostStatus.OPENED);
             Company company = companyService.getCompanyByCompanyId(post.getComp().getCompId());
-            System.out.println(companyService.getCompany(company));
             post.setComp(companyService.getCompany(company));
             List<OpenPosition> openPositionList = post.getOpenPositionList();
             post.setOpenPositionList(new ArrayList<>());
             for (OpenPosition openPosition : openPositionList) {
                 post.addOpenPosition(openPosition);
-//                PositionTag positionTag;
-//                try {
-//                    positionTag = positionTagService.getPositionTagByPositionTagId(openPosition.getPositionTag().getPositionTagId());
-//                } catch (Exception e) {
-//                    PositionTag position = positionTagService.getPositionTagByPositionTagName(openPosition.getOpenPositionTitle());
-//                    positionTag = (position == null) ? new PositionTag(openPosition.getOpenPositionTitle()) : position;
-//                }
-//                openPosition.setPositionTag(positionTagService.getPositionTag(positionTag));
-//                post.addOpenPosition(openPosition);
             }
-//            postRepository.save(post);
-            return new ResponseObject(200, "Create post successfully.", post);
+            System.out.println(post.getPostTagList());
+            List<PostPositionTag> postPositionTagList = createPostDTO.getPostTagList();
+            post.setPostTagList(new ArrayList<>());
+            for (PostPositionTag tag : postPositionTagList) {
+                post.addPostTag(tag);
+            }
+            postRepository.save(post);
+            return new ResponseObject(200, "Create post succesfully.", post);
         } catch (Exception e) {
             res.setStatus(400);
             return new ResponseObject(400, e.getMessage(), null);

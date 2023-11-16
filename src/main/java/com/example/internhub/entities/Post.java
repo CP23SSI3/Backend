@@ -94,6 +94,11 @@ public class Post extends ResponseData {
         openPositionList.add(openPosition);
         openPosition.setPost(this);
     }
+
+    public void addPostTag(PostPositionTag postPositionTag){
+        postTagList.add(postPositionTag);
+        postPositionTag.setPost(this);
+    }
     public String[] getWorkDay(){
         return workDay.split(",");
     }
@@ -104,9 +109,8 @@ public class Post extends ResponseData {
 
     public List<String> getPostTagList() {
         List<String> tagNameList = new LinkedList<>();
-//        String[] tagNameList = String[];
         for (PostPositionTag tag: postTagList) {
-            tagNameList.add(tag.getPositionTagName().getPositionTagName());
+            tagNameList.add(tag.getPositionTag());
         }
         return tagNameList;
     }
