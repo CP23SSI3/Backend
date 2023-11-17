@@ -2,6 +2,9 @@ package com.example.internhub.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.util.UUID;
@@ -23,15 +26,8 @@ public class PostPositionTag {
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "positionTagName", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private PositionTag positionTag;
-
-//    public PostPositionTag(String positionTagName) {
-//        new PostPositionTag(null, UUID.randomUUID().toString(), new PositionTag(positionTagName));
-//    }
-//
-//    public PostPositionTag(PositionTag positionTag) {
-//        new PostPositionTag(null, UUID.randomUUID().toString(), positionTag);
-//    }
 
     public String getPositionTag() {
         return positionTag.getPositionTagName();

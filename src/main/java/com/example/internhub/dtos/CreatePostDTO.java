@@ -71,21 +71,4 @@ public class CreatePostDTO extends ResponseData {
         return tagList;
     }
 
-//    public List<PostPositionTag> getPostTagList() {
-//        List<PostPositionTag> postPositionTagList = new ArrayList<>();
-//////        System.out.println(postTagList[1]);
-//////        System.out.println(new PostPositionTag(null, null,
-//////                new PositionTag("Frontend developer")));
-//////        postPositionTagList.add(new PostPositionTag(null, null,
-//////                new PositionTag("Frontend developer")));
-////        for (String tag : postTagList) {
-////            System.out.println(tag);
-////            System.out.println(new PositionTag(tag));
-//////            postPositionTagList.add(new PostPositionTag(tag));
-//////            System.out.println(new PostPositionTag(null,null,tag));
-////        }
-//////        System.out.println(postPositionTagList);
-//        return postPositionTagList;
-//    }
-
 }

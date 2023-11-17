@@ -3,6 +3,8 @@ package com.example.internhub.services;
 import com.example.internhub.dtos.CreatePostDTO;
 import com.example.internhub.dtos.PostPagination;
 import com.example.internhub.entities.*;
+import com.example.internhub.repositories.AddressRepository;
+import com.example.internhub.repositories.PostPositionTagRepository;
 import com.example.internhub.repositories.PostRepository;
 import com.example.internhub.responses.ResponseData;
 import com.example.internhub.responses.ResponseObject;
@@ -15,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -34,6 +37,9 @@ public class MySQLPostService implements PostService {
     private CompanyService companyService;
     @Autowired
     private PositionTagService positionTagService;
+
+    @Autowired
+    private PostPositionTagRepository postPositionTagRepository;
 
     @Override
     public List<Post> getAllPost() {
@@ -60,7 +66,6 @@ public class MySQLPostService implements PostService {
     @Override
     public ResponseObject createPost(CreatePostDTO createPostDTO, HttpServletResponse res) {
         try {
-            System.out.println(createPostDTO.getPostTagList());
             Post post = modelMapper.map(createPostDTO, Post.class);
             if (post.getOpenPositionList().size() == 0) {
                 res.setStatus(400);
@@ -77,7 +82,6 @@ public class MySQLPostService implements PostService {
             for (OpenPosition openPosition : openPositionList) {
                 post.addOpenPosition(openPosition);
             }
-            System.out.println(post.getPostTagList());
             List<PostPositionTag> postPositionTagList = createPostDTO.getPostTagList();
             post.setPostTagList(new ArrayList<>());
             for (PostPositionTag tag : postPositionTagList) {
@@ -88,6 +92,17 @@ public class MySQLPostService implements PostService {
         } catch (Exception e) {
             res.setStatus(400);
             return new ResponseObject(400, e.getMessage(), null);
+        }
+    }
+
+    @Override
+    public ResponseObject deletePost(String postId, HttpServletRequest req, HttpServletResponse res) {
+        try {
+            Post post = postRepository.getById(postId);
+            postRepository.delete(post);
+            return new ResponseObject(200, "Delete post id " + postId + " successfully", null);
+        } catch (Exception e) {
+            return new ResponseObject(404, e.getMessage(), null);
         }
     }
 

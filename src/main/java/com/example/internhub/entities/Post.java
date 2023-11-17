@@ -2,6 +2,9 @@ package com.example.internhub.entities;
 
 import com.example.internhub.responses.ResponseData;
 import lombok.*;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -46,6 +49,8 @@ public class Post extends ResponseData {
     private LocalDateTime lastUpdateDate;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+//    @Cascade(org.hibernate.annotations.CascadeType.DELETE)
+//    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<OpenPosition> openPositionList;
 
     @Column(name = "postDesc", nullable = false, length = 500)
@@ -56,6 +61,8 @@ public class Post extends ResponseData {
     private String postId;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+//    @Cascade(org.hibernate.annotations.CascadeType.DELETE)
+//    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<PostPositionTag> postTagList;
 
     @Column(name = "postUrl")

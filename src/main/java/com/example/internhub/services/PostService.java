@@ -5,6 +5,7 @@ import com.example.internhub.entities.Post;
 import com.example.internhub.responses.ResponseObject;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
@@ -14,4 +15,6 @@ public interface PostService {
     public ResponseObject getAllPostPagination(int pageNumber, int pageSize);
     public ResponseObject getPostById(String postId);
     public ResponseObject createPost(CreatePostDTO createPostDTO, HttpServletResponse res);
+    public ResponseObject deletePost(String postId, HttpServletRequest req, HttpServletResponse res);
+
 }
