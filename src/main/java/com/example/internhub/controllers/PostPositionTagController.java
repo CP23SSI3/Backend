@@ -1,27 +1,24 @@
 package com.example.internhub.controllers;
 
-import com.example.internhub.entities.OpenPosition;
 import com.example.internhub.responses.ResponseObjectList;
-import com.example.internhub.services.OpenPositionService;
+import com.example.internhub.services.PostPositionTagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/api/v1/open-positions")
+@RequestMapping("/api/v1/post-position-tags")
 @CrossOrigin(origins = "${cors.allow.origin}")
-public class OpenPositionController {
+public class PostPositionTagController {
 
     @Autowired
-    private OpenPositionService openPositionService;
+    public PostPositionTagService postPositionTagService;
 
     @GetMapping("")
-    public ResponseObjectList getAllOpenPositions(){
-        return openPositionService.getAllOpenPositions();
+    public ResponseObjectList getAllPostPositionTags(){
+        return postPositionTagService.getAllPostPositionTag();
     }
 
 }

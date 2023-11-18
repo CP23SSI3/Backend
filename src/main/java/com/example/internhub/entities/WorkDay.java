@@ -3,6 +3,6 @@ package com.example.internhub.entities;
 import lombok.Getter;
 
 @Getter
-public enum WorkType {
-    ONLINE, ONSITE, HYBRID
+public enum WorkDay {
+    mon, tue, wed, thu, fri, sat, sun
 }

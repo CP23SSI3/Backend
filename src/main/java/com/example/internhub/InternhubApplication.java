@@ -10,9 +10,6 @@ public class InternhubApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(InternhubApplication.class, args);
-//		System.out.println(UUID.randomUUID());
-//		System.out.println(UUID.randomUUID());
-//		System.out.println("hello MAIN");
 	}
 
 }

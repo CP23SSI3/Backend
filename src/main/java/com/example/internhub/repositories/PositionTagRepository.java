@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PositionTagRepository extends JpaRepository <PositionTag, String> {
+//    public PositionTag findByPositionName(String positionName);
 }

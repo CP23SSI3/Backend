@@ -2,13 +2,12 @@ package com.example.internhub.services;
 
 import com.example.internhub.dtos.CreatePostDTO;
 import com.example.internhub.dtos.PostPagination;
-import com.example.internhub.entities.Address;
-import com.example.internhub.entities.Company;
-import com.example.internhub.entities.Post;
-import com.example.internhub.entities.PostStatus;
+import com.example.internhub.entities.*;
+import com.example.internhub.repositories.AddressRepository;
+import com.example.internhub.repositories.PostPositionTagRepository;
 import com.example.internhub.repositories.PostRepository;
+import com.example.internhub.responses.ResponseData;
 import com.example.internhub.responses.ResponseObject;
-import org.apache.tomcat.jni.Local;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
@@ -18,15 +17,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Service
 @Primary
-public class MySQLPostService implements PostService{
-
-    private String compId = "8e20782f-2807-4f13-a11e-0fb9ff955488";
+public class MySQLPostService implements PostService {
 
     @Autowired
     private ModelMapper modelMapper;
@@ -36,7 +36,10 @@ public class MySQLPostService implements PostService{
     @Autowired
     private CompanyService companyService;
     @Autowired
-    private AddressService addressService;
+    private PositionTagService positionTagService;
+
+    @Autowired
+    private PostPositionTagRepository postPositionTagRepository;
 
     @Override
     public List<Post> getAllPost() {
@@ -45,7 +48,7 @@ public class MySQLPostService implements PostService{
 
     @Override
     public ResponseObject getAllPostPagination(int pageNumber, int pageSize) {
-        Page<Post> postList = postRepository.findAll(PageRequest.of(pageNumber,pageSize));
+        Page<Post> postList = postRepository.findAll(PageRequest.of(pageNumber, pageSize));
         PostPagination postPagination = modelMapper.map(postList, PostPagination.class);
         return new ResponseObject(200, "The post's list is succesfully sended.", postPagination);
     }
@@ -56,42 +59,51 @@ public class MySQLPostService implements PostService{
             Post post = postRepository.findById(postId).orElseThrow();
             return new ResponseObject(200, "The post is successfully sended.", post);
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Not found");
         }
     }
 
     @Override
-    public Post createPost(CreatePostDTO postDTO) {
-        Company company = companyService.getCompanyById("8e20782f-2807-4f13-a11e-0fb9ff955488");
-        Post post = modelMapper.map(postDTO, Post.class);
-        LocalDateTime now = LocalDateTime.now();
-//        post.setPostId(UUID.randomUUID().toString());
-        post.setCreatedDate(now);
-        post.setLastUpdateDate(now);
-        post.setStatus(PostStatus.OPENED);
-//        post.getAddress().setAddressId(UUID.randomUUID().toString());
-        Address address = addressService.getAddressById("9346a466-4a82-4037-ab00-72ba24fa50bf");
-//        Address address2 = modelMapper.map(address, Address.class);
-        Address address1 = new Address(address.getAddressId(),
-                address.getCountry(), address.getPostalCode(),
-                address.getCity(), address.getDistrict(),
-                address.getSubDistrict(), address.getArea(),
-                address.getLatitude(), address.getLongitude());
-        Company comp1 = new Company(company.getCompId(), company.getCompName(),
-                company.getCompLogoKey(), company.getCompDesc(),
-                company.getDefaultWelfare(), company.getCreatedDate(),
-                company.getLastUpdate(), company.getLastActive(),
-                company.getCompUrl(), address1);
-//        Company company2 = modelMapper.map(company, Company.class);
-//        Company company1 = company;
-//        Company comp = new Company();
-//        comp.setCompId(company.getCompId());
-//        comp.setCompName(company.getCompName());
-//        comp.setCompLogoKey(company.getCompLogoKey());
-//        comp.setCompDesc(company.getCompDesc());
-
-//        comp.setAddress(address);
-        post.setComp(comp1);
-        return post;
+    public ResponseObject createPost(CreatePostDTO createPostDTO, HttpServletResponse res) {
+        try {
+            Post post = modelMapper.map(createPostDTO, Post.class);
+            if (post.getOpenPositionList().size() == 0) {
+                res.setStatus(400);
+                return new ResponseObject(400, "At least one position is required.", null);
+            }
+            LocalDateTime now = LocalDateTime.now();
+            post.setCreatedDate(now);
+            post.setLastUpdateDate(now);
+            post.setStatus(PostStatus.OPENED);
+            Company company = companyService.getCompanyByCompanyId(post.getComp().getCompId());
+            post.setComp(companyService.getCompany(company));
+            List<OpenPosition> openPositionList = post.getOpenPositionList();
+            post.setOpenPositionList(new ArrayList<>());
+            for (OpenPosition openPosition : openPositionList) {
+                post.addOpenPosition(openPosition);
+            }
+            List<PostPositionTag> postPositionTagList = createPostDTO.getPostTagList();
+            post.setPostTagList(new ArrayList<>());
+            for (PostPositionTag tag : postPositionTagList) {
+                post.addPostTag(tag);
+            }
+            postRepository.save(post);
+            return new ResponseObject(200, "Create post succesfully.", post);
+        } catch (Exception e) {
+            res.setStatus(400);
+            return new ResponseObject(400, e.getMessage(), null);
+        }
     }
+
+    @Override
+    public ResponseObject deletePost(String postId, HttpServletRequest req, HttpServletResponse res) {
+        try {
+            Post post = postRepository.getById(postId);
+            postRepository.delete(post);
+            return new ResponseObject(200, "Delete post id " + postId + " successfully", null);
+        } catch (Exception e) {
+            return new ResponseObject(404, e.getMessage(), null);
+        }
+    }
+
 }

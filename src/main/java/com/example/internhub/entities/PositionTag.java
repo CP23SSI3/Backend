@@ -1,22 +1,27 @@
 package com.example.internhub.entities;
 
+import lombok.*;
 import com.example.internhub.responses.ResponseData;
-import lombok.Getter;
-import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.UUID;
 
 @Entity
 @Table(name = "positiontags")
-@Getter @Setter
+@Getter @Setter @ToString
+@NoArgsConstructor @AllArgsConstructor
 public class PositionTag extends ResponseData {
     @Id
-    @Column(name = "positionTagId", nullable = false, length = 36)
-    private String positionId;
+//    @Column(name = "positionTagId", nullable = false, length = 36)
+//    private String positionTagId;
 
-    @Column(name = "positionName", nullable = false, length = 50)
-    private String positionName;
+    @Column(name = "positionTagName", nullable = false, length = 50)
+    private String positionTagName;
+
+//    public PositionTag(String positionName){
+//        new PositionTag(positionName);
+//    }
 }
