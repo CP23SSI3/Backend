@@ -22,4 +22,9 @@ public class MySQLPostPositionTagService implements PostPositionTagService{
         List<PostPositionTag> postPositionTagList= postPositionTagRepository.findAll();
         return new ResponseObjectList(200, "PostPositionTag's list is successfully sended.", postPositionTagList);
     }
+
+    @Override
+    public void updatePostPositionTag() {
+        
+    }
 }
