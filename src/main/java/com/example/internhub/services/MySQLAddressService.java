@@ -59,7 +59,7 @@ public class MySQLAddressService implements AddressService{
     }
 
     @Override
-    public Address updateAddress(Address oldAddress, Address newAddress) {
+    public void updateAddress(Address oldAddress, Address newAddress) {
         oldAddress.setArea(newAddress.getArea());
         oldAddress.setCity(newAddress.getCity());
         oldAddress.setCountry(newAddress.getCountry());
@@ -68,7 +68,6 @@ public class MySQLAddressService implements AddressService{
         oldAddress.setLongitude(newAddress.getLongitude());
         oldAddress.setPostalCode(newAddress.getPostalCode());
         oldAddress.setSubDistrict(newAddress.getSubDistrict());
-        return oldAddress;
     }
 
 }

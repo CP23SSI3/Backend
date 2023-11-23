@@ -7,4 +7,5 @@ import org.springframework.stereotype.Service;
 @Service
 public interface PostPositionTagService {
     public ResponseObjectList getAllPostPositionTag();
+    public void updatePostPositionTag();
 }
