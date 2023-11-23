@@ -1,6 +1,7 @@
 package com.example.internhub.services;
 
 import com.example.internhub.dtos.CreatePostDTO;
+import com.example.internhub.dtos.EditPostDTO;
 import com.example.internhub.entities.Post;
 import com.example.internhub.responses.ResponseObject;
 import org.springframework.stereotype.Service;
@@ -14,7 +15,11 @@ public interface PostService {
     public List<Post> getAllPost();
     public ResponseObject getAllPostPagination(int pageNumber, int pageSize);
     public ResponseObject getPostById(String postId);
+
+    public Post getPostByPostId(String postId);
+
     public ResponseObject createPost(CreatePostDTO createPostDTO, HttpServletResponse res);
+    public ResponseObject editPost(String postId, EditPostDTO editPostDTO, HttpServletRequest req, HttpServletResponse res) throws IllegalAccessException;
     public ResponseObject deletePost(String postId, HttpServletRequest req, HttpServletResponse res);
 
 }

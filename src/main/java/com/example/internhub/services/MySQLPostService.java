@@ -1,12 +1,11 @@
 package com.example.internhub.services;
 
 import com.example.internhub.dtos.CreatePostDTO;
+import com.example.internhub.dtos.EditPostDTO;
 import com.example.internhub.dtos.PostPagination;
 import com.example.internhub.entities.*;
-import com.example.internhub.repositories.AddressRepository;
 import com.example.internhub.repositories.PostPositionTagRepository;
 import com.example.internhub.repositories.PostRepository;
-import com.example.internhub.responses.ResponseData;
 import com.example.internhub.responses.ResponseObject;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +21,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @Primary
@@ -36,7 +34,11 @@ public class MySQLPostService implements PostService {
     @Autowired
     private CompanyService companyService;
     @Autowired
+    private AddressService addressService;
+    @Autowired
     private PositionTagService positionTagService;
+    @Autowired
+    private ClassService classService;
 
     @Autowired
     private PostPositionTagRepository postPositionTagRepository;
@@ -56,11 +58,18 @@ public class MySQLPostService implements PostService {
     @Override
     public ResponseObject getPostById(String postId) {
         try {
-            Post post = postRepository.findById(postId).orElseThrow();
+            Post post = getPostByPostId(postId);
             return new ResponseObject(200, "The post is successfully sended.", post);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Not found");
         }
+    }
+
+
+    @Override
+    public Post getPostByPostId(String postId) {
+//        System.out.println(postRepository.findById(postId).get().getComp());
+        return postRepository.findById(postId).orElseThrow();
     }
 
     @Override
@@ -96,12 +105,36 @@ public class MySQLPostService implements PostService {
     }
 
     @Override
+    public ResponseObject editPost(String postId, EditPostDTO editPostDTO, HttpServletRequest req, HttpServletResponse res) throws IllegalAccessException {
+        Post post = getPostByPostId(postId);
+        Post editPost = modelMapper.map(editPostDTO, Post.class);
+        post.setClosedDate(editPost.getClosedDate());
+        post.setCoordinatorName(editPost.getCoordinatorName());
+        post.setDocuments(editPostDTO.getDocuments());
+        post.setLastUpdateDate(LocalDateTime.now());
+        post.setEmail(editPost.getEmail());
+        post.setEnrolling(editPost.getEnrolling());
+        post.setPostDesc(editPost.getPostDesc());
+        post.setPostUrl(editPost.getPostUrl());
+        post.setPostWelfare(editPost.getPostWelfare());
+        post.setTel(editPost.getTel());
+        post.setTitle(editPost.getTitle());
+        post.setWorkStartTime(editPost.getWorkStartTime());
+        post.setWorkEndTime(editPost.getWorkEndTime());
+        post.setWorkDay(editPostDTO.getWorkDay());
+        post.setWorkType(editPost.getWorkType());
+        addressService.updateAddress(post.getAddress(), editPost.getAddress());
+        postRepository.save(post);
+        return new ResponseObject(200, "Success", post);
+    }
+
+    @Override
     public ResponseObject deletePost(String postId, HttpServletRequest req, HttpServletResponse res) {
         try {
-            Post post = postRepository.getById(postId);
-            postRepository.delete(post);
+            postRepository.deleteById(postId);
             return new ResponseObject(200, "Delete post id " + postId + " successfully", null);
         } catch (Exception e) {
+            e.printStackTrace();
             return new ResponseObject(404, e.getMessage(), null);
         }
     }

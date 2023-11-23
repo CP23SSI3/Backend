@@ -17,4 +17,5 @@ public interface AddressService {
     public Address createAddress(CreateAddressDTO createAddressPostDTO);
     public Address getAddressByAddressId(String addressId);
     public Address getAddress(Address address);
+    public Address updateAddress(Address oldAddress, Address newAddress);
 }

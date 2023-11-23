@@ -1,6 +1,7 @@
 package com.example.internhub.entities;
 
 import com.example.internhub.responses.ResponseData;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.OnDelete;
@@ -49,8 +50,6 @@ public class Post extends ResponseData {
     private LocalDateTime lastUpdateDate;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-//    @Cascade(org.hibernate.annotations.CascadeType.DELETE)
-//    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<OpenPosition> openPositionList;
 
     @Column(name = "postDesc", nullable = false, length = 500)
@@ -61,8 +60,6 @@ public class Post extends ResponseData {
     private String postId;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-//    @Cascade(org.hibernate.annotations.CascadeType.DELETE)
-//    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<PostPositionTag> postTagList;
 
     @Column(name = "postUrl")
@@ -106,6 +103,25 @@ public class Post extends ResponseData {
         postTagList.add(postPositionTag);
         postPositionTag.setPost(this);
     }
+
+    public void addOpenPosition(List<OpenPosition> openPositionList) {
+//        this.openPositionList.clear();
+//        System.out.println(openPositionList);
+        for (OpenPosition position : openPositionList) {
+            position.setPost(this);
+        }
+    }
+
+    public void addPostTag(List<PostPositionTag> postPositionTagList) {
+//        this.postTagList.clear();
+        for (PostPositionTag tag : postPositionTagList) {
+            tag.setPost(this);
+        }
+    }
+
+    public void clearPostTag() {
+        this.postTagList.clear();
+    }
     public String[] getWorkDay(){
         return workDay.split(",");
     }
@@ -121,4 +137,19 @@ public class Post extends ResponseData {
         }
         return tagNameList;
     }
+
+    @JsonIgnore
+    public List<PostPositionTag> getPostTagListObject() {
+        return this.postTagList;
+    }
+
+//    public void setOpenPositionList(List<OpenPosition> list) {
+//        this.openPositionList.clear();
+//        if (list != null) {
+//            for (OpenPosition openPosition : list){
+//                this.openPositionList.add(openPosition);
+//                openPosition.setPost(this);
+//            }
+//        }
+//    }
 }

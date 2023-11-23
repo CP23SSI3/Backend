@@ -26,7 +26,7 @@ public class PostPositionTag {
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "positionTagName", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
     private PositionTag positionTag;
 
     public String getPositionTag() {

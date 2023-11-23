@@ -22,14 +22,14 @@ public class OpenPosition extends ResponseData {
     @Column(name = "openPositionId", nullable = false, length = 36)
     private String openPositionId;
 
-    @Column(name = "openPositionNum", precision = 10, nullable = false)
+    @Column(name = "openPositionNum",  nullable = false)
     private Integer openPositionNum;
 
     @Column(name = "openPositionTitle", nullable = false, length = 50)
     private String openPositionTitle;
 
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "postId", nullable = false)
     private Post post;
 

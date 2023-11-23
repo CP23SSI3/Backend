@@ -4,44 +4,60 @@ import com.example.internhub.entities.Document;
 import com.example.internhub.entities.PositionTag;
 import com.example.internhub.entities.PostPositionTag;
 import com.example.internhub.entities.WorkDay;
-import com.example.internhub.responses.ResponseData;
+import com.example.internhub.services.ArrayStringService;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@Getter @Setter @ToString
-public class CreatePostDTO extends ResponseData {
+@Getter
+@Setter
+public class EditPostDTO {
+    @JsonIgnore
+    LocalDateTime now  = LocalDateTime.now();
+    @NotNull
     CreateAddressDTO address;
     LocalDateTime closedDate;
-    CompanyIdDTO comp;
     String coordinatorName;
+    @NotNull
     Document[] documents;
+    LocalDateTime lastUpdateDate = now;
     String email;
+    @NotNull
     String enrolling;
+    @NotNull
+    @NotNull.List({})
     List<CreateOpenPositionDTO> openPositionList;
-    String postId = UUID.randomUUID().toString();
+    @NotNull
     String postDesc;
     List<String> postTagList;
     String postUrl;
+    @NotNull
     String postWelfare;
     String tel;
+    @NotNull
     String title;
+    @NotNull
     LocalTime workStartTime;
+    @NotNull
     LocalTime workEndTime;
+    @NotNull
     WorkDay[] workDay;
+    @NotNull
     String workType;
 
     public String getWorkDay() {
         try {
-            List<String> workDayString = new ArrayList<>();
+            java.util.List<String> workDayString = new ArrayList<>();
             for (WorkDay day : workDay) {
                 workDayString.add(day.name());
             }
@@ -53,7 +69,7 @@ public class CreatePostDTO extends ResponseData {
 
     public String getDocuments() {
         try {
-            List<String> documentString = new ArrayList<>();
+            java.util.List<String> documentString = new ArrayList<>();
             for (Document document : documents) {
                 documentString.add(document.name());
             }
@@ -64,7 +80,7 @@ public class CreatePostDTO extends ResponseData {
     }
 
     public List<PostPositionTag> getPostTagList() {
-        List<PostPositionTag> tagList = new ArrayList<>();
+        java.util.List<PostPositionTag> tagList = new ArrayList<>();
         for (String tag : postTagList) {
             PostPositionTag postPositionTag = new PostPositionTag(
                     null, UUID.randomUUID().toString(),
@@ -74,5 +90,4 @@ public class CreatePostDTO extends ResponseData {
         }
         return tagList;
     }
-
 }

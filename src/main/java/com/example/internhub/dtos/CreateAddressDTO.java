@@ -3,6 +3,7 @@ package com.example.internhub.dtos;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Getter @Setter
@@ -14,6 +15,14 @@ public class CreateAddressDTO {
     String district;
     String subDistrict;
     String area;
-    String latitude;
-    String longitude;
+    Double latitude;
+    Double longitude;
+
+    public BigDecimal getLatitude() {
+        return BigDecimal.valueOf(latitude).setScale(8);
+    }
+
+    public BigDecimal getLongitude() {
+        return BigDecimal.valueOf(longitude).setScale(8);
+    }
 }
