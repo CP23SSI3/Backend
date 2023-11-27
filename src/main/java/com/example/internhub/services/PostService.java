@@ -14,6 +14,7 @@ public interface PostService {
     public List<Post> getAllPost();
     public ResponseObject getAllPostPagination(int pageNumber, int pageSize);
     public ResponseObject getPostById(String postId);
+    public Post getPostByPostId(String postId);
     public ResponseObject createPost(CreatePostDTO createPostDTO, HttpServletResponse res);
     public ResponseObject deletePost(String postId, HttpServletRequest req, HttpServletResponse res);
 

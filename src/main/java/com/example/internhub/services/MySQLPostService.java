@@ -62,6 +62,14 @@ public class MySQLPostService implements PostService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Not found");
         }
     }
+    @Override
+    public Post getPostByPostId(String postId) {
+        try {
+            return postRepository.findById(postId).orElseThrow();
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Not found");
+        }
+    }
 
     @Override
     public ResponseObject createPost(CreatePostDTO createPostDTO, HttpServletResponse res) {
@@ -98,8 +106,8 @@ public class MySQLPostService implements PostService {
     @Override
     public ResponseObject deletePost(String postId, HttpServletRequest req, HttpServletResponse res) {
         try {
-            Post post = postRepository.getById(postId);
-            postRepository.delete(post);
+            Post post = getPostByPostId(postId);
+            postRepository.deleteById(postId);
             return new ResponseObject(200, "Delete post id " + postId + " successfully", null);
         } catch (Exception e) {
             return new ResponseObject(404, e.getMessage(), null);
