@@ -17,7 +17,6 @@ public interface PostService {
     public ResponseObject getPostById(String postId);
 
     public Post getPostByPostId(String postId);
-
     public ResponseObject createPost(CreatePostDTO createPostDTO, HttpServletResponse res);
     public ResponseObject editPost(String postId, EditPostDTO editPostDTO, HttpServletRequest req, HttpServletResponse res) throws IllegalAccessException;
     public ResponseObject deletePost(String postId, HttpServletRequest req, HttpServletResponse res);

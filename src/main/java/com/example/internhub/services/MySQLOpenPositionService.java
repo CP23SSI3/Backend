@@ -3,6 +3,7 @@ package com.example.internhub.services;
 import com.example.internhub.dtos.CreateOpenPositionDTO;
 import com.example.internhub.dtos.CreatePositionTagDTO;
 import com.example.internhub.entities.OpenPosition;
+import com.example.internhub.entities.Post;
 import com.example.internhub.repositories.OpenPositionRepository;
 import org.modelmapper.ModelMapper;
 import com.example.internhub.responses.ResponseObjectList;
@@ -34,5 +35,15 @@ public class MySQLOpenPositionService implements OpenPositionService {
     public void createOpenPosition(CreateOpenPositionDTO createOpenPositionDTO) {
         OpenPosition openPosition = modelMapper.map(createOpenPositionDTO, OpenPosition.class);
         openPositionRepository.save(openPosition);
+    }
+
+
+    @Override
+    public void updateOpenPosition(Post post, List<OpenPosition> updateOpenPositionList) {
+        List<OpenPosition> openPositionList = post.getOpenPositionList();
+        openPositionList.clear();
+        for (OpenPosition openPosition : updateOpenPositionList) {
+            post.addOpenPosition(openPosition);
+        }
     }
 }

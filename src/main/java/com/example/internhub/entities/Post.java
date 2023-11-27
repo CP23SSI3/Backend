@@ -43,7 +43,7 @@ public class Post extends ResponseData {
     @Column(name = "email", nullable = false, length = 80)
     private String email;
 
-    @Column(name = "enrolling", nullable = false, length = 500)
+    @Column(name = "enrolling", nullable = false, length = 1500)
     private String enrolling;
 
     @Column(name = "lastUpdateDate", nullable = false)
@@ -52,7 +52,7 @@ public class Post extends ResponseData {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OpenPosition> openPositionList;
 
-    @Column(name = "postDesc", nullable = false, length = 500)
+    @Column(name = "postDesc", nullable = false, length = 1500)
     private String postDesc;
 
     @Id
@@ -65,7 +65,7 @@ public class Post extends ResponseData {
     @Column(name = "postUrl")
     private String postUrl;
 
-    @Column(name = "postWelfare", nullable = false, length = 500)
+    @Column(name = "postWelfare", nullable = false, length = 1500)
     private String postWelfare;
 
     @Enumerated(EnumType.STRING)

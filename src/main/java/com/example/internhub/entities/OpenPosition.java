@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 @ToString
 public class OpenPosition extends ResponseData {
 
-    @Column(name = "openPositionDesc", nullable = false, length = 300)
+    @Column(name = "openPositionDesc", nullable = false, length = 200)
     private String openPositionDesc;
 
     @Id

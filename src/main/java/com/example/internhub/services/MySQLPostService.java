@@ -39,6 +39,10 @@ public class MySQLPostService implements PostService {
     private PositionTagService positionTagService;
     @Autowired
     private ClassService classService;
+    @Autowired
+    private OpenPositionService openPositionService;
+    @Autowired
+    private PostPositionTagService postPositionTagService;
 
     @Autowired
     private PostPositionTagRepository postPositionTagRepository;
@@ -124,6 +128,9 @@ public class MySQLPostService implements PostService {
         post.setWorkDay(editPostDTO.getWorkDay());
         post.setWorkType(editPost.getWorkType());
         addressService.updateAddress(post.getAddress(), editPost.getAddress());
+        openPositionService.updateOpenPosition(post, editPost.getOpenPositionList());
+        System.out.println(editPost.getPostTagListObject());
+        postPositionTagService.updatePostPositionTag(post, editPost.getPostTagListObject());
         postRepository.save(post);
         return new ResponseObject(200, "Success", post);
     }
@@ -131,6 +138,7 @@ public class MySQLPostService implements PostService {
     @Override
     public ResponseObject deletePost(String postId, HttpServletRequest req, HttpServletResponse res) {
         try {
+//            Post post = getPostByPostId(postId);
             postRepository.deleteById(postId);
             return new ResponseObject(200, "Delete post id " + postId + " successfully", null);
         } catch (Exception e) {
