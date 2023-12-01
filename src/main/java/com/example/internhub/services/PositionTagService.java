@@ -13,5 +13,4 @@ public interface PositionTagService {
     public ResponseObject getPositionTagById(String positionTagId);
     public PositionTag getPositionTagByPositionTagId(String positionTagId);
     public PositionTag getPositionTagByPositionTagName(String positionName);
-//    public PositionTag getPositionTag(PositionTag positionTag);
 }

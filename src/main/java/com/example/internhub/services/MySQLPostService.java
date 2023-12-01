@@ -72,7 +72,6 @@ public class MySQLPostService implements PostService {
 
     @Override
     public Post getPostByPostId(String postId) {
-//        System.out.println(postRepository.findById(postId).get().getComp());
         return postRepository.findById(postId).orElseThrow();
     }
 
@@ -138,7 +137,6 @@ public class MySQLPostService implements PostService {
     @Override
     public ResponseObject deletePost(String postId, HttpServletRequest req, HttpServletResponse res) {
         try {
-//            Post post = getPostByPostId(postId);
             postRepository.deleteById(postId);
             return new ResponseObject(200, "Delete post id " + postId + " successfully", null);
         } catch (Exception e) {

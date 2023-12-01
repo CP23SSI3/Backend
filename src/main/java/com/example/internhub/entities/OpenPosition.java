@@ -1,6 +1,6 @@
 package com.example.internhub.entities;
 
-import com.example.internhub.responses.ResponseData;
+import com.example.internhub.responses.Object;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 @Table(name = "openpositions")
 @Getter @Setter
 @ToString
-public class OpenPosition extends ResponseData {
+public class OpenPosition extends Object {
 
     @Column(name = "openPositionDesc", nullable = false, length = 200)
     private String openPositionDesc;

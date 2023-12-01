@@ -1,19 +1,16 @@
 package com.example.internhub.entities;
 
-import com.example.internhub.responses.ResponseData;
+import com.example.internhub.responses.Object;
 import lombok.*;
 
 import javax.persistence.*;
-import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Entity
 @Table(name = "companies")
 @Getter @Setter @ToString
 @AllArgsConstructor @NoArgsConstructor
-public class Company extends ResponseData {
+public class Company extends Object {
 
     @OneToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "addressId", nullable = false)

@@ -1,11 +1,8 @@
 package com.example.internhub.entities;
 
-import com.example.internhub.responses.ResponseData;
+import com.example.internhub.responses.Object;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -18,7 +15,7 @@ import java.util.List;
 @Getter @Setter
 //@ToString
 @NoArgsConstructor @AllArgsConstructor
-public class Post extends ResponseData {
+public class Post extends Object {
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "addressId", nullable = false)

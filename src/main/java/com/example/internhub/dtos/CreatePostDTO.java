@@ -4,7 +4,7 @@ import com.example.internhub.entities.Document;
 import com.example.internhub.entities.PositionTag;
 import com.example.internhub.entities.PostPositionTag;
 import com.example.internhub.entities.WorkDay;
-import com.example.internhub.responses.ResponseData;
+import com.example.internhub.responses.Object;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Getter @Setter @ToString
-public class CreatePostDTO extends ResponseData {
+public class CreatePostDTO extends Object {
     CreateAddressDTO address;
     LocalDateTime closedDate;
     CompanyIdDTO comp;
