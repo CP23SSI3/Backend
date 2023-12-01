@@ -8,7 +8,9 @@ import org.modelmapper.ModelMapper;
 import com.example.internhub.responses.ResponseObjectList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -51,11 +53,15 @@ public class MySQLAddressService implements AddressService{
 
     @Override
     public Address getAddress(Address address) {
-        return new Address(address.getAddressId(), address.getArea(),
-                address.getCity(), address.getCountry(),
-                address.getDistrict(), address.getLatitude(), address.getLongitude(),
-                address.getPostalCode(),
-                address.getSubDistrict());
+        try {
+            return new Address(address.getAddressId(), address.getArea(),
+                    address.getCity(), address.getCountry(),
+                    address.getDistrict(), address.getLatitude(), address.getLongitude(),
+                    address.getPostalCode(),
+                    address.getSubDistrict());
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @Override

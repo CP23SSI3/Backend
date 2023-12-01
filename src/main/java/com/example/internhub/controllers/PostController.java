@@ -27,8 +27,8 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
-    public ResponseObject getPostById(@PathVariable String postId) {
-        return postService.getPostById(postId);
+    public ResponseObject getPostById(@PathVariable String postId, HttpServletResponse res) {
+        return postService.getPostById(postId, res);
     }
 
     @PostMapping("")

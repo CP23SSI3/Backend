@@ -19,7 +19,6 @@ public class MySQLPostPositionTagService implements PostPositionTagService{
 
     @Override
     public ResponseObjectList getAllPostPositionTag() {
-        System.out.println("service");
         List<PostPositionTag> postPositionTagList= postPositionTagRepository.findAll();
         return new ResponseObjectList(200, "PostPositionTag's list is successfully sended.", postPositionTagList);
     }
@@ -28,7 +27,6 @@ public class MySQLPostPositionTagService implements PostPositionTagService{
     public void updatePostPositionTag(Post post, List<PostPositionTag> postPositionTagList) {
         post.getPostTagListObject().clear();
         for (PostPositionTag tag : postPositionTagList) {
-            System.out.println(tag);
             post.addPostTag(tag);
         }
     }

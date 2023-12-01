@@ -11,6 +11,7 @@ import lombok.ToString;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -32,7 +33,7 @@ public class CreatePostDTO extends Object {
     String coordinatorName;
     @NotNull
     Document[] documents;
-    @NotNull @Size(max = 320)
+    @NotNull @Size(max = 320) @Email
     String email;
     @NotNull @Size(max = 1500)
     String enrolling;

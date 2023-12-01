@@ -60,12 +60,13 @@ public class MySQLPostService implements PostService {
     }
 
     @Override
-    public ResponseObject getPostById(String postId) {
+    public ResponseObject getPostById(String postId, HttpServletResponse res) {
         try {
             Post post = getPostByPostId(postId);
             return new ResponseObject(200, "The post is successfully sended.", post);
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Not found");
+            res.setStatus(404);
+            return new ResponseObject(404, "The post id " + postId + " not found.", null);
         }
     }
 
@@ -109,29 +110,33 @@ public class MySQLPostService implements PostService {
 
     @Override
     public ResponseObject editPost(String postId, EditPostDTO editPostDTO, HttpServletRequest req, HttpServletResponse res) throws IllegalAccessException {
-        Post post = getPostByPostId(postId);
-        Post editPost = modelMapper.map(editPostDTO, Post.class);
-        post.setClosedDate(editPost.getClosedDate());
-        post.setCoordinatorName(editPost.getCoordinatorName());
-        post.setDocuments(editPostDTO.getDocuments());
-        post.setLastUpdateDate(LocalDateTime.now());
-        post.setEmail(editPost.getEmail());
-        post.setEnrolling(editPost.getEnrolling());
-        post.setPostDesc(editPost.getPostDesc());
-        post.setPostUrl(editPost.getPostUrl());
-        post.setPostWelfare(editPost.getPostWelfare());
-        post.setTel(editPost.getTel());
-        post.setTitle(editPost.getTitle());
-        post.setWorkStartTime(editPost.getWorkStartTime());
-        post.setWorkEndTime(editPost.getWorkEndTime());
-        post.setWorkDay(editPostDTO.getWorkDay());
-        post.setWorkType(editPost.getWorkType());
-        addressService.updateAddress(post.getAddress(), editPost.getAddress());
-        openPositionService.updateOpenPosition(post, editPost.getOpenPositionList());
-        System.out.println(editPost.getPostTagListObject());
-        postPositionTagService.updatePostPositionTag(post, editPost.getPostTagListObject());
-        postRepository.save(post);
-        return new ResponseObject(200, "Success", post);
+        try {
+            Post post = getPostByPostId(postId);
+            Post editPost = modelMapper.map(editPostDTO, Post.class);
+            post.setClosedDate(editPost.getClosedDate());
+            post.setCoordinatorName(editPost.getCoordinatorName());
+            post.setDocuments(editPostDTO.getDocuments());
+            post.setLastUpdateDate(LocalDateTime.now());
+            post.setEmail(editPost.getEmail());
+            post.setEnrolling(editPost.getEnrolling());
+            post.setPostDesc(editPost.getPostDesc());
+            post.setPostUrl(editPost.getPostUrl());
+            post.setPostWelfare(editPost.getPostWelfare());
+            post.setTel(editPost.getTel());
+            post.setTitle(editPost.getTitle());
+            post.setWorkStartTime(editPost.getWorkStartTime());
+            post.setWorkEndTime(editPost.getWorkEndTime());
+            post.setWorkDay(editPostDTO.getWorkDay());
+            post.setWorkType(editPost.getWorkType());
+            addressService.updateAddress(post.getAddress(), editPost.getAddress());
+            openPositionService.updateOpenPosition(post, editPost.getOpenPositionList());
+            postPositionTagService.updatePostPositionTag(post, editPost.getPostTagListObject());
+            postRepository.save(post);
+            return new ResponseObject(200, "Edit post id " + postId + " successful.", post);
+        } catch (Exception e) {
+            res.setStatus(400);
+            return new ResponseObject(400, "Edi post id " + postId + " failed.", null);
+        }
     }
 
     @Override
@@ -140,7 +145,7 @@ public class MySQLPostService implements PostService {
             postRepository.deleteById(postId);
             return new ResponseObject(200, "Delete post id " + postId + " successfully", null);
         } catch (Exception e) {
-            e.printStackTrace();
+            res.setStatus(404);
             return new ResponseObject(404, e.getMessage(), null);
         }
     }

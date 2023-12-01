@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -35,7 +36,7 @@ public class EditPostDTO {
     @NotNull
     Document[] documents;
     LocalDateTime lastUpdateDate = now;
-    @NotNull @Size(max = 320)
+    @NotNull @Size(max = 320) @Email
     String email;
     @NotNull @Size(max = 1500)
     String enrolling;
