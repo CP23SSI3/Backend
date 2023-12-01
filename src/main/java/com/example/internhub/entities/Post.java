@@ -37,7 +37,7 @@ public class Post extends Object {
     @Column(name = "documents", nullable = false, length = 100)
     private String documents;
 
-    @Column(name = "email", nullable = false, length = 80)
+    @Column(name = "email", nullable = false, length = 320)
     private String email;
 
     @Column(name = "enrolling", nullable = false, length = 1500)
@@ -59,7 +59,7 @@ public class Post extends Object {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostPositionTag> postTagList;
 
-    @Column(name = "postUrl")
+    @Column(name = "postUrl", length = 255)
     private String postUrl;
 
     @Column(name = "postWelfare", nullable = false, length = 1500)

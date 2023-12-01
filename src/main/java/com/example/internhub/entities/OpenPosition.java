@@ -36,10 +36,6 @@ public class OpenPosition extends Object {
     @Column(name = "salary", precision = 10)
     private BigDecimal salary;
 
-//    @OneToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
-//    @JoinColumn(name = "positionTagId", nullable = false)
-//    private PositionTag positionTag;
-
-    @Column(name = "workMonth", nullable = false, precision = 10)
+    @Column(name = "workMonth", nullable = false)
     private Integer workMonth;
 }

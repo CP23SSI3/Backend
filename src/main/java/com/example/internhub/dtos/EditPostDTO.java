@@ -12,7 +12,9 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -26,31 +28,35 @@ public class EditPostDTO {
     LocalDateTime now  = LocalDateTime.now();
     @NotNull
     CreateAddressDTO address;
+    @Future
     LocalDateTime closedDate;
+    @NotNull @Size(max = 100)
     String coordinatorName;
     @NotNull
     Document[] documents;
     LocalDateTime lastUpdateDate = now;
+    @NotNull @Size(max = 320)
     String email;
-    @NotNull
+    @NotNull @Size(max = 1500)
     String enrolling;
-    @NotNull
-    @NotNull.List({})
+    @NotNull @NotNull.List({})
     List<CreateOpenPositionDTO> openPositionList;
-    @NotNull
+    @NotNull @Size(max = 1500)
     String postDesc;
     List<String> postTagList;
+    @Size(max = 255)
     String postUrl;
-    @NotNull
+    @NotNull @Size(max = 1500)
     String postWelfare;
+    @NotNull @Size(max = 12)
     String tel;
-    @NotNull
+    @NotNull  @Size(max = 100)
     String title;
     @NotNull
     LocalTime workStartTime;
     @NotNull
     LocalTime workEndTime;
-    @NotNull
+    @NotNull @NotNull.List({})
     WorkDay[] workDay;
     @NotNull
     String workType;
