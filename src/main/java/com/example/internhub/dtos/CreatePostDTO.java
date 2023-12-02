@@ -5,12 +5,14 @@ import com.example.internhub.entities.PositionTag;
 import com.example.internhub.entities.PostPositionTag;
 import com.example.internhub.entities.WorkDay;
 import com.example.internhub.responses.Object;
+import com.example.internhub.validators.EnumDocumentTypesConstraint;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.Constraint;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
@@ -23,41 +25,53 @@ import java.util.UUID;
 
 @Getter @Setter @ToString
 public class CreatePostDTO extends Object {
-    @NotNull
+    @NotNull(message = "Address is required.")
     CreateAddressDTO address;
-    @Future
+    @Future(message = "Closed date must be in future.")
     LocalDateTime closedDate;
-    @NotNull
+    @NotNull(message = "Company id must be provide.")
     CompanyIdDTO comp;
-    @NotNull @Size(max = 100)
+    @NotNull(message = "Coordinator name is required.")
+    @Size(max = 100, message = "Coordinator name is too long, 100 characters maximum.")
     String coordinatorName;
-    @NotNull
-    Document[] documents;
-    @NotNull @Size(max = 320) @Email
+//    @NotNull @EnumDocumentTypesConstraint
+//    Document[] documents;
+    @NotNull(message = "Documents is required.") @EnumDocumentTypesConstraint
+    List<String> documents;
+    @NotNull(message = "Email is required.")
+    @Size(max = 320, message = "Email is too long, 320 characters maximum.")
+    @Email(message = "Bad email format")
     String email;
-    @NotNull @Size(max = 1500)
+    @NotNull(message = "Enrolling data is required.")
+    @Size(max = 1500, message = "Enrolling data is too long, 1500 characters maximum.")
     String enrolling;
+    @NotNull(message = "At least one open position must be provided.")
     @NotNull.List({})
     List<CreateOpenPositionDTO> openPositionList;
     String postId = UUID.randomUUID().toString();
-    @NotNull @Size(max = 1500)
+    @NotNull(message = "Post's description is required.")
+    @Size(max = 1500, message = "Port's description is too long, 1500 characters maximum.")
     String postDesc;
     List<String> postTagList;
-    @Size(max = 255)
+    @Size(max = 255, message = "Post's url is too long, 255 characters maximum.")
     String postUrl;
-    @NotNull @Size(max = 1500)
+    @NotNull(message = "Post's welfare is required.")
+    @Size(max = 1500, message = "Post's welfare is too long, 1500 characters maximum.")
     String postWelfare;
-    @NotNull @Size(max = 12)
+    @NotNull(message = "Telephone number is required.")
+    @Size(max = 12, message = "Telephone's number is required, 12 character's maximum.")
     String tel;
-    @NotNull @Size(max = 100)
+    @NotNull(message = "Post's title is required.")
+    @Size(max = 100, message = "Post's title is too ling, 100 characters maximum.")
     String title;
-    @NotNull
+    @NotNull(message = "Work start time is required.")
     LocalTime workStartTime;
-    @NotNull
+    @NotNull(message = "Work end time is required.")
     LocalTime workEndTime;
-    @NotNull @NotNull.List({})
+    @NotNull(message = "Working day must be provided.")
+    @NotNull.List({})
     WorkDay[] workDay;
-    @NotNull
+    @NotNull(message = "Work type is required.")
     String workType;
 
     public String getWorkDay() {
@@ -73,14 +87,25 @@ public class CreatePostDTO extends Object {
     }
 
     public String getDocuments() {
+//        try {
+//            List<String> documentString = new ArrayList<>();
+//            for (Document document : documents) {
+//                System.out.println(document);
+//                String documentName = document.name();
+//                System.out.println(documentName);
+//                if (documentName == null) documentString.add(document.name());
+//            }
+//            return String.join(",", documentString);
+//        } catch (Exception e) {
+//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+//        }
         try {
-            List<String> documentString = new ArrayList<>();
-            for (Document document : documents) {
-                documentString.add(document.name());
+            for (String document : documents) {
+                Document.valueOf(document);
             }
-            return String.join(",", documentString);
+            return String.join(",", documents);
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown data for document types' enum");
         }
     }
 

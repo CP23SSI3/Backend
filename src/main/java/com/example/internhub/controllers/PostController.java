@@ -6,6 +6,8 @@ import com.example.internhub.entities.Post;
 import com.example.internhub.responses.ResponseObject;
 import com.example.internhub.services.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.BindingResultUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -32,7 +34,8 @@ public class PostController {
     }
 
     @PostMapping("")
-    public ResponseObject createPost(@RequestBody CreatePostDTO post, HttpServletResponse res){
+    public ResponseObject createPost(@Valid @RequestBody CreatePostDTO post, HttpServletResponse res, BindingResult errors){
+        if(errors.hasErrors()) {res.setStatus(404); return null;}
         return postService.createPost(post, res);
     }
 

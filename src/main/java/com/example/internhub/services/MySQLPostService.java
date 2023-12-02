@@ -66,14 +66,18 @@ public class MySQLPostService implements PostService {
             return new ResponseObject(200, "The post is successfully sended.", post);
         } catch (Exception e) {
             res.setStatus(404);
-            return new ResponseObject(404, "The post id " + postId + " not found.", null);
+            return new ResponseObject(404, e.getMessage(), null);
         }
     }
 
 
     @Override
     public Post getPostByPostId(String postId) {
-        return postRepository.findById(postId).orElseThrow();
+        try {
+            return postRepository.findById(postId).orElseThrow();
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Post id " + postId + " not fouund.");
+        }
     }
 
     @Override
@@ -101,7 +105,7 @@ public class MySQLPostService implements PostService {
                 post.addPostTag(tag);
             }
             postRepository.save(post);
-            return new ResponseObject(200, "Create post succesfully.", post);
+            return new ResponseObject(200, "Create post successfully.", post);
         } catch (Exception e) {
             res.setStatus(400);
             return new ResponseObject(400, e.getMessage(), null);
@@ -135,7 +139,7 @@ public class MySQLPostService implements PostService {
             return new ResponseObject(200, "Edit post id " + postId + " successful.", post);
         } catch (Exception e) {
             res.setStatus(400);
-            return new ResponseObject(400, "Edi post id " + postId + " failed.", null);
+            return new ResponseObject(400, e.getMessage(), null);
         }
     }
 
