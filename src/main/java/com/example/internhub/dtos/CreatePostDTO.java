@@ -13,17 +13,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Constraint;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.Future;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@Getter @Setter @ToString
+@Getter @Setter
 public class CreatePostDTO extends Object {
     @NotNull(message = "Address is required.")
     CreateAddressDTO address;
@@ -34,9 +31,7 @@ public class CreatePostDTO extends Object {
     @NotNull(message = "Coordinator name is required.")
     @Size(max = 100, message = "Coordinator name is too long, 100 characters maximum.")
     String coordinatorName;
-//    @NotNull @EnumDocumentTypesConstraint
-//    Document[] documents;
-    @NotNull(message = "Documents is required.") @EnumDocumentTypesConstraint
+    @EnumDocumentTypesConstraint(message = "Unknown documents type.")
     List<String> documents;
     @NotNull(message = "Email is required.")
     @Size(max = 320, message = "Email is too long, 320 characters maximum.")
@@ -46,7 +41,7 @@ public class CreatePostDTO extends Object {
     @Size(max = 1500, message = "Enrolling data is too long, 1500 characters maximum.")
     String enrolling;
     @NotNull(message = "At least one open position must be provided.")
-    @NotNull.List({})
+    @NotEmpty(message = "Post must have at least one open position.")
     List<CreateOpenPositionDTO> openPositionList;
     String postId = UUID.randomUUID().toString();
     @NotNull(message = "Post's description is required.")
@@ -59,17 +54,17 @@ public class CreatePostDTO extends Object {
     @Size(max = 1500, message = "Post's welfare is too long, 1500 characters maximum.")
     String postWelfare;
     @NotNull(message = "Telephone number is required.")
-    @Size(max = 12, message = "Telephone's number is required, 12 character's maximum.")
+    @Size(max = 12, message = "Telephone's number is too long, 12 character's maximum.")
     String tel;
     @NotNull(message = "Post's title is required.")
-    @Size(max = 100, message = "Post's title is too ling, 100 characters maximum.")
+    @Size(max = 100, message = "Post's title is too long, 100 characters maximum.")
     String title;
     @NotNull(message = "Work start time is required.")
     LocalTime workStartTime;
     @NotNull(message = "Work end time is required.")
     LocalTime workEndTime;
     @NotNull(message = "Working day must be provided.")
-    @NotNull.List({})
+    @NotEmpty(message = "Post must have at least one working day.")
     WorkDay[] workDay;
     @NotNull(message = "Work type is required.")
     String workType;
@@ -87,19 +82,8 @@ public class CreatePostDTO extends Object {
     }
 
     public String getDocuments() {
-//        try {
-//            List<String> documentString = new ArrayList<>();
-//            for (Document document : documents) {
-//                System.out.println(document);
-//                String documentName = document.name();
-//                System.out.println(documentName);
-//                if (documentName == null) documentString.add(document.name());
-//            }
-//            return String.join(",", documentString);
-//        } catch (Exception e) {
-//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-//        }
         try {
+            if(documents==null || documents.size() == 0) return null;
             for (String document : documents) {
                 Document.valueOf(document);
             }

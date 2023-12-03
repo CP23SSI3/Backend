@@ -63,6 +63,8 @@ public class MySQLPostService implements PostService {
     public ResponseObject getPostById(String postId, HttpServletResponse res) {
         try {
             Post post = getPostByPostId(postId);
+            post.view();
+            postRepository.save(post);
             return new ResponseObject(200, "The post is successfully sended.", post);
         } catch (Exception e) {
             res.setStatus(404);

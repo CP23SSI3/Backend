@@ -22,7 +22,7 @@ public class OpenPosition extends Object {
     @Column(name = "openPositionId", nullable = false, length = 36)
     private String openPositionId;
 
-    @Column(name = "openPositionNum",  nullable = false)
+    @Column(name = "openPositionNum")
     private Integer openPositionNum;
 
     @Column(name = "openPositionTitle", nullable = false, length = 50)
@@ -36,6 +36,6 @@ public class OpenPosition extends Object {
     @Column(name = "salary", precision = 10)
     private BigDecimal salary;
 
-    @Column(name = "workMonth", nullable = false)
+    @Column(name = "workMonth")
     private Integer workMonth;
 }

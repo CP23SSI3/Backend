@@ -8,6 +8,6 @@ import javax.validation.constraints.NotNull;
 
 @Getter @Setter
 public class CompanyIdDTO {
-    @NotNull
+    @NotNull(message = "Company's id is required.")
     String compId;
 }

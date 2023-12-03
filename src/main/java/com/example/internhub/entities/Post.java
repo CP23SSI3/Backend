@@ -7,6 +7,7 @@ import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -34,7 +35,7 @@ public class Post extends Object {
     @Column(name = "createdDate", nullable = false)
     private LocalDateTime createdDate;
 
-    @Column(name = "documents", nullable = false, length = 100)
+    @Column(name = "documents", length = 100)
     private String documents;
 
     @Column(name = "email", nullable = false, length = 320)
@@ -102,15 +103,12 @@ public class Post extends Object {
     }
 
     public void addOpenPosition(List<OpenPosition> openPositionList) {
-//        this.openPositionList.clear();
-//        System.out.println(openPositionList);
         for (OpenPosition position : openPositionList) {
             position.setPost(this);
         }
     }
 
     public void addPostTag(List<PostPositionTag> postPositionTagList) {
-//        this.postTagList.clear();
         for (PostPositionTag tag : postPositionTagList) {
             tag.setPost(this);
         }
@@ -124,6 +122,9 @@ public class Post extends Object {
     }
 
     public String[] getDocuments(){
+        if (documents == null) {
+            return new String[0];
+        }
         return documents.split(",");
     }
 
@@ -140,13 +141,7 @@ public class Post extends Object {
         return this.postTagList;
     }
 
-//    public void setOpenPositionList(List<OpenPosition> list) {
-//        this.openPositionList.clear();
-//        if (list != null) {
-//            for (OpenPosition openPosition : list){
-//                this.openPositionList.add(openPosition);
-//                openPosition.setPost(this);
-//            }
-//        }
-//    }
+    public void view(){
+        this.totalView++;
+    }
 }

@@ -16,10 +16,17 @@ public class EnumDocumentTypesValidator implements ConstraintValidator<EnumDocum
     }
 
     @Override
-    public boolean isValid(List<String> document, ConstraintValidatorContext constraintValidatorContext) {
-//        System.out.println(document);
-        return true;
-//        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Testing");
-//        return false;
+    public boolean isValid(List<String> documentList, ConstraintValidatorContext constraintValidatorContext) {
+        if (documentList == null) return true;
+        try {
+            if (documentList.size() > 0) {
+                for (String document : documentList) {
+                    Document.valueOf(document);
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

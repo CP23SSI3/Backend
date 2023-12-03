@@ -11,11 +11,13 @@ import java.util.UUID;
 
 @Getter @Setter @ToString
 public class CreateOpenPositionDTO {
-    @NotNull @Size(max = 200)
+    @NotNull(message = "Open position description is required.")
+    @Size(max = 200)
     String openPositionDesc;
     String openPositionId = UUID.randomUUID().toString();
     Integer openPositionNum;
-    @NotNull @Size(max = 50)
+    @NotNull(message = "Open position title is required.")
+    @Size(max = 50)
     String openPositionTitle;
     Integer workMonth;
     BigDecimal salary;
