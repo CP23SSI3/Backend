@@ -10,10 +10,12 @@ import com.example.internhub.responses.ResponseObject;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -78,7 +80,7 @@ public class MySQLPostService implements PostService {
         try {
             return postRepository.findById(postId).orElseThrow();
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Post id " + postId + " not fouund.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Post id " + postId + " not found.");
         }
     }
 
@@ -139,6 +141,9 @@ public class MySQLPostService implements PostService {
             postPositionTagService.updatePostPositionTag(post, editPost.getPostTagListObject());
             postRepository.save(post);
             return new ResponseObject(200, "Edit post id " + postId + " successful.", post);
+        } catch (ResponseStatusException e){
+            res.setStatus(e.getStatus().value());
+            return new ResponseObject(e.getStatus().value(), e.getMessage(), null);
         } catch (Exception e) {
             res.setStatus(400);
             return new ResponseObject(400, e.getMessage(), null);

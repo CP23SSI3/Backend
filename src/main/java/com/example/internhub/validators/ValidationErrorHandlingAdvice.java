@@ -44,8 +44,8 @@ public class ValidationErrorHandlingAdvice {
 
             errorMap.get(error.getField()).add(error.getDefaultMessage());
         }
-        res.setStatus(404);
-        return new ResponseObject(404, errorMap.toString(), null);
+        res.setStatus(400);
+        return new ResponseObject(400, errorMap.toString(), null);
     }
 
 

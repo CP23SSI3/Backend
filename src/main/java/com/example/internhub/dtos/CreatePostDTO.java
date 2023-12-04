@@ -45,7 +45,7 @@ public class CreatePostDTO extends Object {
     List<CreateOpenPositionDTO> openPositionList;
     String postId = UUID.randomUUID().toString();
     @NotNull(message = "Post's description is required.")
-    @Size(max = 1500, message = "Port's description is too long, 1500 characters maximum.")
+    @Size(max = 1500, message = "Post's description is too long, 1500 characters maximum.")
     String postDesc;
     List<String> postTagList;
     @Size(max = 255, message = "Post's url is too long, 255 characters maximum.")
