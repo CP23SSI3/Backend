@@ -58,7 +58,7 @@ public class MySQLPostService implements PostService {
     public ResponseObject getAllPostPagination(int pageNumber, int pageSize) {
         Page<Post> postList = postRepository.findAll(PageRequest.of(pageNumber, pageSize));
         PostPagination postPagination = modelMapper.map(postList, PostPagination.class);
-        return new ResponseObject(200, "The post's list is succesfully sended.", postPagination);
+        return new ResponseObject(200, "The post's list is successfully sent.", postPagination);
     }
 
     @Override
@@ -67,7 +67,7 @@ public class MySQLPostService implements PostService {
             Post post = getPostByPostId(postId);
             post.view();
             postRepository.save(post);
-            return new ResponseObject(200, "The post is successfully sended.", post);
+            return new ResponseObject(200, "The post is successfully sent.", post);
         } catch (Exception e) {
             res.setStatus(404);
             return new ResponseObject(404, e.getMessage(), null);
@@ -110,6 +110,10 @@ public class MySQLPostService implements PostService {
             }
             postRepository.save(post);
             return new ResponseObject(200, "Create post successfully.", post);
+        } catch (ResponseStatusException e) {
+            int statusCode= e.getStatus().value();
+            res.setStatus(statusCode);
+            return new ResponseObject(statusCode, e.getMessage(), null);
         } catch (Exception e) {
             res.setStatus(400);
             return new ResponseObject(400, e.getMessage(), null);
@@ -142,8 +146,9 @@ public class MySQLPostService implements PostService {
             postRepository.save(post);
             return new ResponseObject(200, "Edit post id " + postId + " successful.", post);
         } catch (ResponseStatusException e){
-            res.setStatus(e.getStatus().value());
-            return new ResponseObject(e.getStatus().value(), e.getMessage(), null);
+            int statusCode= e.getStatus().value();
+            res.setStatus(statusCode);
+            return new ResponseObject(statusCode, e.getMessage(), null);
         } catch (Exception e) {
             res.setStatus(400);
             return new ResponseObject(400, e.getMessage(), null);

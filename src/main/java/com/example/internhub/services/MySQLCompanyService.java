@@ -49,7 +49,11 @@ public class MySQLCompanyService implements CompanyService{
 
     @Override
     public Company getCompanyByCompanyId(String companyId) {
-        return companyRepository.getById(companyId);
+        try {
+            return companyRepository.findById(companyId).orElseThrow();
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Company id " + companyId + " not found.");
+        }
     }
 
 //    @Override

@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Constraint;
+import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -26,6 +27,7 @@ public class CreatePostDTO extends Object {
     CreateAddressDTO address;
     @Future(message = "Closed date must be in future.")
     LocalDateTime closedDate;
+    @Valid
     @NotNull(message = "Company id must be provide.")
     CompanyIdDTO comp;
     @NotNull(message = "Coordinator name is required.")

@@ -34,6 +34,7 @@ public class ValidationErrorHandlingAdvice {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public @ResponseBody ResponseObject handleMethodArgumentNotValidException(MethodArgumentNotValidException ex, HttpServletResponse res) {
         Map<String, List<String>> errorMap = new TreeMap<>();
+        System.out.println(errorMap.size());
 
         BindingResult result = ex.getBindingResult();
         for (FieldError error : result.getFieldErrors()) {
