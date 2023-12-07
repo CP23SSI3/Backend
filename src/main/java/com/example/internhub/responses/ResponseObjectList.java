@@ -1,6 +1,5 @@
 package com.example.internhub.responses;
 
-import com.google.protobuf.Any;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
