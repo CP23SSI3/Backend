@@ -1,18 +1,14 @@
 package com.example.internhub.dtos;
 
-import com.example.internhub.entities.Document;
 import com.example.internhub.entities.PositionTag;
 import com.example.internhub.entities.PostPositionTag;
-import com.example.internhub.entities.WorkDay;
 import com.example.internhub.responses.Object;
+import com.example.internhub.services.ArrayStringService;
 import com.example.internhub.validators.EnumDocumentTypesConstraint;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
 
-import javax.validation.Constraint;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.time.LocalDateTime;
@@ -67,32 +63,19 @@ public class CreatePostDTO extends Object {
     LocalTime workEndTime;
     @NotNull(message = "Working day must be provided.")
     @NotEmpty(message = "Post must have at least one working day.")
-    WorkDay[] workDay;
+    List<String> workDay;
     @NotNull(message = "Work type is required.")
     String workType;
 
+    @JsonIgnore
+    ArrayStringService arrayStringService = new ArrayStringService();
+
     public String getWorkDay() {
-        try {
-            List<String> workDayString = new ArrayList<>();
-            for (WorkDay day : workDay) {
-                workDayString.add(day.name());
-            }
-            return String.join(",", workDayString);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
+        return arrayStringService.getStringFromWorkDayArray(workDay);
     }
 
     public String getDocuments() {
-        try {
-            if(documents==null || documents.size() == 0) return null;
-            for (String document : documents) {
-                Document.valueOf(document);
-            }
-            return String.join(",", documents);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown data for document types' enum");
-        }
+        return arrayStringService.getStringFromDocumentArray(documents);
     }
 
     public List<PostPositionTag> getPostTagList() {
