@@ -1,4 +1,4 @@
 package com.example.internhub.responses;
 
-public abstract class ResponseData {
+public abstract class Object {
 }

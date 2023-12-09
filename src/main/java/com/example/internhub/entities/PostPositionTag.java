@@ -16,17 +16,18 @@ import java.util.UUID;
 public class PostPositionTag {
 
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.DETACH, CascadeType.MERGE})
     @JoinColumn(name = "postId", nullable = false)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
     private Post post;
 
     @Id
     @Column(name = "postPositionTagId", nullable = false, length = 36)
     private String postPositionTagId;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.DETACH, CascadeType.MERGE})
     @JoinColumn(name = "positionTagName", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
     private PositionTag positionTag;
 
     public String getPositionTag() {

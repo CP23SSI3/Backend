@@ -7,13 +7,14 @@ import com.example.internhub.responses.ResponseObjectList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @Service
 public interface CompanyService {
     public ResponseObjectList getAllCompanies();
-    public ResponseObject getCompanyById(String companyId);
+    public ResponseObject getCompanyById(String companyId, HttpServletResponse res);
     public Company getCompanyByCompanyId(String companyId);
-    public Company createCompany();
+//    public Company createCompany();
     public Company getCompany(Company company);
 }

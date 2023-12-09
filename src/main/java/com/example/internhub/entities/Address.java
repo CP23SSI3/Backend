@@ -1,20 +1,19 @@
 package com.example.internhub.entities;
 
 import lombok.*;
-import com.example.internhub.responses.ResponseData;
+import com.example.internhub.responses.Object;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.math.BigDecimal;
-import java.util.UUID;
 
 @Entity
 @Table(name = "addresses")
 @Getter @Setter @ToString
 @NoArgsConstructor @AllArgsConstructor
-public class Address extends ResponseData {
+public class Address extends Object {
     @Id
     @Column(name = "addressId", nullable = false, length = 36)
     private String addressId;
