@@ -9,7 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "positiontags")
+@Table(name = "positionTags")
 @Getter @Setter @ToString
 @NoArgsConstructor @AllArgsConstructor
 public class PositionTag extends Object {

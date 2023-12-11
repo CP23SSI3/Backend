@@ -10,7 +10,7 @@ import javax.persistence.*;
 import java.util.UUID;
 
 @Entity
-@Table(name = "postpositiontags")
+@Table(name = "postPositionTags")
 @Getter @Setter @ToString
 @AllArgsConstructor @NoArgsConstructor
 public class PostPositionTag {
