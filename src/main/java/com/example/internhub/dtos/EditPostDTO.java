@@ -1,17 +1,14 @@
 package com.example.internhub.dtos;
 
-import com.example.internhub.entities.Document;
 import com.example.internhub.entities.PositionTag;
 import com.example.internhub.entities.PostPositionTag;
-import com.example.internhub.entities.WorkDay;
 import com.example.internhub.services.ArrayStringService;
 import com.example.internhub.validators.EnumDocumentTypesConstraint;
+import com.example.internhub.validators.EnumWorkDayConstraint;
+import com.example.internhub.validators.EnumWorkTypeConstraint;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Required;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.constraints.*;
 import java.time.LocalDateTime;
@@ -30,7 +27,7 @@ public class EditPostDTO {
     @NotNull(message = "Coordinator name is required.")
     @Size(max = 100, message = "Coordinator name is too long, 100 characters maximum.")
     String coordinatorName;
-    @EnumDocumentTypesConstraint(message = "Unknown documents type.")
+    @EnumDocumentTypesConstraint
     List<String> documents;
     @JsonIgnore
     LocalDateTime lastUpdateDate = LocalDateTime.now();
@@ -65,32 +62,21 @@ public class EditPostDTO {
     LocalTime workEndTime;
     @NotNull(message = "Working day must be provided.")
     @NotEmpty(message = "Post must have at least one working day.")
-    WorkDay[] workDay;
+    @EnumWorkDayConstraint
+    List<String> workDay;
     @NotNull(message = "Work type is required.")
+    @EnumWorkTypeConstraint
     String workType;
 
+    @JsonIgnore
+    ArrayStringService arrayStringService = new ArrayStringService();
+
     public String getWorkDay() {
-        try {
-            java.util.List<String> workDayString = new ArrayList<>();
-            for (WorkDay day : workDay) {
-                workDayString.add(day.name());
-            }
-            return String.join(",", workDayString);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
+        return arrayStringService.getStringFromWorkDayArray(workDay);
     }
 
     public String getDocuments() {
-        try {
-            if(documents==null || documents.size() == 0) return null;
-            for (String document : documents) {
-                Document.valueOf(document);
-            }
-            return String.join(",", documents);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown data for document types' enum");
-        }
+        return arrayStringService.getStringFromDocumentArray(documents);
     }
 
     public List<PostPositionTag> getPostTagList() {

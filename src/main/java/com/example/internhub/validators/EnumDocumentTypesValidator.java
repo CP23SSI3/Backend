@@ -12,7 +12,7 @@ public class EnumDocumentTypesValidator implements ConstraintValidator<EnumDocum
 
     @Override
     public void initialize(EnumDocumentTypesConstraint constraintAnnotation) {
-//        ConstraintValidator.super.initialize(constraintAnnotation);
+
     }
 
     @Override
