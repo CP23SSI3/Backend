@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletResponse;
+
 @Service
 @Primary
 public class MySQLPositionTagService implements PositionTagService {
@@ -24,10 +26,17 @@ public class MySQLPositionTagService implements PositionTagService {
     }
 
     @Override
-    public ResponseObject getPositionTagById(String positionTagId) {
-        return new ResponseObject(200,
-                ("Position tag id " + positionTagId + " is successfully sended."),
-                getPositionTagByPositionTagId(positionTagId));
+    public ResponseObject getPositionTagById(String positionTagId, HttpServletResponse res) {
+        try {
+            return new ResponseObject(200,
+                    ("Position tag id " + positionTagId + " is successfully sended."),
+                    getPositionTagByPositionTagId(positionTagId));
+        } catch (Exception e) {
+            res.setStatus(404);
+            return new ResponseObject(404,
+                    "Position tag id " + positionTagId + " not found.",
+            null);
+        }
     }
 
     @Override
@@ -37,12 +46,7 @@ public class MySQLPositionTagService implements PositionTagService {
 
     @Override
     public PositionTag getPositionTagByPositionTagName(String positionName) {
-//        return positionTagRepository.findByPositionName(positionName);
         return null;
     }
 
-//    @Override
-//    public PositionTag getPositionTag(PositionTag positionTag) {
-//        return new PositionTag(positionTag.getPositionTagId(), positionTag.getPositionName());
-//    }
 }

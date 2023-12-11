@@ -1,14 +1,13 @@
 package com.example.internhub.entities;
 
-import com.example.internhub.responses.ResponseData;
+import com.example.internhub.responses.Object;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,7 +16,7 @@ import java.util.List;
 @Getter @Setter
 //@ToString
 @NoArgsConstructor @AllArgsConstructor
-public class Post extends ResponseData {
+public class Post extends Object {
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "addressId", nullable = false)
@@ -36,10 +35,10 @@ public class Post extends ResponseData {
     @Column(name = "createdDate", nullable = false)
     private LocalDateTime createdDate;
 
-    @Column(name = "documents", nullable = false, length = 100)
+    @Column(name = "documents", length = 100)
     private String documents;
 
-    @Column(name = "email", nullable = false, length = 80)
+    @Column(name = "email", nullable = false, length = 320)
     private String email;
 
     @Column(name = "enrolling", nullable = false, length = 1500)
@@ -49,8 +48,6 @@ public class Post extends ResponseData {
     private LocalDateTime lastUpdateDate;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-//    @Cascade(org.hibernate.annotations.CascadeType.DELETE)
-//    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<OpenPosition> openPositionList;
 
     @Column(name = "postDesc", nullable = false, length = 1500)
@@ -61,11 +58,9 @@ public class Post extends ResponseData {
     private String postId;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-//    @Cascade(org.hibernate.annotations.CascadeType.DELETE)
-//    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<PostPositionTag> postTagList;
 
-    @Column(name = "postUrl")
+    @Column(name = "postUrl", length = 255)
     private String postUrl;
 
     @Column(name = "postWelfare", nullable = false, length = 1500)
@@ -106,11 +101,30 @@ public class Post extends ResponseData {
         postTagList.add(postPositionTag);
         postPositionTag.setPost(this);
     }
+
+    public void addOpenPosition(List<OpenPosition> openPositionList) {
+        for (OpenPosition position : openPositionList) {
+            position.setPost(this);
+        }
+    }
+
+    public void addPostTag(List<PostPositionTag> postPositionTagList) {
+        for (PostPositionTag tag : postPositionTagList) {
+            tag.setPost(this);
+        }
+    }
+
+    public void clearPostTag() {
+        this.postTagList.clear();
+    }
     public String[] getWorkDay(){
         return workDay.split(",");
     }
 
     public String[] getDocuments(){
+        if (documents == null) {
+            return new String[0];
+        }
         return documents.split(",");
     }
 
@@ -120,5 +134,14 @@ public class Post extends ResponseData {
             tagNameList.add(tag.getPositionTag());
         }
         return tagNameList;
+    }
+
+    @JsonIgnore
+    public List<PostPositionTag> getPostTagListObject() {
+        return this.postTagList;
+    }
+
+    public void view(){
+        this.totalView++;
     }
 }

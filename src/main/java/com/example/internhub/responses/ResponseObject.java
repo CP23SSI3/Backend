@@ -9,5 +9,5 @@ import lombok.Setter;
 public class ResponseObject {
     private int status;
     private String message;
-    private ResponseData data;
+    private Object data;
 }

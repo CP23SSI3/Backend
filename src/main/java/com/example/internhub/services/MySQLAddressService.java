@@ -8,7 +8,9 @@ import org.modelmapper.ModelMapper;
 import com.example.internhub.responses.ResponseObjectList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -51,12 +53,27 @@ public class MySQLAddressService implements AddressService{
 
     @Override
     public Address getAddress(Address address) {
-//        return new Address(address);
-        return new Address(address.getAddressId(), address.getArea(),
-                address.getCity(), address.getCountry(),
-                address.getDistrict(), address.getLatitude(), address.getLongitude(),
-                address.getPostalCode(),
-                address.getSubDistrict());
+        try {
+            return new Address(address.getAddressId(), address.getArea(),
+                    address.getCity(), address.getCountry(),
+                    address.getDistrict(), address.getLatitude(), address.getLongitude(),
+                    address.getPostalCode(),
+                    address.getSubDistrict());
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @Override
+    public void updateAddress(Address oldAddress, Address newAddress) {
+        oldAddress.setArea(newAddress.getArea());
+        oldAddress.setCity(newAddress.getCity());
+        oldAddress.setCountry(newAddress.getCountry());
+        oldAddress.setDistrict(newAddress.getDistrict());
+        oldAddress.setLatitude(newAddress.getLatitude());
+        oldAddress.setLongitude(newAddress.getLongitude());
+        oldAddress.setPostalCode(newAddress.getPostalCode());
+        oldAddress.setSubDistrict(newAddress.getSubDistrict());
     }
 
 }
