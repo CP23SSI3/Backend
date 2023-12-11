@@ -15,7 +15,7 @@ public class ArrayStringService {
         try {
             if(workDay==null || workDay.size() == 0) return null;
             for (String day : workDay) {
-                Document.valueOf(day);
+                WorkDay.valueOf(day);
             }
             return String.join(",", workDay);
         } catch (Exception e) {

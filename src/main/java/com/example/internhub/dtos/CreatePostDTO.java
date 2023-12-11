@@ -5,6 +5,8 @@ import com.example.internhub.entities.PostPositionTag;
 import com.example.internhub.responses.Object;
 import com.example.internhub.services.ArrayStringService;
 import com.example.internhub.validators.EnumDocumentTypesConstraint;
+import com.example.internhub.validators.EnumWorkDayConstraint;
+import com.example.internhub.validators.EnumWorkTypeConstraint;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,7 +31,7 @@ public class CreatePostDTO extends Object {
     @NotNull(message = "Coordinator name is required.")
     @Size(max = 100, message = "Coordinator name is too long, 100 characters maximum.")
     String coordinatorName;
-    @EnumDocumentTypesConstraint(message = "Unknown documents type.")
+    @EnumDocumentTypesConstraint
     List<String> documents;
     @NotNull(message = "Email is required.")
     @Size(max = 320, message = "Email is too long, 320 characters maximum.")
@@ -63,8 +65,10 @@ public class CreatePostDTO extends Object {
     LocalTime workEndTime;
     @NotNull(message = "Working day must be provided.")
     @NotEmpty(message = "Post must have at least one working day.")
+    @EnumWorkDayConstraint
     List<String> workDay;
     @NotNull(message = "Work type is required.")
+    @EnumWorkTypeConstraint
     String workType;
 
     @JsonIgnore

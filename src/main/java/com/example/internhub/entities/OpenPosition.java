@@ -10,7 +10,7 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "openpositions")
+@Table(name = "openPositions")
 @Getter @Setter
 @ToString
 public class OpenPosition extends Object {
