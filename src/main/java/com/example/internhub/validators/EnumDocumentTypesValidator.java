@@ -21,7 +21,7 @@ public class EnumDocumentTypesValidator implements ConstraintValidator<EnumDocum
         try {
             if (documentList.size() > 0) {
                 for (String document : documentList) {
-                    Document.valueOf(document);
+                    Document.valueOf(document.toLowerCase());
                 }
             }
             return true;

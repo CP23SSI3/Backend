@@ -16,7 +16,7 @@ public class EnumWorkTypeValidator implements ConstraintValidator<EnumWorkTypeCo
     @Override
     public boolean isValid(String workType, ConstraintValidatorContext constraintValidatorContext) {
         try {
-            WorkType.valueOf(workType);
+            WorkType.valueOf(workType.toUpperCase());
             return true;
         } catch (Exception e) {
             return false;

@@ -20,7 +20,7 @@ public class EnumWorkDayValidator implements ConstraintValidator<EnumWorkDayCons
             if (workDayList.size() > 0) {
                 for (String workDay
                         : workDayList) {
-                    WorkDay.valueOf(workDay);
+                    WorkDay.valueOf(workDay.toLowerCase());
                 }
             }
             return true;
