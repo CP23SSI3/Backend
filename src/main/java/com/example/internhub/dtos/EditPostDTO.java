@@ -2,10 +2,9 @@ package com.example.internhub.dtos;
 
 import com.example.internhub.entities.PositionTag;
 import com.example.internhub.entities.PostPositionTag;
+import com.example.internhub.entities.WorkType;
 import com.example.internhub.services.ArrayStringService;
-import com.example.internhub.validators.EnumDocumentTypesConstraint;
-import com.example.internhub.validators.EnumWorkDayConstraint;
-import com.example.internhub.validators.EnumWorkTypeConstraint;
+import com.example.internhub.validators.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
@@ -42,7 +41,7 @@ public class EditPostDTO {
     @NotEmpty(message = "Post must have at least one open position.")
     List<CreateOpenPositionDTO> openPositionList;
     @NotNull(message = "Post's description is required.")
-    @Size(max = 1500, message = "Port's description is too long, 1500 characters maximum.")
+    @Size(max = 1500, message = "Post's description is too long, 1500 characters maximum.")
     String postDesc;
     List<String> postTagList;
     @Size(max = 255, message = "Post's url is too long, 255 characters maximum.")
@@ -54,7 +53,7 @@ public class EditPostDTO {
     @Size(max = 12, message = "Telephone's number is required, 12 character's maximum.")
     String tel;
     @NotNull(message = "Post's title is required.")
-    @Size(max = 100, message = "Post's title is too ling, 100 characters maximum.")
+    @Size(max = 100, message = "Post's title is too long, 100 characters maximum.")
     String title;
     @NotNull(message = "Work start time is required.")
     LocalTime workStartTime;
@@ -79,8 +78,12 @@ public class EditPostDTO {
         return arrayStringService.getStringFromDocumentArray(documents);
     }
 
+    public WorkType getWorktype() {
+        return WorkType.valueOf(workType.toUpperCase());
+    }
+
     public List<PostPositionTag> getPostTagList() {
-        java.util.List<PostPositionTag> tagList = new ArrayList<>();
+        List<PostPositionTag> tagList = new ArrayList<>();
         for (String tag : postTagList) {
             PostPositionTag postPositionTag = new PostPositionTag(
                     null, UUID.randomUUID().toString(),

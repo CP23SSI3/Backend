@@ -15,7 +15,7 @@ public class ArrayStringService {
         try {
             if(workDay==null || workDay.size() == 0) return null;
             for (String day : workDay) {
-                WorkDay.valueOf(day);
+                WorkDay.valueOf(day.toLowerCase());
             }
             return String.join(",", workDay);
         } catch (Exception e) {
@@ -27,7 +27,7 @@ public class ArrayStringService {
         try {
             if(documents==null || documents.size() == 0) return null;
             for (String document : documents) {
-                Document.valueOf(document);
+                Document.valueOf(document.toLowerCase());
             }
             return String.join(",", documents);
         } catch (Exception e) {

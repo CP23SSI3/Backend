@@ -2,6 +2,7 @@ package com.example.internhub.dtos;
 
 import com.example.internhub.entities.PositionTag;
 import com.example.internhub.entities.PostPositionTag;
+import com.example.internhub.entities.WorkType;
 import com.example.internhub.responses.Object;
 import com.example.internhub.services.ArrayStringService;
 import com.example.internhub.validators.EnumDocumentTypesConstraint;
@@ -80,6 +81,10 @@ public class CreatePostDTO extends Object {
 
     public String getDocuments() {
         return arrayStringService.getStringFromDocumentArray(documents);
+    }
+
+    public WorkType getWorktype() {
+        return WorkType.valueOf(workType.toUpperCase());
     }
 
     public List<PostPositionTag> getPostTagList() {
