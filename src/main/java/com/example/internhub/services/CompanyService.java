@@ -15,6 +15,5 @@ public interface CompanyService {
     public ResponseObjectList getAllCompanies();
     public ResponseObject getCompanyById(String companyId, HttpServletResponse res);
     public Company getCompanyByCompanyId(String companyId);
-//    public Company createCompany();
     public Company getCompany(Company company);
 }
