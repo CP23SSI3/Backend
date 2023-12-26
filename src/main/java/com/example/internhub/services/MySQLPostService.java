@@ -58,14 +58,19 @@ public class MySQLPostService implements PostService {
     }
 
     @Override
-    public ResponseObject getAllPostPagination(int pageNumber, int pageSize, String searchText) {
+    public ResponseObject getAllPostPagination(int pageNumber, int pageSize, String searchText, String city, String district) {
         Page<Post> postList = postRepository.findAll(PageRequest.of(pageNumber, pageSize));
 //        Page<Object> list = postRepository.findAllByQuery(PageRequest.of(pageNumber, pageSize));
         if (searchText == null) {
             searchText = "";
         }
-        System.out.println(searchText);
-        Page<Post> p = postRepository.findByQuery(searchText, PageRequest.of(pageNumber, pageSize));
+        if (city == null) {
+            city = "";
+        }
+        if (district == null) {
+            district = "";
+        } else { city = ""; }
+        Page<Post> p = postRepository.findByQuery(searchText, city, district, PageRequest.of(pageNumber, pageSize));
 
 
         PostPagination postPagination = modelMapper.map(p, PostPagination.class);
