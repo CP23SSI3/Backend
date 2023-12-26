@@ -17,17 +17,19 @@ public interface PostRepository extends JpaRepository<Post, String> {
     )
     public Page<Object> findAllByQuery(Pageable pageable);
 
-//    @Query(
-//            value = "select * from posts p where lower(p.title) like concat('%', :searchText, '%')",
-//            countQuery = "select * from posts p where lower(p.title) like concat('%', :searchText, '%')",
-//            nativeQuery = true
-//    )
     @Query(
-            value = "select * from posts p join companies c on p.compId = c.compId " +
+            value = "select * from (posts p join companies c on p.compId = c.compId) join addresses a on p.addressId = a.addressId " +
                     "where lower(p.title) like concat('%', :searchText, '%') or lower(c.compName) like concat('%', :searchText, '%') ",
-            countQuery = "select count(*) from posts p join companies c on p.compId = c.compId " +
+            countQuery = "select count(*) from (posts p join companies c on p.compId = c.compId) join addresses a on p.addressId = a.addressId " +
                     "where lower(p.title) like concat('%', :searchText, '%') or lower(c.compName) like concat('%', :searchText, '%') ",
             nativeQuery = true
     )
+//    @Query(
+//            value = "select * from posts p join companies c on p.compId = c.compId " +
+//                    "where lower(p.title) like concat('%', :searchText, '%') or lower(c.compName) like concat('%', :searchText, '%') ",
+//            countQuery = "select count(*) from posts p join companies c on p.compId = c.compId " +
+//                    "where lower(p.title) like concat('%', :searchText, '%') or lower(c.compName) like concat('%', :searchText, '%') ",
+//            nativeQuery = true
+//    )
     public Page<Post> findByQuery(@Param("searchText") String searchText,  Pageable pageable);
 }
