@@ -21,8 +21,9 @@ public class PostController {
 
     @GetMapping("")
     public ResponseObject getAllPosts(@RequestParam(defaultValue = "0") int page,
-                                      @RequestParam(defaultValue = "10") int pageSize) {
-        return postService.getAllPostPagination(page, pageSize);
+                                      @RequestParam(defaultValue = "10") int pageSize,
+                                      @RequestParam(required = false) String q) {
+        return postService.getAllPostPagination(page, pageSize, q);
     }
 
     @GetMapping("/{postId}")

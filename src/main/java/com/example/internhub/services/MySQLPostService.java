@@ -1,5 +1,6 @@
 package com.example.internhub.services;
 
+import com.example.internhub.config.ListMapper;
 import com.example.internhub.dtos.CreatePostDTO;
 import com.example.internhub.dtos.EditPostDTO;
 import com.example.internhub.dtos.PostPagination;
@@ -30,6 +31,8 @@ public class MySQLPostService implements PostService {
 
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private ListMapper listMapper = ListMapper.getInstance();
 
     @Autowired
     private PostRepository postRepository;
@@ -55,10 +58,30 @@ public class MySQLPostService implements PostService {
     }
 
     @Override
-    public ResponseObject getAllPostPagination(int pageNumber, int pageSize) {
+    public ResponseObject getAllPostPagination(int pageNumber, int pageSize, String searchText) {
         Page<Post> postList = postRepository.findAll(PageRequest.of(pageNumber, pageSize));
-        PostPagination postPagination = modelMapper.map(postList, PostPagination.class);
-        return new ResponseObject(200, "The post's list is successfully sent.", postPagination);
+        Page<Object> list = postRepository.findAllByQuery(PageRequest.of(pageNumber, pageSize));
+//        System.out.println(list);
+//        System.out.println((modelMapper.map(list.getContent().get(1), Post.class)).toString());
+//        System.out.println(modelMapper.map(list, PostPagination.class));
+//        System.out.println(list.getContent().stream().toArray());
+
+//        List<Object> objectList = list.getContent();
+//        List<Post> postLists = listMapper.mapList(objectList, Post.class, modelMapper);
+//        System.out.println(postLists);
+//        System.out.println(postLists.get(1).getTitle());
+//        System.out.println(postLists.get(1).getComp());
+//        PostPagination p = new PostPagination(list.getNumber(),
+//                list.getSize(), list.getTotalPages(), list.getNumberOfElements(), postLists);
+
+        //        PostPagination p = modelMapper.map(postLists, PostPagination.class);
+//        System.out.println(p);
+        Page<Post> p = postRepository.findByQuery(searchText, PageRequest.of(pageNumber, pageSize));
+
+
+        PostPagination postPagination = modelMapper.map(p, PostPagination.class);
+        return new ResponseObject(200, "The post's list is successfully sent.",
+                postPagination);
     }
 
     @Override
