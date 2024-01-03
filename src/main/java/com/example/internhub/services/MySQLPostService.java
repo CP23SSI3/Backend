@@ -68,7 +68,9 @@ public class MySQLPostService implements PostService {
             res.setStatus(400);
             return new ResponseObject(400, e.getMessage(), null);
         }
-        Page<Post> postList = postRepository.findByQuery(searchText, city, district, status, PageRequest.of(pageNumber, pageSize));
+        Page<Post> postList = postRepository.findByQuery(searchText, city, district,
+//                status,
+                PageRequest.of(pageNumber, pageSize));
         PostPagination postPagination = modelMapper.map(postList, PostPagination.class);
         return new ResponseObject(200, "The post's list is successfully sent.",
                 postPagination);
