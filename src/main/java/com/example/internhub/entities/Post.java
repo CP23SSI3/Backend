@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ public class Post extends Object {
     private Address address;
 
     @Column(name = "closedDate")
-    private LocalDateTime closedDate;
+    private LocalDate closedDate;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "compId", nullable = false)

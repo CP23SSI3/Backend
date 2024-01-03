@@ -19,9 +19,12 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+
+import static java.lang.Math.abs;
 
 @Service
 @Primary
@@ -47,7 +50,7 @@ public class MySQLPostService implements PostService {
     @Autowired
     private PostPositionTagService postPositionTagService;
 
-    @Value("{milliseconds.before.closed.post.test}")
+    @Value("${milliseconds.before.closed.post.test}")
     private long milliSecondsBeforeClosedPost;
 
     Timer timer = new Timer();
@@ -105,8 +108,10 @@ public class MySQLPostService implements PostService {
             LocalDateTime now = LocalDateTime.now();
             post.setCreatedDate(now);
             post.setLastUpdateDate(now);
-            LocalDateTime closedDate = post.getClosedDate();
-            long milliSecondsBeforeClosed = closedDate.until(LocalDateTime.now(), ChronoUnit.MILLIS);
+            LocalDate closedDate = post.getClosedDate();
+            LocalDateTime closedDateTime = closedDate.atStartOfDay();
+            System.out.println(closedDateTime);
+            long milliSecondsBeforeClosed = (closedDate == null) ? 0 : abs(closedDateTime.until(LocalDateTime.now(), ChronoUnit.MILLIS));
             long milliSecondsBeforeNearlyClosed = milliSecondsBeforeClosed - milliSecondsBeforeClosedPost;
             if(closedDate == null) {
                 post.alwaysOpenedPost();
@@ -140,8 +145,8 @@ public class MySQLPostService implements PostService {
                     postRepository.save(post);
                 }
             };
-            timer.schedule(nearlyClosedPostTimerTask, milliSecondsBeforeNearlyClosed); 
-            timer.schedule(closedPostTimerTask, milliSecondsBeforeClosed);
+            if (milliSecondsBeforeClosed > 0) timer.schedule(closedPostTimerTask, milliSecondsBeforeClosed);
+            if (milliSecondsBeforeNearlyClosed > 0) timer.schedule(nearlyClosedPostTimerTask, milliSecondsBeforeNearlyClosed);
             //----------------------------------------
 
             return new ResponseObject(200, "Create post successfully.", post);

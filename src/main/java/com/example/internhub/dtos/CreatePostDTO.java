@@ -14,6 +14,7 @@ import lombok.Setter;
 
 import javax.validation.Valid;
 import javax.validation.constraints.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ public class CreatePostDTO extends Object {
     @NotNull(message = "Address is required.")
     CreateAddressDTO address;
     @Future(message = "Closed date must be in future.")
-    LocalDateTime closedDate;
+    LocalDate closedDate;
     @Valid
     @NotNull(message = "Company id must be provide.")
     CompanyIdDTO comp;
