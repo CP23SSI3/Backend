@@ -58,22 +58,15 @@ public class MySQLPostService implements PostService {
     }
 
     @Override
-    public ResponseObject getAllPostPagination(int pageNumber, int pageSize, String searchText, String city, String district) {
-        Page<Post> postList = postRepository.findAll(PageRequest.of(pageNumber, pageSize));
-//        Page<Object> list = postRepository.findAllByQuery(PageRequest.of(pageNumber, pageSize));
-        if (searchText == null) {
-            searchText = "";
+    public ResponseObject getAllPostPagination(int pageNumber, int pageSize, String searchText, String city, String district, String status, HttpServletResponse res) {
+        try {
+            PostStatus postStatus = PostStatus.valueOf(status);
+        } catch (Exception e) {
+            res.setStatus(400);
+            return new ResponseObject(400, e.getMessage(), null);
         }
-        if (city == null) {
-            city = "";
-        }
-        if (district == null) {
-            district = "";
-        } else { city = ""; }
-        Page<Post> p = postRepository.findByQuery(searchText, city, district, PageRequest.of(pageNumber, pageSize));
-
-
-        PostPagination postPagination = modelMapper.map(p, PostPagination.class);
+        Page<Post> postList = postRepository.findByQuery(searchText, city, district, status, PageRequest.of(pageNumber, pageSize));
+        PostPagination postPagination = modelMapper.map(postList, PostPagination.class);
         return new ResponseObject(200, "The post's list is successfully sent.",
                 postPagination);
     }

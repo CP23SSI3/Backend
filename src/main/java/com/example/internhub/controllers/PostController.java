@@ -22,10 +22,12 @@ public class PostController {
     @GetMapping("")
     public ResponseObject getAllPosts(@RequestParam(defaultValue = "0") int page,
                                       @RequestParam(defaultValue = "10") int pageSize,
-                                      @RequestParam(required = false) String q,
-                                      @RequestParam(required = false) String city,
-                                      @RequestParam(required = false) String district) {
-        return postService.getAllPostPagination(page, pageSize, q, city, district);
+                                      @RequestParam(defaultValue = "") String q,
+                                      @RequestParam(defaultValue = "") String city,
+                                      @RequestParam(defaultValue = "") String district,
+                                      @RequestParam(defaultValue = "OPENED")String status,
+                                      HttpServletResponse res) {
+        return postService.getAllPostPagination(page, pageSize, q, city, district, status, res);
     }
 
     @GetMapping("/{postId}")
