@@ -109,9 +109,7 @@ public class MySQLPostService implements PostService {
             post.setCreatedDate(now);
             post.setLastUpdateDate(now);
             LocalDate closedDate = post.getClosedDate();
-            LocalDateTime closedDateTime = closedDate.atStartOfDay();
-            System.out.println(closedDateTime);
-            long milliSecondsBeforeClosed = (closedDate == null) ? 0 : abs(closedDateTime.until(LocalDateTime.now(), ChronoUnit.MILLIS));
+            long milliSecondsBeforeClosed = (closedDate == null) ? 0 : abs(closedDate.atStartOfDay().until(LocalDateTime.now(), ChronoUnit.MILLIS));
             long milliSecondsBeforeNearlyClosed = milliSecondsBeforeClosed - milliSecondsBeforeClosedPost;
             if(closedDate == null) {
                 post.alwaysOpenedPost();
