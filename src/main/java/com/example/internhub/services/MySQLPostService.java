@@ -51,8 +51,8 @@ public class MySQLPostService implements PostService {
     private PostPositionTagService postPositionTagService;
 
     @Value("${milliseconds.before.closed.post.test}")
-    private long milliSecondsBeforeClosedPost;
-
+    private long milliSecondsBeforeClosedPostforTest;
+    private long milliSecondsBeforeClosedPost = (24 - milliSecondsBeforeClosedPostforTest) *60*60*1000;
     Timer timer = new Timer();
 
     @Override
