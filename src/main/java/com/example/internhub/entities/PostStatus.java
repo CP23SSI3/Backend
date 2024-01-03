@@ -5,5 +5,5 @@ import lombok.ToString;
 
 @Getter
 public enum PostStatus {
-    OPENED, CLOSED, DELETED
+    ALWAYS_OPENED, OPENED, CLOSED, NEARLY_CLOSED, DELETED
 }

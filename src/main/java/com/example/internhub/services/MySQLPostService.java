@@ -5,25 +5,23 @@ import com.example.internhub.dtos.CreatePostDTO;
 import com.example.internhub.dtos.EditPostDTO;
 import com.example.internhub.dtos.PostPagination;
 import com.example.internhub.entities.*;
-import com.example.internhub.repositories.PostPositionTagRepository;
 import com.example.internhub.repositories.PostRepository;
 import com.example.internhub.responses.ResponseObject;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
 
 @Service
 @Primary
@@ -49,8 +47,10 @@ public class MySQLPostService implements PostService {
     @Autowired
     private PostPositionTagService postPositionTagService;
 
-    @Autowired
-    private PostPositionTagRepository postPositionTagRepository;
+    @Value("{milliseconds.before.closed.post.test}")
+    private long milliSecondsBeforeClosedPost;
+
+    Timer timer = new Timer();
 
     @Override
     public List<Post> getAllPost() {
@@ -105,7 +105,14 @@ public class MySQLPostService implements PostService {
             LocalDateTime now = LocalDateTime.now();
             post.setCreatedDate(now);
             post.setLastUpdateDate(now);
-            post.setStatus(PostStatus.OPENED);
+            LocalDateTime closedDate = post.getClosedDate();
+            long milliSecondsBeforeClosed = closedDate.until(LocalDateTime.now(), ChronoUnit.MILLIS);
+            long milliSecondsBeforeNearlyClosed = milliSecondsBeforeClosed - milliSecondsBeforeClosedPost;
+            if(closedDate == null) {
+                post.alwaysOpenedPost();
+            } else if (milliSecondsBeforeNearlyClosed > 0) {
+                post.openedPost();
+            } else {post.nearlyClosedPost();}
             Company company = companyService.getCompanyByCompanyId(post.getComp().getCompId());
             post.setComp(companyService.getCompany(company));
             List<OpenPosition> openPositionList = post.getOpenPositionList();
@@ -119,6 +126,24 @@ public class MySQLPostService implements PostService {
                 post.addPostTag(tag);
             }
             postRepository.save(post);
+            TimerTask nearlyClosedPostTimerTask = new TimerTask() {
+                @Override
+                public void run() {
+                    post.nearlyClosedPost();
+                    postRepository.save(post);
+                }
+            };
+            TimerTask closedPostTimerTask =  new TimerTask() {
+                @Override
+                public void run() {
+                    post.closedPost();
+                    postRepository.save(post);
+                }
+            };
+            timer.schedule(nearlyClosedPostTimerTask, milliSecondsBeforeNearlyClosed); 
+            timer.schedule(closedPostTimerTask, milliSecondsBeforeClosed);
+            //----------------------------------------
+
             return new ResponseObject(200, "Create post successfully.", post);
         } catch (ResponseStatusException e) {
             int statusCode= e.getStatus().value();

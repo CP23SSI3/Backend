@@ -144,4 +144,20 @@ public class Post extends Object {
     public void view(){
         this.totalView++;
     }
+
+    public void openedPost() {
+        this.status = PostStatus.OPENED;
+    }
+
+    public void alwaysOpenedPost() {
+        this.status = PostStatus.ALWAYS_OPENED;
+    }
+
+    public void closedPost() {
+        this.status = PostStatus.CLOSED;
+    }
+
+    public void nearlyClosedPost() {
+        this.status = PostStatus.NEARLY_CLOSED;
+    }
 }
