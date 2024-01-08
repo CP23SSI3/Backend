@@ -92,11 +92,12 @@ public class MySQLPostService implements PostService {
 
             }
         }
-        System.out.println("post tag " + postTag);
+        System.out.println("post list " + postTag);
+        System.out.println("post array" + tags);
 //        if (tags == null) { tags = new String [0]; }
         Page<Post> postList = postRepository.findByQuery(searchText, city, district,
                 status,
-                postTag,
+                postTag, tags,
                 PageRequest.of(pageNumber, pageSize));
         PostPagination postPagination = modelMapper.map(postList, PostPagination.class);
         return new ResponseObject(200, "The post's list is successfully sent.",

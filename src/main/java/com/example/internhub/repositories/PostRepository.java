@@ -19,15 +19,13 @@ public interface PostRepository extends JpaRepository<Post, String> {
                     "where ((lower(p.title) like concat('%', :searchText, '%')) or (lower(c.compName) like concat('%', :searchText, '%'))) " +
                     "and ((lower(a.city) like concat('%', :city, '%')) and (lower(a.district) like concat('%', :district, '%'))) " +
                     "and (p.status in :status) " +
-//                    "and (ppt.positionTagName in :tags or :tags IS NULL) "
-                    "and ppt.positionTagName in :tags"
+                    "and ((ppt.positionTagName in :tagList) or (:tagArray is null))"
             ,
             countQuery = "select count(distinct p.postId) from ((posts p join companies c on p.compId = c.compId) join addresses a on p.addressId = a.addressId) join postPositionTags ppt on p.postId = ppt.postId " +
                     "where ((lower(p.title) like concat('%', :searchText, '%')) or (lower(c.compName) like concat('%', :searchText, '%'))) " +
                     "and ((lower(a.city) like concat('%', :city, '%')) and (lower(a.district) like concat('%', :district, '%'))) " +
                     "and (p.status in :status) " +
-//                    "and (ppt.positionTagName in :tags or :tags IS NULL) "
-                    "and ppt.positionTagName in :tags"
+                    "and ((ppt.positionTagName in :tagList) or (:tagArray is null))"
             ,
             nativeQuery = true
     )
@@ -35,6 +33,7 @@ public interface PostRepository extends JpaRepository<Post, String> {
                                   @Param("city") String city,
                                   @Param("district") String district,
                                   @Param("status") String[] status,
-                                  @Param("tags") List<String> tags,
+                                  @Param("tagList") List<String> tagList,
+                                  @Param("tagArray") String[] tagArray,
                                   Pageable pageable);
 }
