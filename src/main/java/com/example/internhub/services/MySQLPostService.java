@@ -130,7 +130,9 @@ public class MySQLPostService implements PostService {
             for (PostPositionTag tag : postPositionTagList) {
                 post.addPostTag(tag);
             }
+            System.out.println("before save");
             postRepository.save(post);
+            System.out.println("before schedule");
             TimerTask nearlyClosedPostTimerTask = new TimerTask() {
                 @Override
                 public void run() {
