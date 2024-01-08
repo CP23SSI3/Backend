@@ -19,6 +19,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -61,9 +63,8 @@ public class MySQLPostService implements PostService {
 
     @Override
     public ResponseObject getAllPostPagination(int pageNumber, int pageSize, String searchText, String city, String district,
-                                               String[] status, HttpServletResponse res) {
+                                               String[] status, String[] tags, HttpServletResponse res) {
         String[] defaultStatus = {"OPENED", "ALWAYS_OPENED", "NEARLY_CLOSED"};
-        System.out.println(status);
         if (status == null) {
             status = defaultStatus;
         } else {
@@ -77,8 +78,25 @@ public class MySQLPostService implements PostService {
                 return new ResponseObject(400, e.getMessage(), null);
             }
         }
+        List<String> postTag = new ArrayList<>();
+        System.out.println("Tag");
+        System.out.println(tags);
+        if (tags == null) {
+//            postTag = null;
+        }else {
+            try {
+                for (String tag : tags) {
+                    postTag.add(URLDecoder.decode(tag, StandardCharsets.UTF_8.toString()));
+                }
+            } catch (Exception e) {
+
+            }
+        }
+        System.out.println("post tag " + postTag);
+//        if (tags == null) { tags = new String [0]; }
         Page<Post> postList = postRepository.findByQuery(searchText, city, district,
                 status,
+                postTag,
                 PageRequest.of(pageNumber, pageSize));
         PostPagination postPagination = modelMapper.map(postList, PostPagination.class);
         return new ResponseObject(200, "The post's list is successfully sent.",
