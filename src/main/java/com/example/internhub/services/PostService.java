@@ -13,7 +13,7 @@ import java.util.List;
 @Service
 public interface PostService {
     public List<Post> getAllPost();
-    public ResponseObject getAllPostPagination(int pageNumber, int pageSize, String searchText, String city, String district, String status, HttpServletResponse res);
+    public ResponseObject getAllPostPagination(int pageNumber, int pageSize, String searchText, String city, String district, String[] status, HttpServletResponse res);
     public ResponseObject getPostById(String postId, HttpServletResponse res);
 
     public Post getPostByPostId(String postId);

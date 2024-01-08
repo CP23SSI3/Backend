@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/posts")
@@ -25,7 +26,8 @@ public class PostController {
                                       @RequestParam(defaultValue = "") String q,
                                       @RequestParam(defaultValue = "") String city,
                                       @RequestParam(defaultValue = "") String district,
-                                      @RequestParam(defaultValue = "OPENED")String status,
+                                      @RequestParam(required = false,
+                                      value = "status") String[] status,
                                       HttpServletResponse res) {
         return postService.getAllPostPagination(page, pageSize, q, city, district, status, res);
     }

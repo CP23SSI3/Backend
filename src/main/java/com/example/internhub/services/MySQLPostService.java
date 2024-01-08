@@ -34,7 +34,6 @@ public class MySQLPostService implements PostService {
     private ModelMapper modelMapper;
     @Autowired
     private ListMapper listMapper = ListMapper.getInstance();
-
     @Autowired
     private PostRepository postRepository;
     @Autowired
@@ -61,15 +60,25 @@ public class MySQLPostService implements PostService {
     }
 
     @Override
-    public ResponseObject getAllPostPagination(int pageNumber, int pageSize, String searchText, String city, String district, String status, HttpServletResponse res) {
-        try {
-            PostStatus postStatus = PostStatus.valueOf(status);
-        } catch (Exception e) {
-            res.setStatus(400);
-            return new ResponseObject(400, e.getMessage(), null);
+    public ResponseObject getAllPostPagination(int pageNumber, int pageSize, String searchText, String city, String district,
+                                               String[] status, HttpServletResponse res) {
+        String[] defaultStatus = {"OPENED", "ALWAYS_OPENED", "NEARLY_CLOSED"};
+        System.out.println(status);
+        if (status == null) {
+            status = defaultStatus;
+        } else {
+            System.out.println("else branch");
+            try {
+                for (String s : status) {
+                    PostStatus.valueOf(s);
+                }
+            } catch (Exception e) {
+                res.setStatus(400);
+                return new ResponseObject(400, e.getMessage(), null);
+            }
         }
         Page<Post> postList = postRepository.findByQuery(searchText, city, district,
-//                status,
+                status,
                 PageRequest.of(pageNumber, pageSize));
         PostPagination postPagination = modelMapper.map(postList, PostPagination.class);
         return new ResponseObject(200, "The post's list is successfully sent.",
