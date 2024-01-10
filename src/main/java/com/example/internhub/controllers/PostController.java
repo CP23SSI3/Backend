@@ -28,10 +28,10 @@ public class PostController {
                                       @RequestParam(defaultValue = "") String district,
                                       @RequestParam(required = false) String[] status,
                                       @RequestParam(required = false) String[] tags,
-                                      @RequestParam(defaultValue = "0") Integer minMonth,
-                                      @RequestParam(defaultValue = "0") Integer minSalary,
+                                      @RequestParam(defaultValue = "0") Integer month,
+                                      @RequestParam(defaultValue = "0") Integer salary,
                                       HttpServletResponse res) {
-        return postService.getAllPostPagination(page, pageSize, q, city, district, status, tags, minMonth, minSalary, res);
+        return postService.getAllPostPagination(page, pageSize, q, city, district, status, tags, month, salary, res);
     }
 
     @GetMapping("/{postId}")

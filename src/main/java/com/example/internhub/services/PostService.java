@@ -14,7 +14,7 @@ import java.util.List;
 public interface PostService {
     public List<Post> getAllPost();
     public ResponseObject getAllPostPagination(int pageNumber, int pageSize, String searchText, String city, String district,
-                                               String[] status, String[] tags, Integer minMonth, Integer minSalary, HttpServletResponse res);
+                                               String[] status, String[] tags, Integer month, Integer salary, HttpServletResponse res);
     public ResponseObject getPostById(String postId, HttpServletResponse res);
 
     public Post getPostByPostId(String postId);

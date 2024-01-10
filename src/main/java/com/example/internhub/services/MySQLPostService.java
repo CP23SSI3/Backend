@@ -63,7 +63,7 @@ public class MySQLPostService implements PostService {
 
     @Override
     public ResponseObject getAllPostPagination(int pageNumber, int pageSize, String searchText, String city, String district,
-                                               String[] status, String[] tags, Integer minMonth, Integer minSalary,
+                                               String[] status, String[] tags, Integer month, Integer salary,
                                                HttpServletResponse res) {
         String[] defaultStatus = {"OPENED", "ALWAYS_OPENED", "NEARLY_CLOSED"};
         List<String> postTag = new ArrayList<>();
@@ -89,7 +89,7 @@ public class MySQLPostService implements PostService {
             return new ResponseObject(400, e.getMessage(), null);
         }
         Page<Post> postList = postRepository.findByQuery(searchText, city, district,
-                status, postTag, tags, minSalary,
+                status, postTag, tags, month, salary,
                 PageRequest.of(pageNumber, pageSize));
         PostPagination postPagination = modelMapper.map(postList, PostPagination.class);
         return new ResponseObject(200, "The post's list is successfully sent.",
