@@ -65,36 +65,28 @@ public class MySQLPostService implements PostService {
     public ResponseObject getAllPostPagination(int pageNumber, int pageSize, String searchText, String city, String district,
                                                String[] status, String[] tags, HttpServletResponse res) {
         String[] defaultStatus = {"OPENED", "ALWAYS_OPENED", "NEARLY_CLOSED"};
-        if (status == null) {
-            status = defaultStatus;
-        } else {
-            System.out.println("else branch");
-            try {
+        List<String> postTag = new ArrayList<>();
+        try {
+            if (status == null) {
+                status = defaultStatus;
+            } else {
                 for (String s : status) {
                     PostStatus.valueOf(s);
                 }
-            } catch (Exception e) {
-                res.setStatus(400);
-                return new ResponseObject(400, e.getMessage(), null);
             }
-        }
-        List<String> postTag = new ArrayList<>();
-        System.out.println("Tag");
-        System.out.println(tags);
-        if (tags == null) {
-//            postTag = null;
-        }else {
-            try {
-                for (String tag : tags) {
-                    postTag.add(URLDecoder.decode(tag, StandardCharsets.UTF_8.toString()));
+            if (tags != null) {
+                if (tags.length == 0) {
+                    tags = null;
+                } else {
+                    for (String tag : tags) {
+                        postTag.add(URLDecoder.decode(tag, StandardCharsets.UTF_8.toString()));
+                    }
                 }
-            } catch (Exception e) {
-
             }
+        } catch (Exception e) {
+            res.setStatus(400);
+            return new ResponseObject(400, e.getMessage(), null);
         }
-        System.out.println("post list " + postTag);
-        System.out.println("post array" + tags);
-//        if (tags == null) { tags = new String [0]; }
         Page<Post> postList = postRepository.findByQuery(searchText, city, district,
                 status,
                 postTag, tags,
