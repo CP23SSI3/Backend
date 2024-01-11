@@ -51,9 +51,12 @@ public class MySQLPostService implements PostService {
     @Autowired
     private PostPositionTagService postPositionTagService;
 
-    @Value("${milliseconds.before.closed.post.test}")
-    private long milliSecondsBeforeClosedPostforTest;
-    private long milliSecondsBeforeClosedPost = (24 - milliSecondsBeforeClosedPostforTest) *60*60*1000;
+//    @Value("${milliseconds.before.closed.post}")
+//    private long milliSecondsBeforeClosedPostforTest;
+    @Value("${milliseconds.before.closed.post}")
+    private long milliSecondsBeforeClosedPost;
+    @Value("${convert.day.to.minute}")
+    private long convertDayToMinute;
     Timer timer = new Timer();
 
     @Override
@@ -131,8 +134,13 @@ public class MySQLPostService implements PostService {
             post.setCreatedDate(now);
             post.setLastUpdateDate(now);
             LocalDate closedDate = post.getClosedDate();
-            long milliSecondsBeforeClosed = (closedDate == null) ? 0 : abs(closedDate.atStartOfDay().until(LocalDateTime.now(), ChronoUnit.MILLIS));
+            long milliSecondsBeforeClosed = (closedDate == null) ? 0 : abs((closedDate.atStartOfDay().plusDays(1)).until(LocalDateTime.now(), ChronoUnit.MILLIS))/convertDayToMinute;
             long milliSecondsBeforeNearlyClosed = milliSecondsBeforeClosed - milliSecondsBeforeClosedPost;
+            System.out.println(milliSecondsBeforeClosed);
+            System.out.println(milliSecondsBeforeNearlyClosed);
+            System.out.println(closedDate.atStartOfDay());
+            System.out.println(LocalDateTime.now());
+            System.out.println((closedDate.atStartOfDay().plusDays(1)).until(LocalDateTime.now(), ChronoUnit.MILLIS));
             if(closedDate == null) {
                 post.alwaysOpenedPost();
             } else if (milliSecondsBeforeNearlyClosed > 0) {
@@ -150,9 +158,7 @@ public class MySQLPostService implements PostService {
             for (PostPositionTag tag : postPositionTagList) {
                 post.addPostTag(tag);
             }
-            System.out.println("before save");
             postRepository.save(post);
-            System.out.println("before schedule");
             TimerTask nearlyClosedPostTimerTask = new TimerTask() {
                 @Override
                 public void run() {
@@ -227,5 +233,35 @@ public class MySQLPostService implements PostService {
             return new ResponseObject(404, e.getMessage(), null);
         }
     }
+
+    @Override
+    public void postCheck() {
+        List<Post> postList = postRepository.findAll();
+        for (Post post : postList) {
+//            switch (post.getStatus()) {
+//                case ALWAYS_OPENED, CLOSED, DELETED : break;
+//                case NEARLY_CLOSED: {
+//                    LocalDate closedDate = post.getClosedDate();
+//                    LocalDate now = LocalDate.now();
+//                    if(closedDate.isBefore(now)) {
+//                        // post already closed
+//                        post.setStatus(PostStatus.CLOSED);
+//                    } else {
+//                        // post still not closed
+//                        // need nearly closed timer
+//                    }
+//                }
+//                case OPENED: {
+//                    LocalDate closedDate = post.getClosedDate();
+//                    LocalDate now = LocalDate.now();
+//                    if(closedDate.isBefore(now)) {
+//                        // post already closed
+//                        post.setStatus(PostStatus.CLOSED);
+//                    }
+//                }
+//            }
+        }
+    }
+
 
 }
