@@ -23,7 +23,7 @@ public interface PostRepository extends JpaRepository<Post, String> {
                     "and ((ppt.positionTagName in :tagList) or (:tagArray is null)) " +
                     "and ((:month = 0) or (maxMonth >= :month)) " +
                     "and ((:salary = 0) or (maxSalary >= :salary)) "
-            
+
             ,
             countQuery = "select count(distinct p.postId) from (((posts p join companies c on p.compId = c.compId) join addresses a on p.addressId = a.addressId) join postPositionTags ppt on p.postId = ppt.postId) " +
                     "join (select min(o.salary) as minSalary, min(o.workMonth) as minMonth, max(o.salary) as maxSalary, max(o.workMonth) as maxMonth, p2.postId from posts p2 join openpositions o on p2.postId = o.postId group by p2.postId) salaryTable on  p.postId = salaryTable.postId " +
