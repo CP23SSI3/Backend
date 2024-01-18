@@ -1,7 +1,6 @@
 package com.example.internhub.dtos;
 
 import com.example.internhub.entities.User;
-import com.example.internhub.responses.Object;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +10,7 @@ import java.util.List;
 
 @Getter @Setter
 @AllArgsConstructor @NoArgsConstructor
-public class UserPagination extends Object {
+public class UserPagination {
     int number;
     int size;
     int totalPages;

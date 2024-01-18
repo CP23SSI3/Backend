@@ -29,4 +29,9 @@ public class UserController {
         return userService.getResponseUserById(userId, req, res);
     }
 
+    @GetMapping("/test-password")
+    public String getTestPassword(){
+        return userService.encryptedPassword("password");
+    }
+
 }

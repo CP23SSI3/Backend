@@ -1,7 +1,6 @@
 package com.example.internhub.entities;
 
 import lombok.*;
-import com.example.internhub.responses.Object;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,7 +12,7 @@ import java.math.BigDecimal;
 @Table(name = "addresses")
 @Getter @Setter @ToString
 @NoArgsConstructor @AllArgsConstructor
-public class Address extends Object {
+public class Address {
     @Id
     @Column(name = "addressId", nullable = false, length = 36)
     private String addressId;

@@ -14,5 +14,6 @@ public interface UserService {
     public ResponseObject getAllUserPagination(int pageNumber, int pageSize, HttpServletResponse res);
     public ResponseObject getResponseUserById(String userId, HttpServletRequest req, HttpServletResponse res);
     public User getUserById(String userId);
+    public String encryptedPassword(String rawPassword);
 
 }
