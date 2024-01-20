@@ -31,7 +31,7 @@ public class UserController {
 
     @GetMapping("/test-password")
     public String getTestPassword(){
-        return userService.encryptedPassword("password");
+        return userService.encryptedPassword("userpassword");
     }
 
 }

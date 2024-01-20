@@ -1,5 +1,6 @@
 package com.example.internhub.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,7 +15,7 @@ public class User {
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "addressId", nullable = false)
     private Address address;
-//
+
     @ManyToOne(fetch = FetchType.EAGER, optional = true, cascade = CascadeType.ALL)
     @JoinColumn(name = "compId", nullable = true)
     private Company company;
@@ -37,6 +38,7 @@ public class User {
     @Column(name = "lastUpdate", nullable = false)
     private LocalDateTime lastUpdate;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "password", length = 72, nullable = false)
     private String password;
 

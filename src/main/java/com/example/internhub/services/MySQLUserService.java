@@ -57,4 +57,14 @@ public class MySQLUserService implements UserService {
     public String encryptedPassword(String rawPassword) {
         return encoder.encode(rawPassword);
     }
+
+    @Override
+    public User findUserByUserName(String username) {
+        return userRepository.findByUsername(username);
+    }
+
+    @Override
+    public User findUserByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
 }
