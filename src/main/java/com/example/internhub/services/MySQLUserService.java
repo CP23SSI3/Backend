@@ -2,12 +2,16 @@ package com.example.internhub.services;
 
 import com.example.internhub.dtos.UserPagination;
 import com.example.internhub.entities.User;
+import com.example.internhub.entities.UserPrinciple;
 import com.example.internhub.repositories.UserRepository;
 import com.example.internhub.responses.ResponseObject;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,16 +20,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Service
-public class MySQLUserService implements UserService {
+public class MySQLUserService implements UserService, UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
     @Autowired
     private ModelMapper modelMapper;
-
-//    @Value("${jwt.secret}")
-//    private String secretKey;
-//    private Algorithm algorithm = Algorithm.HMAC512(secretKey);
     private PasswordEncoder encoder = new BCryptPasswordEncoder();
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -66,5 +66,11 @@ public class MySQLUserService implements UserService {
     @Override
     public User findUserByEmail(String email) {
         return userRepository.findByEmail(email);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+//        return (UserDetails) findUserByUserName(username);
+        return null;
     }
 }

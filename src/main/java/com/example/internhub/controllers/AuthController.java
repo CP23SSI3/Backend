@@ -1,7 +1,6 @@
 package com.example.internhub.controllers;
 
 import com.example.internhub.dtos.UserLoginDTO;
-import com.example.internhub.responses.ResponseObject;
 import com.example.internhub.services.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
