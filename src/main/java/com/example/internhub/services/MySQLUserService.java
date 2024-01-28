@@ -20,15 +20,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Service
-public class MySQLUserService implements UserService, UserDetailsService {
+public class MySQLUserService implements UserService {
 
     @Autowired
     private UserRepository userRepository;
     @Autowired
     private ModelMapper modelMapper;
     private PasswordEncoder encoder = new BCryptPasswordEncoder();
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     @Override
     public ResponseObject getAllUserPagination(int pageNumber, int pageSize,HttpServletResponse res) {
@@ -59,6 +57,11 @@ public class MySQLUserService implements UserService, UserDetailsService {
     }
 
     @Override
+    public boolean isPasswordMatch(String rawPassword, String encryptedPassword) {
+        return encoder.matches(rawPassword, encryptedPassword);
+    }
+
+    @Override
     public User findUserByUserName(String username) {
         return userRepository.findByUsername(username);
     }
@@ -68,9 +71,4 @@ public class MySQLUserService implements UserService, UserDetailsService {
         return userRepository.findByEmail(email);
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-//        return (UserDetails) findUserByUserName(username);
-        return null;
-    }
 }

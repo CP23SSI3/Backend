@@ -15,6 +15,7 @@ public interface UserService {
     public ResponseObject getResponseUserById(String userId, HttpServletRequest req, HttpServletResponse res);
     public User getUserById(String userId);
     public String encryptedPassword(String rawPassword);
+    public boolean isPasswordMatch(String rawPassword, String encryptedPassword);
     public User findUserByUserName(String username);
     public User findUserByEmail(String email);
 }

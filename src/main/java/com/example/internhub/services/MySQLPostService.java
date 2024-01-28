@@ -43,16 +43,10 @@ public class MySQLPostService implements PostService {
     @Autowired
     private AddressService addressService;
     @Autowired
-    private PositionTagService positionTagService;
-    @Autowired
-    private ClassService classService;
-    @Autowired
     private OpenPositionService openPositionService;
     @Autowired
     private PostPositionTagService postPositionTagService;
 
-//    @Value("${milliseconds.before.closed.post}")
-//    private long milliSecondsBeforeClosedPostforTest;
     @Value("${milliseconds.before.closed.post}")
     private long milliSecondsBeforeClosedPost;
     @Value("${convert.day.to.minute}")
