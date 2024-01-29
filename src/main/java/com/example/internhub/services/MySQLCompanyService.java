@@ -42,7 +42,7 @@ public class MySQLCompanyService implements CompanyService{
         } catch (Exception e) {
             res.setStatus(404);
             return new ResponseObject(404,
-                    ("Company id " + companyId + "not found"),
+                    ("Company id " + companyId + " not found."),
                     null);
         }
     }

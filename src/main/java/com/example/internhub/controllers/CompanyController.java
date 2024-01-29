@@ -1,12 +1,12 @@
 package com.example.internhub.controllers;
 
+import com.example.internhub.responses.ResponseObject;
 import com.example.internhub.responses.ResponseObjectList;
 import com.example.internhub.services.CompanyService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
 
 
 @RestController
@@ -20,5 +20,11 @@ public class CompanyController {
     @GetMapping("")
     public ResponseObjectList getAllCompanies(){
         return companyService.getAllCompanies();
+    }
+
+    @GetMapping("/{compId}")
+    public ResponseObject getCompanyById(@PathVariable String compId,
+                                         HttpServletResponse res) {
+        return companyService.getCompanyById(compId, res);
     }
 }
