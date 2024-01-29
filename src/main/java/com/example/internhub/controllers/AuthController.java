@@ -3,6 +3,7 @@ package com.example.internhub.controllers;
 import com.example.internhub.dtos.UserLoginDTO;
 import com.example.internhub.services.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +19,7 @@ public class AuthController {
     @Autowired
     AuthService authService;
 
-    @PostMapping("/login")
+    @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity logIn(@Valid @RequestBody UserLoginDTO userLoginDTO,
                                 HttpServletRequest req,
                                 HttpServletResponse res) {

@@ -106,14 +106,12 @@ public class MySQLAuthService implements AuthService{
             responseEntity = new ResponseEntity(authenticationSuccessDTO, headers, HttpStatus.OK);
         } catch (ResponseStatusException ex) {
             ResponseObject responseObject = new ResponseObject(ex.getStatus().value(), ex.getMessage(), null);
-            System.out.println("response exception");
             responseEntity = new ResponseEntity(responseObject, headers, ex.getStatus());
         } catch(UsernameNotFoundException ex) {
             ResponseObject responseObject = new ResponseObject(404, ex.getMessage(), null);
             responseEntity = new ResponseEntity(responseObject, headers, HttpStatus.NOT_FOUND);
         } catch (Exception ex) {
             ResponseObject responseObject = new ResponseObject(400, ex.getMessage(), null);
-            System.out.println("exception");
             responseEntity = new ResponseEntity(responseObject, headers, HttpStatus.BAD_REQUEST);
         }
         return responseEntity;
