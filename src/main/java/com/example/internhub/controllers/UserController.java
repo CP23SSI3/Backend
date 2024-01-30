@@ -1,8 +1,10 @@
 package com.example.internhub.controllers;
 
+import com.example.internhub.dtos.CreateUserDTO;
 import com.example.internhub.responses.ResponseObject;
 import com.example.internhub.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,15 +25,15 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseObject getUserById(@PathVariable String userId,
+    public ResponseEntity getUserById(@PathVariable String userId,
                                       HttpServletRequest req,
                                       HttpServletResponse res) {
         return userService.getResponseUserById(userId, req, res);
     }
 
-    @GetMapping("/test-password")
-    public String getTestPassword(){
-        return userService.encryptedPassword("userpassword");
-    }
+    @PostMapping("")
+    public ResponseEntity createUser(@RequestBody CreateUserDTO createUserDTO) {
+        return userService.createUser(createUserDTO);
+    };
 
 }

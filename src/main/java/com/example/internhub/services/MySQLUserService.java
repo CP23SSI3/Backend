@@ -1,14 +1,20 @@
 package com.example.internhub.services;
 
+import com.example.internhub.dtos.CreateUserDTO;
 import com.example.internhub.dtos.UserPagination;
 import com.example.internhub.entities.User;
 import com.example.internhub.entities.UserPrinciple;
+import com.example.internhub.exception.EmailExistedException;
+import com.example.internhub.exception.UserNotFoundException;
 import com.example.internhub.repositories.UserRepository;
 import com.example.internhub.responses.ResponseObject;
+import org.hibernate.ObjectNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -37,18 +43,26 @@ public class MySQLUserService implements UserService {
     }
 
     @Override
-    public ResponseObject getResponseUserById(String userId, HttpServletRequest req, HttpServletResponse res) {
+    public ResponseEntity getResponseUserById(String userId, HttpServletRequest req, HttpServletResponse res) {
         try {
-            return new ResponseObject(200, "The user's data is already sent.", getUserById(userId));
+            return new ResponseEntity(new ResponseObject(200, "The user's data is already sent.", getUserById(userId)),
+                    null, HttpStatus.OK);
+        } catch (UserNotFoundException ex) {
+            return new ResponseEntity(new ResponseObject(404, ex.getMessage(), null),
+                    null, HttpStatus.NOT_FOUND);
         } catch (Exception ex) {
-            res.setStatus(404);
-            return new ResponseObject(404, "User id " + userId + " not found", null);
+            return new ResponseEntity(new ResponseObject(400, ex.getMessage(), null),
+                    null, HttpStatus.BAD_REQUEST);
         }
     }
 
     @Override
-    public User getUserById(String userId) {
-        return userRepository.findById(userId).orElseThrow();
+    public User getUserById(String userId) throws UserNotFoundException {
+        try{
+            return userRepository.findById(userId).orElseThrow();
+        } catch (Exception ex) {
+            throw new UserNotFoundException("User id " + userId + " not found.");
+        }
     }
 
     @Override
@@ -69,6 +83,20 @@ public class MySQLUserService implements UserService {
     @Override
     public User findUserByEmail(String email) {
         return userRepository.findByEmail(email);
+    }
+
+    @Override
+    public ResponseEntity createUser(CreateUserDTO createUserDTO) {
+        try {
+            User user = modelMapper.map(createUserDTO, User.class);
+            if (findUserByEmail(user.getEmail()) != null) throw new EmailExistedException();
+            userRepository.save(user);
+            return new ResponseEntity(new ResponseObject(200, "Create user successfully.", user),
+                    null, HttpStatus.OK);
+        } catch (EmailExistedException ex) {
+            return new ResponseEntity(new ResponseObject(404, ex.getMessage(), null),
+                    null, HttpStatus.BAD_REQUEST);
+        }
     }
 
 }
