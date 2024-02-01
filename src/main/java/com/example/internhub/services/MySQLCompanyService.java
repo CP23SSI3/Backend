@@ -1,20 +1,17 @@
 package com.example.internhub.services;
 
-import com.example.internhub.entities.Address;
 import com.example.internhub.entities.Company;
+import com.example.internhub.exception.CompNotFoundException;
 import com.example.internhub.repositories.CompanyRepository;
 import com.example.internhub.responses.ResponseObject;
 import com.example.internhub.responses.ResponseObjectList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
 import javax.servlet.http.HttpServletResponse;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
 
 @Service
 @Primary
@@ -27,42 +24,42 @@ public class MySQLCompanyService implements CompanyService{
     private AddressService addressService;
 
     @Override
-    public ResponseObjectList getAllCompanies() {
-        return new ResponseObjectList(200,
-                "Company's list is successfully sended.",
-                companyRepository.findAll());
+    public ResponseEntity getAllCompanies() {
+        return new ResponseEntity(new ResponseObjectList(200,
+                "Company's list is successfully sent.",
+                companyRepository.findAll()),
+                null,
+                HttpStatus.OK);
     }
 
     @Override
-    public ResponseObject getCompanyById(String companyId, HttpServletResponse res) {
+    public ResponseEntity getCompanyById(String companyId, HttpServletResponse res) {
         try {
-            return new ResponseObject(200,
-                    ("Company id " + companyId + " is successfully sended."),
-                    getCompanyByCompanyId(companyId));
-        } catch (Exception e) {
-            res.setStatus(404);
-            return new ResponseObject(404,
-                    ("Company id " + companyId + " not found."),
-                    null);
+            return new ResponseEntity(new ResponseObject(200,
+                    ("Company id " + companyId + " is successfully sent."),
+                    getCompanyByCompanyId(companyId)),
+                    null, HttpStatus.OK);
+        } catch (CompNotFoundException ex) {
+            return new ResponseEntity(new ResponseObject(404,
+                    ex.getMessage(),
+                    null),
+                    null, HttpStatus.NOT_FOUND);
+        } catch (Exception ex) {
+            return new ResponseEntity(new ResponseObject(400,
+                    ex.getMessage(),
+                    null),
+                    null, HttpStatus.BAD_REQUEST);
         }
     }
 
     @Override
-    public Company getCompanyByCompanyId(String companyId) {
+    public Company getCompanyByCompanyId(String companyId) throws CompNotFoundException {
         try {
             return companyRepository.findById(companyId).orElseThrow();
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Company id " + companyId + " not found.");
+            throw new CompNotFoundException(companyId);
         }
     }
-
-//    @Override
-//    public Company createCompany() {
-//        Address address = addressService.getAddressByAddressId("5ee4a66e-9750-4340-a9c3-6aff93aa2ad3");
-//        Company company = new Company();
-//        companyRepository.save(company);
-//        return company;
-//    }
 
     @Override
     public Company getCompany(Company company){

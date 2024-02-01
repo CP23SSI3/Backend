@@ -4,6 +4,7 @@ import com.example.internhub.responses.ResponseObject;
 import com.example.internhub.responses.ResponseObjectList;
 import com.example.internhub.services.CompanyService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -18,12 +19,12 @@ public class CompanyController {
     private CompanyService companyService;
 
     @GetMapping("")
-    public ResponseObjectList getAllCompanies(){
+    public ResponseEntity getAllCompanies(){
         return companyService.getAllCompanies();
     }
 
     @GetMapping("/{compId}")
-    public ResponseObject getCompanyById(@PathVariable String compId,
+    public ResponseEntity getCompanyById(@PathVariable String compId,
                                          HttpServletResponse res) {
         return companyService.getCompanyById(compId, res);
     }

@@ -3,6 +3,7 @@ package com.example.internhub.controllers;
 import com.example.internhub.responses.ResponseObjectList;
 import com.example.internhub.services.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +19,7 @@ public class AddressController {
     private AddressService addressService;
 
     @GetMapping
-    public ResponseObjectList getAllAddresses(){
+    public ResponseEntity getAllAddresses(){
         return addressService.getAllAddresses();
     }
 }
