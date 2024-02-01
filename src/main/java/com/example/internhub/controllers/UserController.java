@@ -18,7 +18,7 @@ public class UserController {
     UserService userService;
 
     @GetMapping("")
-    public ResponseObject getAllUsersPagination(@RequestParam(defaultValue = "0") int page,
+    public ResponseEntity getAllUsersPagination(@RequestParam(defaultValue = "0") int page,
                                                 @RequestParam(defaultValue = "10") int pageSize,
                                                 HttpServletResponse res){
         return userService.getAllUserPagination(page, pageSize, res);
@@ -35,5 +35,10 @@ public class UserController {
     public ResponseEntity createUser(@RequestBody CreateUserDTO createUserDTO) {
         return userService.createUser(createUserDTO);
     };
+
+    @DeleteMapping("/{userId}")
+    public ResponseEntity deleteUser(@PathVariable String userId){
+        return userService.deleteUser(userId);
+    }
 
 }

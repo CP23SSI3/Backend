@@ -6,6 +6,7 @@ import com.example.internhub.entities.User;
 import com.example.internhub.entities.UserPrinciple;
 import com.example.internhub.exception.EmailExistedException;
 import com.example.internhub.exception.UserNotFoundException;
+import com.example.internhub.exception.UsernameExistedException;
 import com.example.internhub.repositories.UserRepository;
 import com.example.internhub.responses.ResponseObject;
 import org.hibernate.ObjectNotFoundException;
@@ -35,11 +36,12 @@ public class MySQLUserService implements UserService {
     private PasswordEncoder encoder = new BCryptPasswordEncoder();
 
     @Override
-    public ResponseObject getAllUserPagination(int pageNumber, int pageSize,HttpServletResponse res) {
+    public ResponseEntity getAllUserPagination(int pageNumber, int pageSize,HttpServletResponse res) {
         Page<User> userPage = userRepository.findAll(PageRequest.of(pageNumber, pageSize));
         UserPagination userPagination = modelMapper.map(userPage, UserPagination.class);
-        return new ResponseObject(200, "The user's list is successfully sended.",
-                userPagination);
+        return new ResponseEntity(new ResponseObject(200, "The user's list is successfully sended.",
+                userPagination),
+                null, HttpStatus.OK);
     }
 
     @Override
@@ -90,13 +92,35 @@ public class MySQLUserService implements UserService {
         try {
             User user = modelMapper.map(createUserDTO, User.class);
             if (findUserByEmail(user.getEmail()) != null) throw new EmailExistedException();
+            if (findUserByUserName(user.getUsername()) != null) throw new UsernameExistedException();
             userRepository.save(user);
             return new ResponseEntity(new ResponseObject(200, "Create user successfully.", user),
                     null, HttpStatus.OK);
-        } catch (EmailExistedException ex) {
-            return new ResponseEntity(new ResponseObject(404, ex.getMessage(), null),
+        } catch (EmailExistedException | UsernameExistedException ex) {
+            return new ResponseEntity(new ResponseObject(400, ex.getMessage(), null),
+                    null, HttpStatus.BAD_REQUEST);
+        } catch (Exception ex) {
+            return new ResponseEntity(new ResponseObject(400, ex.getMessage(), null),
                     null, HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @Override
+    public ResponseEntity deleteUser(String userId) {
+        try {
+            deleteUserByUserId(userId);
+            return new ResponseEntity(new ResponseObject(200, "Delete user id " + userId + " successfully.", null),
+                    null, HttpStatus.OK);
+        } catch (UserNotFoundException ex) {
+            return new ResponseEntity(new ResponseObject(404, ex.getMessage(), null),
+                    null, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @Override
+    public void deleteUserByUserId(String userId) throws UserNotFoundException {
+        getUserById(userId);
+        userRepository.deleteById(userId);
     }
 
 }

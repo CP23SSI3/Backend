@@ -48,8 +48,8 @@ public class MySQLOpenPositionService implements OpenPositionService {
     @Override
     public void updateOpenPosition(Post post, List<OpenPosition> updateOpenPositionList) throws EmptyPositionListException {
         List<OpenPosition> openPositionList = post.getOpenPositionList();
-        openPositionList.clear();
         if (openPositionList.size() == 0) throw new EmptyPositionListException();
+        openPositionList.clear();
         for (OpenPosition openPosition : updateOpenPositionList) {
             post.addOpenPosition(openPosition);
         }

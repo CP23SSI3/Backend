@@ -5,6 +5,7 @@ import com.example.internhub.dtos.CreatePostDTO;
 import com.example.internhub.dtos.EditPostDTO;
 import com.example.internhub.dtos.PostPagination;
 import com.example.internhub.entities.*;
+import com.example.internhub.exception.CompNotFoundException;
 import com.example.internhub.exception.EmptyPositionListException;
 import com.example.internhub.exception.PostNotFoundException;
 import com.example.internhub.repositories.PostRepository;
@@ -178,6 +179,9 @@ public class MySQLPostService implements PostService {
         } catch (EmptyPositionListException ex) {
             return new ResponseEntity(new ResponseObject(400, ex.getMessage(), null),
                     null, HttpStatus.BAD_REQUEST);
+        } catch (CompNotFoundException ex) {
+            return new ResponseEntity(new ResponseObject(404, ex.getMessage(), null),
+                    null, HttpStatus.NOT_FOUND);
         } catch (Exception e) {
             return new ResponseEntity(new ResponseObject(400, e.getMessage(), null),
                     null, HttpStatus.BAD_REQUEST);
