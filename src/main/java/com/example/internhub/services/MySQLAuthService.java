@@ -74,16 +74,14 @@ public class MySQLAuthService implements AuthService{
 
     @Override
     public boolean validateToken(String token, UserDetails userDetails) {
-        Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());
-        DecodedJWT decodeJwt = JWT.require(algorithm).build().verify(token);
+        DecodedJWT decodeJwt = decodeToken(token);
         return decodeJwt.getSubject().equals(userDetails.getUsername()) &&
                 !isTokenExpired(token, userDetails);
     }
 
     @Override
     public boolean isTokenExpired(String token, UserDetails userDetails) {
-        Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());
-        DecodedJWT decodeJwt = JWT.require(algorithm).build().verify(token);
+        DecodedJWT decodeJwt = decodeToken(token);
         return decodeJwt.getExpiresAt().before(new Date(System.currentTimeMillis()));
     }
 
@@ -120,5 +118,11 @@ public class MySQLAuthService implements AuthService{
     @Override
     public boolean isPasswordMatch(String rawPassword, User user) {
         return encoder.matches(rawPassword, user.getPassword());
+    }
+
+    @Override
+    public DecodedJWT decodeToken(String token) {
+        Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());
+        return JWT.require(algorithm).build().verify(token);
     }
 }
