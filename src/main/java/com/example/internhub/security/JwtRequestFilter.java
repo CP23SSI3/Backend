@@ -1,6 +1,7 @@
 package com.example.internhub.security;
 
 import com.example.internhub.entities.User;
+import com.example.internhub.exception.TokenException;
 import com.example.internhub.services.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
