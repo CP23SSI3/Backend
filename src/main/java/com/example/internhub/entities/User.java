@@ -1,5 +1,6 @@
 package com.example.internhub.entities;
 
+import antlr.collections.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -55,5 +56,9 @@ public class User {
 
     @Column(name = "username", length = 50, unique = true, nullable = false)
     private String username;
+
+//    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+////    @JoinColumn(name = "userId")
+//    private List<UserCompany> userCompanyList;
 
 }
