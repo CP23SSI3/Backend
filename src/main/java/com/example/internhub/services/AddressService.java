@@ -2,20 +2,16 @@ package com.example.internhub.services;
 
 import com.example.internhub.dtos.CreateAddressDTO;
 import com.example.internhub.entities.Address;
-import com.example.internhub.repositories.AddressRepository;
-import com.example.internhub.responses.ResponseObject;
-import com.example.internhub.responses.ResponseObjectList;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.internhub.exception.AddressNotFoundException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public interface AddressService {
-    public ResponseObjectList getAllAddresses();
-    public ResponseObject getAddressById(String addressId);
+    public ResponseEntity getAllAddresses();
+    public ResponseEntity getAddressById(String addressId);
     public Address createAddress(CreateAddressDTO createAddressPostDTO);
-    public Address getAddressByAddressId(String addressId);
+    public Address getAddressByAddressId(String addressId) throws AddressNotFoundException;
     public Address getAddress(Address address);
     public void updateAddress(Address oldAddress, Address newAddress);
 }

@@ -5,6 +5,7 @@ import com.example.internhub.dtos.EditPostDTO;
 import com.example.internhub.responses.ResponseObject;
 import com.example.internhub.services.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,7 +22,7 @@ public class PostController {
     private PostService postService;
 
     @GetMapping("")
-    public ResponseObject getAllPosts(@RequestParam(defaultValue = "0") int page,
+    public ResponseEntity getAllPosts(@RequestParam(defaultValue = "0") int page,
                                       @RequestParam(defaultValue = "10") int pageSize,
                                       @RequestParam(defaultValue = "") String q,
                                       @RequestParam(defaultValue = "") String city,
@@ -35,23 +36,23 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
-    public ResponseObject getPostById(@PathVariable String postId, HttpServletResponse res) {
+    public ResponseEntity getPostById(@PathVariable String postId, HttpServletResponse res) {
         return postService.getPostById(postId, res);
     }
 
     @PostMapping("")
-    public ResponseObject createPost(@Valid @RequestBody CreatePostDTO post, HttpServletResponse res){
+    public ResponseEntity createPost(@Valid @RequestBody CreatePostDTO post, HttpServletResponse res){
         return postService.createPost(post, res);
     }
 
     @PutMapping("/{postId}")
-    public ResponseObject editPost(@PathVariable String postId, @RequestBody @Valid EditPostDTO editPostDTO
+    public ResponseEntity editPost(@PathVariable String postId, @RequestBody @Valid EditPostDTO editPostDTO
             , HttpServletRequest req, HttpServletResponse res) throws IllegalAccessException {
         return postService.editPost(postId, editPostDTO, req, res);
     }
 
     @DeleteMapping("/{postId}")
-    public ResponseObject deletePost(@PathVariable String postId, HttpServletRequest req, HttpServletResponse res) {
+    public ResponseEntity deletePost(@PathVariable String postId, HttpServletRequest req, HttpServletResponse res) {
         return postService.deletePost(postId, req, res);
     }
 }

@@ -1,6 +1,7 @@
 package com.example.internhub.entities;
 
-import com.example.internhub.responses.Object;
+import antlr.collections.List;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,12 +11,12 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "users")
 @Getter @Setter
-public class User extends Object {
+public class User {
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "addressId", nullable = false)
     private Address address;
-//
+
     @ManyToOne(fetch = FetchType.EAGER, optional = true, cascade = CascadeType.ALL)
     @JoinColumn(name = "compId", nullable = true)
     private Company company;
@@ -38,6 +39,7 @@ public class User extends Object {
     @Column(name = "lastUpdate", nullable = false)
     private LocalDateTime lastUpdate;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "password", length = 72, nullable = false)
     private String password;
 
@@ -54,5 +56,9 @@ public class User extends Object {
 
     @Column(name = "username", length = 50, unique = true, nullable = false)
     private String username;
+
+//    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+////    @JoinColumn(name = "userId")
+//    private List<UserCompany> userCompanyList;
 
 }
