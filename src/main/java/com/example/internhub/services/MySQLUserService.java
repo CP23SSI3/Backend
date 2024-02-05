@@ -93,6 +93,7 @@ public class MySQLUserService implements UserService {
             User user = modelMapper.map(createUserDTO, User.class);
             if (findUserByEmail(user.getEmail()) != null) throw new EmailExistedException();
             if (findUserByUserName(user.getUsername()) != null) throw new UsernameExistedException();
+            user.setPassword(encryptedPassword(createUserDTO.getRawPassword()));
             userRepository.save(user);
             return new ResponseEntity(new ResponseObject(200, "Create user successfully.", user),
                     null, HttpStatus.OK);
