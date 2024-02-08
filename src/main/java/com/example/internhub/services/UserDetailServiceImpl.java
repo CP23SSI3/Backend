@@ -30,7 +30,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
             UserDetails userDetails = new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), role);
             return userDetails;
         } catch (Exception ex) {
-            throw new UsernameNotFoundException("User with inputed data is not existed.");
+            throw new UsernameNotFoundException("User with input data is not existed.");
         }
     }
 }
