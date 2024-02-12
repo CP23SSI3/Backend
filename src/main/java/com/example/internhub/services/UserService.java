@@ -1,5 +1,6 @@
 package com.example.internhub.services;
 
+import com.example.internhub.dtos.CheckedUsernameAndEmailDTO;
 import com.example.internhub.dtos.CreateUserDTO;
 import com.example.internhub.dtos.EditUserDTO;
 import com.example.internhub.entities.User;
@@ -14,7 +15,8 @@ import javax.servlet.http.HttpServletResponse;
 
 @Service
 public interface UserService {
-
+    public ResponseEntity checkIfUsernameAndEmailExisted(CheckedUsernameAndEmailDTO checkedUsernameAndEmailDTO);
+//    public ResponseEntity checkIfEmailExisted(String email);
     public ResponseEntity createUser(CreateUserDTO createUserDTO);
     public ResponseEntity deleteUser(String userId);
     public void deleteUserByUserId(String userId) throws UserNotFoundException;

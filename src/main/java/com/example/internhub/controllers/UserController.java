@@ -1,5 +1,6 @@
 package com.example.internhub.controllers;
 
+import com.example.internhub.dtos.CheckedUsernameAndEmailDTO;
 import com.example.internhub.dtos.CreateUserDTO;
 import com.example.internhub.dtos.EditUserDTO;
 import com.example.internhub.responses.ResponseObject;
@@ -17,6 +18,12 @@ import javax.servlet.http.HttpServletResponse;
 public class UserController {
     @Autowired
     UserService userService;
+
+
+    @GetMapping("/username-email-checking")
+    public ResponseEntity checkIfUsernameAndEmailExisted(@RequestBody CheckedUsernameAndEmailDTO checkedUsernameAndEmailDTO){
+        return userService.checkIfUsernameAndEmailExisted(checkedUsernameAndEmailDTO);
+    }
 
     @PostMapping("")
     public ResponseEntity createUser(@RequestBody CreateUserDTO createUserDTO) {

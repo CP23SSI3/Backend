@@ -24,7 +24,7 @@ public class CreateUserDTO {
     LocalDate dateOfBirth;
     @NotNull(message = "Email is required.")
     @Size(max = 320, message = "Email is too long, 320 characters maximum.")
-    @Email
+    @Email(message = "Unknown email format.")
     String email;
     @NotNull(message = "First name is required.")
     @Size(max = 50, message = "User's firstname is too long, 50 characters maximum.")

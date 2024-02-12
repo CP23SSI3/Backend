@@ -1,5 +1,6 @@
 package com.example.internhub.services;
 
+import com.example.internhub.dtos.CheckedUsernameAndEmailDTO;
 import com.example.internhub.dtos.CreateUserDTO;
 import com.example.internhub.dtos.EditUserDTO;
 import com.example.internhub.dtos.UserPagination;
@@ -37,6 +38,15 @@ public class MySQLUserService implements UserService {
     private ModelMapper modelMapper;
     private PasswordEncoder encoder = new BCryptPasswordEncoder();
 
+
+    @Override
+    public ResponseEntity checkIfUsernameAndEmailExisted(CheckedUsernameAndEmailDTO checkedUsernameAndEmailDTO) {
+        String errorMessage = "";
+        if (isEmailExisted(checkedUsernameAndEmailDTO.getEmail())) errorMessage += "This email has an existed account. ";
+        if (isUsernameExisted(checkedUsernameAndEmailDTO.getUsername())) errorMessage += "This username has an existed account. ";
+        if (errorMessage != "") return new ResponseEntity(new ResponseObject(400, errorMessage, null), null, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity(new ResponseObject(200, "This email and username don't has an existed account.", null), null, HttpStatus.OK);
+    }
     @Override
     public ResponseEntity createUser(CreateUserDTO createUserDTO) {
         try {
@@ -146,6 +156,10 @@ public class MySQLUserService implements UserService {
         }
     }
 
+    private boolean isEmailExisted(String email) {
+        return findUserByEmail(email) != null;
+    }
+
     @Override
     public User getUserById(String userId) throws UserNotFoundException {
         try{
@@ -158,6 +172,10 @@ public class MySQLUserService implements UserService {
     @Override
     public boolean isPasswordMatch(String rawPassword, String encryptedPassword) {
         return encoder.matches(rawPassword, encryptedPassword);
+    }
+
+    private boolean isUsernameExisted(String username) {
+        return findUserByUserName(username) != null;
     }
 
 
