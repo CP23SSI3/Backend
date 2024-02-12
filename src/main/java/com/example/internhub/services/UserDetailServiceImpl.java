@@ -3,6 +3,7 @@ package com.example.internhub.services;
 import com.example.internhub.entities.User;
 import com.example.internhub.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 
+@Primary
 @Service
 public class UserDetailServiceImpl implements UserDetailsService {
 
@@ -26,10 +28,9 @@ public class UserDetailServiceImpl implements UserDetailsService {
             ArrayList<SimpleGrantedAuthority> role = new ArrayList<>();
             role.add(new SimpleGrantedAuthority(user.getRole().toString()));
             UserDetails userDetails = new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), role);
-            System.out.println(userDetails);
             return userDetails;
         } catch (Exception ex) {
-            throw new UsernameNotFoundException("User with inputed data is not existed.");
+            throw new UsernameNotFoundException("User with input data is not existed.");
         }
     }
 }

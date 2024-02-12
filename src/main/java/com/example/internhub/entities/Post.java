@@ -23,9 +23,9 @@ public class Post {
 
     @Column(name = "closedDate")
     private LocalDate closedDate;
-
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "compId", nullable = false)
+
     private Company comp;
 
     @Column(name = "coordinatorName", nullable = false, length = 100)

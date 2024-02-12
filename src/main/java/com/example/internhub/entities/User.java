@@ -6,15 +6,19 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
 @Getter @Setter
 public class User {
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
-    @JoinColumn(name = "addressId", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = true, cascade = CascadeType.ALL)
+    @JoinColumn(name = "addressId", nullable = true)
     private Address address;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = true, cascade = CascadeType.ALL)
@@ -24,11 +28,21 @@ public class User {
     @Column(name = "createdDate", nullable = false)
     private LocalDateTime createdDate;
 
+    @Column(name = "dateOfBirth", nullable = false)
+    private LocalDate dateOfBirth;
+
     @Column(name = "email", length = 320, nullable = false)
     private String email;
 
     @Column(name = "firstname", length = 50, nullable = false)
     private String firstname;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "gender", length = 1)
+    private Gender gender;
+
+    @OneToMany(mappedBy = "user")
+    private Set<Language> languages = new LinkedHashSet<>();
 
     @Column(name = "lastname", length = 50, nullable = false)
     private String lastname;
@@ -54,11 +68,13 @@ public class User {
     @Column(name = "userId", length = 36 ,nullable = false)
     private String userId;
 
+    @Column(name = "userDesc", length = 1500, nullable = false)
+    private String userDesc;
+
     @Column(name = "username", length = 50, unique = true, nullable = false)
     private String username;
 
-//    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-////    @JoinColumn(name = "userId")
-//    private List<UserCompany> userCompanyList;
+    @Column(name = "userProfileKey", length = 100)
+    private String userProfileKey;
 
 }
