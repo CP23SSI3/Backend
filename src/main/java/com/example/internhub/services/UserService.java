@@ -1,6 +1,7 @@
 package com.example.internhub.services;
 
 import com.example.internhub.dtos.CreateUserDTO;
+import com.example.internhub.dtos.EditUserDTO;
 import com.example.internhub.entities.User;
 import com.example.internhub.exception.UserNotFoundException;
 import com.example.internhub.responses.ResponseObject;
@@ -17,6 +18,7 @@ public interface UserService {
     public ResponseEntity createUser(CreateUserDTO createUserDTO);
     public ResponseEntity deleteUser(String userId);
     public void deleteUserByUserId(String userId) throws UserNotFoundException;
+    public ResponseEntity editUserGeneralInformation(String userId, EditUserDTO editUserDTO);
     public String encryptedPassword(String rawPassword);
     public User findUserByUserName(String username);
     public User findUserByEmail(String email);

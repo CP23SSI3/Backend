@@ -1,6 +1,7 @@
 package com.example.internhub.controllers;
 
 import com.example.internhub.dtos.CreateUserDTO;
+import com.example.internhub.dtos.EditUserDTO;
 import com.example.internhub.responses.ResponseObject;
 import com.example.internhub.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,22 @@ public class UserController {
     @Autowired
     UserService userService;
 
+    @PostMapping("")
+    public ResponseEntity createUser(@RequestBody CreateUserDTO createUserDTO) {
+        return userService.createUser(createUserDTO);
+    };
+
+    @DeleteMapping("/{userId}")
+    public ResponseEntity deleteUser(@PathVariable String userId){
+        return userService.deleteUser(userId);
+    }
+
+    @PutMapping("/{userId}")
+    public ResponseEntity editUserGeneralInformation(@PathVariable String userId,
+                                                     @RequestBody EditUserDTO editUserDTO) {
+        return userService.editUserGeneralInformation(userId, editUserDTO);
+    }
+
     @GetMapping("")
     public ResponseEntity getAllUsersPagination(@RequestParam(defaultValue = "0") int page,
                                                 @RequestParam(defaultValue = "10") int pageSize,
@@ -29,16 +46,6 @@ public class UserController {
                                       HttpServletRequest req,
                                       HttpServletResponse res) {
         return userService.getResponseUserById(userId, req, res);
-    }
-
-    @PostMapping("")
-    public ResponseEntity createUser(@RequestBody CreateUserDTO createUserDTO) {
-        return userService.createUser(createUserDTO);
-    };
-
-    @DeleteMapping("/{userId}")
-    public ResponseEntity deleteUser(@PathVariable String userId){
-        return userService.deleteUser(userId);
     }
 
 }
