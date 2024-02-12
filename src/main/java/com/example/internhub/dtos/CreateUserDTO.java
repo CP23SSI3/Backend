@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 @Getter @Setter
 public class CreateUserDTO {
-//    CreateAddressDTO address;
     String compId;
     LocalDateTime createdDate = LocalDateTime.now();
     @NotNull(message = "Date of birth is required.")

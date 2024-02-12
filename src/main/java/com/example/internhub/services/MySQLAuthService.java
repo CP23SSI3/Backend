@@ -90,13 +90,15 @@ public class MySQLAuthService implements AuthService{
         HttpHeaders headers = new HttpHeaders();
         ResponseEntity responseEntity;
         try {
-            User user;
-            if(userLoginDTO.getUsername() != null) user = userService.findUserByUserName(userLoginDTO.getUsername());
-//            else if (userLoginDTO.getEmail() != null) user = userService.findUserByEmail(userLoginDTO.getEmail());
-            else throw new UsernameNotFoundException("User with input data is not existed.");
+            User user = null;
+            System.out.println(userLoginDTO.getUsername());
+            if (userLoginDTO.getUsername() != null) {
+                user = userService.findUserByUsernameOrEmail(userLoginDTO.getUsername());
+            }
+            if (user == null) throw new UsernameNotFoundException("User with input data is not existed.");
             boolean isPasswordMatches = userService.isPasswordMatch(userLoginDTO.getPassword(), user.getPassword());
             if(!isPasswordMatches) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password is incorrect");
-            UserDetails userDetails = userDetailsService.loadUserByUsername(userLoginDTO.getUsername());
+            UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
             AuthenticationSuccessDTO authenticationSuccessDTO = new AuthenticationSuccessDTO(
                     generateAccessToken(userDetails),
                     generateRefreshToken(userDetails),

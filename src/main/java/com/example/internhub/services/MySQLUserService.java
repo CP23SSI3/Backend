@@ -36,58 +36,6 @@ public class MySQLUserService implements UserService {
     private PasswordEncoder encoder = new BCryptPasswordEncoder();
 
     @Override
-    public ResponseEntity getAllUserPagination(int pageNumber, int pageSize,HttpServletResponse res) {
-        Page<User> userPage = userRepository.findAll(PageRequest.of(pageNumber, pageSize));
-        UserPagination userPagination = modelMapper.map(userPage, UserPagination.class);
-        return new ResponseEntity(new ResponseObject(200, "The user's list is successfully sended.",
-                userPagination),
-                null, HttpStatus.OK);
-    }
-
-    @Override
-    public ResponseEntity getResponseUserById(String userId, HttpServletRequest req, HttpServletResponse res) {
-        try {
-            return new ResponseEntity(new ResponseObject(200, "The user's data is already sent.", getUserById(userId)),
-                    null, HttpStatus.OK);
-        } catch (UserNotFoundException ex) {
-            return new ResponseEntity(new ResponseObject(404, ex.getMessage(), null),
-                    null, HttpStatus.NOT_FOUND);
-        } catch (Exception ex) {
-            return new ResponseEntity(new ResponseObject(400, ex.getMessage(), null),
-                    null, HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @Override
-    public User getUserById(String userId) throws UserNotFoundException {
-        try{
-            return userRepository.findById(userId).orElseThrow();
-        } catch (Exception ex) {
-            throw new UserNotFoundException("User id " + userId + " not found.");
-        }
-    }
-
-    @Override
-    public String encryptedPassword(String rawPassword) {
-        return encoder.encode(rawPassword);
-    }
-
-    @Override
-    public boolean isPasswordMatch(String rawPassword, String encryptedPassword) {
-        return encoder.matches(rawPassword, encryptedPassword);
-    }
-
-    @Override
-    public User findUserByUserName(String username) {
-        return userRepository.findByUsername(username);
-    }
-
-    @Override
-    public User findUserByEmail(String email) {
-        return userRepository.findByEmail(email);
-    }
-
-    @Override
     public ResponseEntity createUser(CreateUserDTO createUserDTO) {
         try {
             User user = modelMapper.map(createUserDTO, User.class);
@@ -123,5 +71,65 @@ public class MySQLUserService implements UserService {
         getUserById(userId);
         userRepository.deleteById(userId);
     }
+
+    @Override
+    public String encryptedPassword(String rawPassword) {
+        return encoder.encode(rawPassword);
+    }
+
+    @Override
+    public User findUserByUserName(String username) {
+        return userRepository.findByUsername(username);
+    }
+
+    @Override
+    public User findUserByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    @Override
+    public User findUserByUsernameOrEmail(String usernameOrEmail) {
+        User user = findUserByUserName(usernameOrEmail);
+        if (user == null) user = findUserByEmail(usernameOrEmail);
+        return user;
+    }
+
+    @Override
+    public ResponseEntity getAllUserPagination(int pageNumber, int pageSize,HttpServletResponse res) {
+        Page<User> userPage = userRepository.findAll(PageRequest.of(pageNumber, pageSize));
+        UserPagination userPagination = modelMapper.map(userPage, UserPagination.class);
+        return new ResponseEntity(new ResponseObject(200, "The user's list is successfully sended.",
+                userPagination),
+                null, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity getResponseUserById(String userId, HttpServletRequest req, HttpServletResponse res) {
+        try {
+            return new ResponseEntity(new ResponseObject(200, "The user's data is already sent.", getUserById(userId)),
+                    null, HttpStatus.OK);
+        } catch (UserNotFoundException ex) {
+            return new ResponseEntity(new ResponseObject(404, ex.getMessage(), null),
+                    null, HttpStatus.NOT_FOUND);
+        } catch (Exception ex) {
+            return new ResponseEntity(new ResponseObject(400, ex.getMessage(), null),
+                    null, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @Override
+    public User getUserById(String userId) throws UserNotFoundException {
+        try{
+            return userRepository.findById(userId).orElseThrow();
+        } catch (Exception ex) {
+            throw new UserNotFoundException("User id " + userId + " not found.");
+        }
+    }
+
+    @Override
+    public boolean isPasswordMatch(String rawPassword, String encryptedPassword) {
+        return encoder.matches(rawPassword, encryptedPassword);
+    }
+
 
 }
