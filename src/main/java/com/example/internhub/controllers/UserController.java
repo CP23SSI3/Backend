@@ -1,9 +1,7 @@
 package com.example.internhub.controllers;
 
-import com.example.internhub.dtos.CheckedUsernameAndEmailDTO;
 import com.example.internhub.dtos.CreateUserDTO;
 import com.example.internhub.dtos.EditUserDTO;
-import com.example.internhub.responses.ResponseObject;
 import com.example.internhub.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,8 +19,8 @@ public class UserController {
 
 
     @GetMapping("/username-email-checking")
-    public ResponseEntity checkIfUsernameAndEmailExisted(@RequestBody CheckedUsernameAndEmailDTO checkedUsernameAndEmailDTO){
-        return userService.checkIfUsernameAndEmailExisted(checkedUsernameAndEmailDTO);
+    public ResponseEntity checkIfUsernameAndEmailExisted(@RequestParam String username, @RequestParam String email){
+        return userService.checkIfUsernameAndEmailExisted(username, email);
     }
 
     @PostMapping("")

@@ -1,29 +1,22 @@
 package com.example.internhub.services;
 
-import com.example.internhub.dtos.CheckedUsernameAndEmailDTO;
 import com.example.internhub.dtos.CreateUserDTO;
 import com.example.internhub.dtos.EditUserDTO;
 import com.example.internhub.dtos.UserPagination;
 import com.example.internhub.entities.User;
-import com.example.internhub.entities.UserPrinciple;
 import com.example.internhub.exception.EmailExistedException;
 import com.example.internhub.exception.UserNotFoundException;
 import com.example.internhub.exception.UsernameExistedException;
 import com.example.internhub.repositories.UserRepository;
 import com.example.internhub.responses.ResponseObject;
-import org.hibernate.ObjectNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,10 +33,10 @@ public class MySQLUserService implements UserService {
 
 
     @Override
-    public ResponseEntity checkIfUsernameAndEmailExisted(CheckedUsernameAndEmailDTO checkedUsernameAndEmailDTO) {
+    public ResponseEntity checkIfUsernameAndEmailExisted(String username, String email) {
         String errorMessage = "";
-        if (isEmailExisted(checkedUsernameAndEmailDTO.getEmail())) errorMessage += "This email has an existed account. ";
-        if (isUsernameExisted(checkedUsernameAndEmailDTO.getUsername())) errorMessage += "This username has an existed account. ";
+        if (isUsernameExisted(username)) errorMessage += "This username has an existed account. ";
+        if (isEmailExisted(email)) errorMessage += "This email has an existed account. ";
         if (errorMessage != "") return new ResponseEntity(new ResponseObject(400, errorMessage, null), null, HttpStatus.BAD_REQUEST);
         return new ResponseEntity(new ResponseObject(200, "This email and username don't has an existed account.", null), null, HttpStatus.OK);
     }

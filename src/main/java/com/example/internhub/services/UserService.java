@@ -1,12 +1,9 @@
 package com.example.internhub.services;
 
-import com.example.internhub.dtos.CheckedUsernameAndEmailDTO;
 import com.example.internhub.dtos.CreateUserDTO;
 import com.example.internhub.dtos.EditUserDTO;
 import com.example.internhub.entities.User;
 import com.example.internhub.exception.UserNotFoundException;
-import com.example.internhub.responses.ResponseObject;
-import com.example.internhub.responses.ResponseObjectList;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 @Service
 public interface UserService {
-    public ResponseEntity checkIfUsernameAndEmailExisted(CheckedUsernameAndEmailDTO checkedUsernameAndEmailDTO);
+    public ResponseEntity checkIfUsernameAndEmailExisted(String username, String email);
 //    public ResponseEntity checkIfEmailExisted(String email);
     public ResponseEntity createUser(CreateUserDTO createUserDTO);
     public ResponseEntity deleteUser(String userId);
