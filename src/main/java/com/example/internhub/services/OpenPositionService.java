@@ -13,7 +13,7 @@ import java.util.List;
 
 @Service
 public interface OpenPositionService {
-    public ResponseEntity getAllOpenPositions();
     public void createOpenPosition(CreateOpenPositionDTO createOpenPositionDTO);
+    public ResponseEntity getAllOpenPositions();
     public void updateOpenPosition(Post post, List<OpenPosition> updateOpenPositionList) throws EmptyPositionListException;
 }

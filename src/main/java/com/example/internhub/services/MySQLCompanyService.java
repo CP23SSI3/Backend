@@ -7,6 +7,8 @@ import com.example.internhub.responses.ResponseObject;
 import com.example.internhub.responses.ResponseObjectList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -24,12 +26,36 @@ public class MySQLCompanyService implements CompanyService{
     private AddressService addressService;
 
     @Override
-    public ResponseEntity getAllCompanies() {
+    public ResponseEntity getAllCompanies(int pageNumber, int pageSize) {
+        Page<Company> companyPage = companyRepository.findAll(PageRequest.of(pageNumber, pageSize));
         return new ResponseEntity(new ResponseObjectList(200,
                 "Company's list is successfully sent.",
                 companyRepository.findAll()),
                 null,
                 HttpStatus.OK);
+    }
+
+    @Override
+    public Company getCompany(Company company){
+        try {
+            return new Company(addressService.getAddress(company.getAddress()),
+                    company.getCompDesc(),
+                    company.getCompId(), company.getCompLogoKey(),
+                    company.getCompName(), company.getCompUrl(),
+                    company.getCreatedDate(), company.getDefaultWelfare(),
+                    company.getLastActive(), company.getLastUpdate());
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @Override
+    public Company getCompanyByCompanyId(String companyId) throws CompNotFoundException {
+        try {
+            return companyRepository.findById(companyId).orElseThrow();
+        } catch (Exception e) {
+            throw new CompNotFoundException(companyId);
+        }
     }
 
     @Override
@@ -52,27 +78,5 @@ public class MySQLCompanyService implements CompanyService{
         }
     }
 
-    @Override
-    public Company getCompanyByCompanyId(String companyId) throws CompNotFoundException {
-        try {
-            return companyRepository.findById(companyId).orElseThrow();
-        } catch (Exception e) {
-            throw new CompNotFoundException(companyId);
-        }
-    }
-
-    @Override
-    public Company getCompany(Company company){
-        try {
-            return new Company(addressService.getAddress(company.getAddress()),
-                    company.getCompDesc(),
-                    company.getCompId(), company.getCompLogoKey(),
-                    company.getCompName(), company.getCompUrl(),
-                    company.getCreatedDate(), company.getDefaultWelfare(),
-                    company.getLastActive(), company.getLastUpdate());
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
-    }
 
 }

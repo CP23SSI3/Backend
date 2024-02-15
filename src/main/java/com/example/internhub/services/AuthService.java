@@ -11,14 +11,14 @@ import java.util.Date;
 
 @Service
 public interface AuthService {
-    public Date generateAccessTokenExpiredDate();
-    public Date generateRefreshTokenExpiredDate();
+    public DecodedJWT decodeToken(String token);
     public String generateAccessToken(UserDetails userDetails);
+    public Date generateAccessTokenExpiredDate();
     public String generateRefreshToken(UserDetails userDetails);
-    public boolean validateToken(String token, UserDetails userDetails);
+    public Date generateRefreshTokenExpiredDate();
+    public boolean isPasswordMatch(String rawPassword, User user);
     public boolean isTokenExpired(String token, UserDetails userDetails);
     public ResponseEntity logIn(UserLoginDTO userLoginDTO);
-    public boolean isPasswordMatch(String rawPassword, User user);
-    public DecodedJWT decodeToken(String token);
+    public boolean validateToken(String token, UserDetails userDetails);
 }
 

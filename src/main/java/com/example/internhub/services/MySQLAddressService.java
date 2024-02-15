@@ -27,11 +27,34 @@ public class MySQLAddressService implements AddressService{
     @Autowired
     private AddressRepository addressRepository;
 
+
     @Override
-    public ResponseEntity getAllAddresses() {
-        return new ResponseEntity(new ResponseObjectList(200, "Address's list is successfully sent.", addressRepository.findAll()),
-                null,
-                HttpStatus.OK);
+    public Address createAddress(CreateAddressDTO createAddressPostDTO) {
+        Address address = modelMapper.map(createAddressPostDTO, Address.class);
+        addressRepository.save(address);
+        return address;
+    }
+
+    @Override
+    public Address getAddress(Address address) {
+        try {
+            return new Address(address.getAddressId(), address.getArea(),
+                    address.getCity(), address.getCountry(),
+                    address.getDistrict(), address.getLatitude(), address.getLongitude(),
+                    address.getPostalCode(),
+                    address.getSubDistrict());
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @Override
+    public Address getAddressByAddressId(String addressId) throws AddressNotFoundException {
+        try {
+            return addressRepository.findById(addressId).orElseThrow();
+        } catch (Exception ex) {
+            throw new AddressNotFoundException(addressId);
+        }
     }
 
     @Override
@@ -48,32 +71,10 @@ public class MySQLAddressService implements AddressService{
     }
 
     @Override
-    public Address createAddress(CreateAddressDTO createAddressPostDTO) {
-        Address address = modelMapper.map(createAddressPostDTO, Address.class);
-        addressRepository.save(address);
-        return address;
-    }
-
-    @Override
-    public Address getAddressByAddressId(String addressId) throws AddressNotFoundException {
-        try {
-            return addressRepository.findById(addressId).orElseThrow();
-        } catch (Exception ex) {
-            throw new AddressNotFoundException(addressId);
-        }
-    }
-
-    @Override
-    public Address getAddress(Address address) {
-        try {
-            return new Address(address.getAddressId(), address.getArea(),
-                    address.getCity(), address.getCountry(),
-                    address.getDistrict(), address.getLatitude(), address.getLongitude(),
-                    address.getPostalCode(),
-                    address.getSubDistrict());
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity getAllAddresses() {
+        return new ResponseEntity(new ResponseObjectList(200, "Address's list is successfully sent.", addressRepository.findAll()),
+                null,
+                HttpStatus.OK);
     }
 
     @Override
