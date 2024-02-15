@@ -21,6 +21,22 @@ public class PostController {
     @Autowired
     private PostService postService;
 
+    @PostMapping("")
+    public ResponseEntity createPost(@Valid @RequestBody CreatePostDTO post, HttpServletResponse res){
+        return postService.createPost(post, res);
+    }
+
+    @DeleteMapping("/{postId}")
+    public ResponseEntity deletePost(@PathVariable String postId, HttpServletRequest req, HttpServletResponse res) {
+        return postService.deletePost(postId, req, res);
+    }
+
+    @PutMapping("/{postId}")
+    public ResponseEntity editPost(@PathVariable String postId, @RequestBody @Valid EditPostDTO editPostDTO
+            , HttpServletRequest req, HttpServletResponse res) throws IllegalAccessException {
+        return postService.editPost(postId, editPostDTO, req, res);
+    }
+
     @GetMapping("")
     public ResponseEntity getAllPosts(@RequestParam(defaultValue = "0") int page,
                                       @RequestParam(defaultValue = "10") int pageSize,
@@ -38,21 +54,5 @@ public class PostController {
     @GetMapping("/{postId}")
     public ResponseEntity getPostById(@PathVariable String postId, HttpServletResponse res) {
         return postService.getPostById(postId, res);
-    }
-
-    @PostMapping("")
-    public ResponseEntity createPost(@Valid @RequestBody CreatePostDTO post, HttpServletResponse res){
-        return postService.createPost(post, res);
-    }
-
-    @PutMapping("/{postId}")
-    public ResponseEntity editPost(@PathVariable String postId, @RequestBody @Valid EditPostDTO editPostDTO
-            , HttpServletRequest req, HttpServletResponse res) throws IllegalAccessException {
-        return postService.editPost(postId, editPostDTO, req, res);
-    }
-
-    @DeleteMapping("/{postId}")
-    public ResponseEntity deletePost(@PathVariable String postId, HttpServletRequest req, HttpServletResponse res) {
-        return postService.deletePost(postId, req, res);
     }
 }

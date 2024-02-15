@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -27,7 +28,7 @@ public class MySQLCompanyService implements CompanyService{
 
     @Override
     public ResponseEntity getAllCompanies(int pageNumber, int pageSize) {
-        Page<Company> companyPage = companyRepository.findAll(PageRequest.of(pageNumber, pageSize));
+        Page<Company> companyPage = companyRepository.findAll(PageRequest.of(pageNumber, pageSize, Sort.by("lastActive").descending()));
         return new ResponseEntity(new ResponseObjectList(200,
                 "Company's list is successfully sent.",
                 companyRepository.findAll()),
