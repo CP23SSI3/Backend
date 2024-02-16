@@ -1,6 +1,7 @@
 package com.example.internhub.entities;
 
 import antlr.collections.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,6 +31,10 @@ public class User {
 
     @Column(name = "dateOfBirth", nullable = false)
     private LocalDate dateOfBirth;
+
+//    @JsonIgnore
+    @OneToMany(mappedBy = "user")
+    private Set<Education> educations = new LinkedHashSet<>();
 
     @Column(name = "email", length = 320, nullable = false)
     private String email;

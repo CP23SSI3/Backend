@@ -17,8 +17,6 @@ public class Language {
     @Column(name = "languageName", nullable = false)
     private String languageName;
 
-
-//    @Column(name = "userId", nullable = false)
     @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.ALL})
     @JoinColumn(name = "userId")
