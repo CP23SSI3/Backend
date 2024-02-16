@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
@@ -16,6 +17,7 @@ import java.util.UUID;
 @Getter @Setter
 public class CreateUserDTO {
     @NotNull(message = "Address is required.")
+            @Valid
     CreateAddressDTO address;
     String compId;
     LocalDateTime createdDate = LocalDateTime.now();

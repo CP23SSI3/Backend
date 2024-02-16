@@ -22,6 +22,7 @@ import java.util.UUID;
 @Getter @Setter
 public class CreatePostDTO {
     @NotNull(message = "Address is required.")
+    @Valid
     CreateAddressDTO address;
     @Future(message = "Closed date must be in future.")
     LocalDate closedDate;
@@ -42,6 +43,7 @@ public class CreatePostDTO {
     String enrolling;
     @NotNull(message = "At least one open position must be provided.")
     @NotEmpty(message = "Post must have at least one open position.")
+    @Valid
     List<CreateOpenPositionDTO> openPositionList;
     String postId = UUID.randomUUID().toString();
     @NotNull(message = "Post's description is required.")

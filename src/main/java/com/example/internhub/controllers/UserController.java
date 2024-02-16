@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -24,7 +25,7 @@ public class UserController {
     }
 
     @PostMapping("")
-    public ResponseEntity createUser(@RequestBody CreateUserDTO createUserDTO) {
+    public ResponseEntity createUser(@Valid @RequestBody CreateUserDTO createUserDTO) {
         return userService.createUser(createUserDTO);
     };
 
@@ -35,7 +36,7 @@ public class UserController {
 
     @PutMapping("/{userId}")
     public ResponseEntity editUserGeneralInformation(@PathVariable String userId,
-                                                     @RequestBody EditUserDTO editUserDTO) {
+                                                     @Valid @RequestBody EditUserDTO editUserDTO) {
         return userService.editUserGeneralInformation(userId, editUserDTO);
     }
 
