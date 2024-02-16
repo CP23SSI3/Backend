@@ -1,6 +1,7 @@
 package com.example.internhub.services;
 
 import com.example.internhub.dtos.CreateAddressDTO;
+import com.example.internhub.dtos.EditAddressDTO;
 import com.example.internhub.entities.Address;
 import com.example.internhub.exception.AddressNotFoundException;
 import com.example.internhub.repositories.AddressRepository;
@@ -33,6 +34,24 @@ public class MySQLAddressService implements AddressService{
         Address address = modelMapper.map(createAddressPostDTO, Address.class);
         addressRepository.save(address);
         return address;
+    }
+
+    @Override
+    public ResponseEntity editAddress(String addressId, EditAddressDTO editAddressDTO) {
+        try {
+            Address oldAddress = getAddressByAddressId(addressId);
+            Address newAddress = modelMapper.map(editAddressDTO, Address.class);
+            updateAddress(oldAddress, newAddress);
+            addressRepository.save(oldAddress);
+            return new ResponseEntity(new ResponseObject(200, "Edit address id " + addressId + " successfully.", null),
+                    null, HttpStatus.OK);
+        } catch (AddressNotFoundException ex) {
+            return new ResponseEntity(new ResponseObject(404, ex.getMessage(), null),
+                    null, HttpStatus.NOT_FOUND);
+        } catch (Exception ex) {
+            return new ResponseEntity(new ResponseObject(400, ex.getMessage(), null),
+                    null, HttpStatus.BAD_REQUEST);
+        }
     }
 
     @Override
