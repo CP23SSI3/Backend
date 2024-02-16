@@ -1,10 +1,12 @@
 package com.example.internhub.services;
 
+import com.example.internhub.dtos.CompanyPagination;
 import com.example.internhub.entities.Company;
 import com.example.internhub.exception.CompNotFoundException;
 import com.example.internhub.repositories.CompanyRepository;
 import com.example.internhub.responses.ResponseObject;
 import com.example.internhub.responses.ResponseObjectList;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
@@ -22,16 +24,17 @@ public class MySQLCompanyService implements CompanyService{
 
     @Autowired
     private CompanyRepository companyRepository;
-
     @Autowired
     private AddressService addressService;
+    @Autowired
+    private ModelMapper modelMapper;
 
     @Override
     public ResponseEntity getAllCompanies(int pageNumber, int pageSize) {
         Page<Company> companyPage = companyRepository.findAll(PageRequest.of(pageNumber, pageSize, Sort.by("lastActive").descending()));
-        return new ResponseEntity(new ResponseObjectList(200,
+        return new ResponseEntity(new ResponseObject(200,
                 "Company's list is successfully sent.",
-                companyRepository.findAll()),
+                modelMapper.map(companyPage, CompanyPagination.class)),
                 null,
                 HttpStatus.OK);
     }
