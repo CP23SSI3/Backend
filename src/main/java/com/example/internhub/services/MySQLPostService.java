@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -56,6 +57,123 @@ public class MySQLPostService implements PostService {
     @Value("${convert.day.to.minute}")
     private long convertDayToMinute;
     Timer timer = new Timer();
+
+
+    @Override
+    public ResponseEntity createPost(CreatePostDTO createPostDTO, HttpServletResponse res) {
+        try {
+            Post post = modelMapper.map(createPostDTO, Post.class);
+            if (post.getOpenPositionList().size() == 0) {
+                throw new EmptyPositionListException();
+            }
+            LocalDateTime now = LocalDateTime.now();
+            post.setCreatedDate(now);
+            post.setLastUpdateDate(now);
+            LocalDate closedDate = post.getClosedDate();
+            long milliSecondsBeforeClosed = (closedDate == null) ? 0 : abs((closedDate.atStartOfDay().plusDays(1)).until(LocalDateTime.now(), ChronoUnit.MILLIS))/convertDayToMinute;
+            long milliSecondsBeforeNearlyClosed = milliSecondsBeforeClosed - milliSecondsBeforeClosedPost;
+            if(closedDate == null) {
+                post.alwaysOpenedPost();
+            } else if (milliSecondsBeforeNearlyClosed > 0) {
+                post.openedPost();
+            } else {post.nearlyClosedPost();}
+            Company company = companyService.getCompanyByCompanyId(post.getComp().getCompId());
+            post.setComp(companyService.getCompany(company));
+            List<OpenPosition> openPositionList = post.getOpenPositionList();
+            post.setOpenPositionList(new ArrayList<>());
+            for (OpenPosition openPosition : openPositionList) {
+                post.addOpenPosition(openPosition);
+            }
+            List<PostPositionTag> postPositionTagList = createPostDTO.getPostTagList();
+            post.setPostTagList(new ArrayList<>());
+            for (PostPositionTag tag : postPositionTagList) {
+                post.addPostTag(tag);
+            }
+            postRepository.save(post);
+            TimerTask nearlyClosedPostTimerTask = new TimerTask() {
+                @Override
+                public void run() {
+                    post.nearlyClosedPost();
+                    postRepository.save(post);
+                }
+            };
+            TimerTask closedPostTimerTask =  new TimerTask() {
+                @Override
+                public void run() {
+                    post.closedPost();
+                    postRepository.save(post);
+                }
+            };
+            if (milliSecondsBeforeClosed > 0) timer.schedule(closedPostTimerTask, milliSecondsBeforeClosed);
+            if (milliSecondsBeforeNearlyClosed > 0) timer.schedule(nearlyClosedPostTimerTask, milliSecondsBeforeNearlyClosed);
+            return new ResponseEntity(new ResponseObject(200, "Create post successfully.", post),
+                    null, HttpStatus.OK);
+        } catch (EmptyPositionListException ex) {
+            return new ResponseEntity(new ResponseObject(400, ex.getMessage(), null),
+                    null, HttpStatus.BAD_REQUEST);
+        } catch (CompNotFoundException ex) {
+            return new ResponseEntity(new ResponseObject(404, ex.getMessage(), null),
+                    null, HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity(new ResponseObject(400, e.getMessage(), null),
+                    null, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @Override
+    public ResponseEntity deletePost(String postId, HttpServletRequest req, HttpServletResponse res) {
+        try {
+            getPostByPostId(postId);
+            postRepository.deleteById(postId);
+            return new ResponseEntity(new ResponseObject(200, "Delete post id " + postId + " successfully", null),
+                    null, HttpStatus.OK);
+        } catch (PostNotFoundException ex) {
+            return new ResponseEntity(new ResponseObject(404, ex.getMessage(), null),
+                    null, HttpStatus.NOT_FOUND);
+        } catch (Exception ex) {
+            return new ResponseEntity(new ResponseObject(400, ex.getMessage(), null),
+                    null, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @Override
+    public ResponseEntity editPost(String postId, EditPostDTO editPostDTO, HttpServletRequest req, HttpServletResponse res) throws IllegalAccessException {
+        try {
+            Post post = getPostByPostId(postId);
+            Post editPost = modelMapper.map(editPostDTO, Post.class);
+            post.setClosedDate(editPost.getClosedDate());
+            post.setCoordinatorName(editPost.getCoordinatorName());
+            post.setDocuments(editPostDTO.getDocuments());
+            post.setLastUpdateDate(LocalDateTime.now());
+            post.setEmail(editPost.getEmail());
+            post.setEnrolling(editPost.getEnrolling());
+            post.setPostDesc(editPost.getPostDesc());
+            post.setPostUrl(editPost.getPostUrl());
+            post.setPostWelfare(editPost.getPostWelfare());
+            post.setTel(editPost.getTel());
+            post.setTitle(editPost.getTitle());
+            post.setWorkStartTime(editPost.getWorkStartTime());
+            post.setWorkEndTime(editPost.getWorkEndTime());
+            post.setWorkDay(editPostDTO.getWorkDay());
+            post.setWorkType(editPost.getWorkType());
+            addressService.updateAddress(post.getAddress(), editPost.getAddress());
+            openPositionService.updateOpenPosition(post, editPost.getOpenPositionList());
+            postPositionTagService.updatePostPositionTag(post, editPost.getPostTagListObject());
+            postRepository.save(post);
+            return new ResponseEntity(new ResponseObject(200, "Edit post id " + postId + " successful.", post),
+                    null, HttpStatus.OK);
+        } catch (PostNotFoundException ex) {
+            return new ResponseEntity(new ResponseObject(404, ex.getMessage(), null),
+                    null, HttpStatus.NOT_FOUND);
+        } catch (EmptyPositionListException ex) {
+            return new ResponseEntity(new ResponseObject(400, ex.getMessage(), null),
+                    null, HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity(new ResponseObject(400, e.getMessage(), null),
+                    null, HttpStatus.BAD_REQUEST);
+        }
+    }
+
 
     @Override
     public List<Post> getAllPost() {
@@ -124,121 +242,6 @@ public class MySQLPostService implements PostService {
             return postRepository.findById(postId).orElseThrow();
         } catch (Exception e) {
             throw new PostNotFoundException(postId);
-        }
-    }
-
-    @Override
-    public ResponseEntity createPost(CreatePostDTO createPostDTO, HttpServletResponse res) {
-        try {
-            Post post = modelMapper.map(createPostDTO, Post.class);
-            if (post.getOpenPositionList().size() == 0) {
-                throw new EmptyPositionListException();
-            }
-            LocalDateTime now = LocalDateTime.now();
-            post.setCreatedDate(now);
-            post.setLastUpdateDate(now);
-            LocalDate closedDate = post.getClosedDate();
-            long milliSecondsBeforeClosed = (closedDate == null) ? 0 : abs((closedDate.atStartOfDay().plusDays(1)).until(LocalDateTime.now(), ChronoUnit.MILLIS))/convertDayToMinute;
-            long milliSecondsBeforeNearlyClosed = milliSecondsBeforeClosed - milliSecondsBeforeClosedPost;
-            if(closedDate == null) {
-                post.alwaysOpenedPost();
-            } else if (milliSecondsBeforeNearlyClosed > 0) {
-                post.openedPost();
-            } else {post.nearlyClosedPost();}
-            Company company = companyService.getCompanyByCompanyId(post.getComp().getCompId());
-            post.setComp(companyService.getCompany(company));
-            List<OpenPosition> openPositionList = post.getOpenPositionList();
-            post.setOpenPositionList(new ArrayList<>());
-            for (OpenPosition openPosition : openPositionList) {
-                post.addOpenPosition(openPosition);
-            }
-            List<PostPositionTag> postPositionTagList = createPostDTO.getPostTagList();
-            post.setPostTagList(new ArrayList<>());
-            for (PostPositionTag tag : postPositionTagList) {
-                post.addPostTag(tag);
-            }
-            postRepository.save(post);
-            TimerTask nearlyClosedPostTimerTask = new TimerTask() {
-                @Override
-                public void run() {
-                    post.nearlyClosedPost();
-                    postRepository.save(post);
-                }
-            };
-            TimerTask closedPostTimerTask =  new TimerTask() {
-                @Override
-                public void run() {
-                    post.closedPost();
-                    postRepository.save(post);
-                }
-            };
-            if (milliSecondsBeforeClosed > 0) timer.schedule(closedPostTimerTask, milliSecondsBeforeClosed);
-            if (milliSecondsBeforeNearlyClosed > 0) timer.schedule(nearlyClosedPostTimerTask, milliSecondsBeforeNearlyClosed);
-            return new ResponseEntity(new ResponseObject(200, "Create post successfully.", post),
-                    null, HttpStatus.OK);
-        } catch (EmptyPositionListException ex) {
-            return new ResponseEntity(new ResponseObject(400, ex.getMessage(), null),
-                    null, HttpStatus.BAD_REQUEST);
-        } catch (CompNotFoundException ex) {
-            return new ResponseEntity(new ResponseObject(404, ex.getMessage(), null),
-                    null, HttpStatus.NOT_FOUND);
-        } catch (Exception e) {
-            return new ResponseEntity(new ResponseObject(400, e.getMessage(), null),
-                    null, HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @Override
-    public ResponseEntity editPost(String postId, EditPostDTO editPostDTO, HttpServletRequest req, HttpServletResponse res) throws IllegalAccessException {
-        try {
-            Post post = getPostByPostId(postId);
-            Post editPost = modelMapper.map(editPostDTO, Post.class);
-            post.setClosedDate(editPost.getClosedDate());
-            post.setCoordinatorName(editPost.getCoordinatorName());
-            post.setDocuments(editPostDTO.getDocuments());
-            post.setLastUpdateDate(LocalDateTime.now());
-            post.setEmail(editPost.getEmail());
-            post.setEnrolling(editPost.getEnrolling());
-            post.setPostDesc(editPost.getPostDesc());
-            post.setPostUrl(editPost.getPostUrl());
-            post.setPostWelfare(editPost.getPostWelfare());
-            post.setTel(editPost.getTel());
-            post.setTitle(editPost.getTitle());
-            post.setWorkStartTime(editPost.getWorkStartTime());
-            post.setWorkEndTime(editPost.getWorkEndTime());
-            post.setWorkDay(editPostDTO.getWorkDay());
-            post.setWorkType(editPost.getWorkType());
-            addressService.updateAddress(post.getAddress(), editPost.getAddress());
-            openPositionService.updateOpenPosition(post, editPost.getOpenPositionList());
-            postPositionTagService.updatePostPositionTag(post, editPost.getPostTagListObject());
-            postRepository.save(post);
-            return new ResponseEntity(new ResponseObject(200, "Edit post id " + postId + " successful.", post),
-                    null, HttpStatus.OK);
-        } catch (PostNotFoundException ex) {
-            return new ResponseEntity(new ResponseObject(404, ex.getMessage(), null),
-                    null, HttpStatus.NOT_FOUND);
-        } catch (EmptyPositionListException ex) {
-            return new ResponseEntity(new ResponseObject(400, ex.getMessage(), null),
-                    null, HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            return new ResponseEntity(new ResponseObject(400, e.getMessage(), null),
-                    null, HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @Override
-    public ResponseEntity deletePost(String postId, HttpServletRequest req, HttpServletResponse res) {
-        try {
-            getPostByPostId(postId);
-            postRepository.deleteById(postId);
-            return new ResponseEntity(new ResponseObject(200, "Delete post id " + postId + " successfully", null),
-                    null, HttpStatus.OK);
-        } catch (PostNotFoundException ex) {
-            return new ResponseEntity(new ResponseObject(404, ex.getMessage(), null),
-                    null, HttpStatus.NOT_FOUND);
-        } catch (Exception ex) {
-            return new ResponseEntity(new ResponseObject(400, ex.getMessage(), null),
-                    null, HttpStatus.BAD_REQUEST);
         }
     }
 

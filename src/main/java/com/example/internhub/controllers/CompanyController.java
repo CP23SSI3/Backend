@@ -19,8 +19,9 @@ public class CompanyController {
     private CompanyService companyService;
 
     @GetMapping("")
-    public ResponseEntity getAllCompanies(){
-        return companyService.getAllCompanies();
+    public ResponseEntity getAllCompanies(@RequestParam int pageNumber,
+                                          @RequestParam int pageSize){
+        return companyService.getAllCompanies(pageNumber, pageSize);
     }
 
     @GetMapping("/{compId}")

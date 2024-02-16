@@ -14,8 +14,8 @@ import java.util.List;
 
 @Service
 public interface CompanyService {
-    public ResponseEntity getAllCompanies();
-    public ResponseEntity getCompanyById(String companyId, HttpServletResponse res);
-    public Company getCompanyByCompanyId(String companyId) throws CompNotFoundException;
+    public ResponseEntity getAllCompanies(int pageNumber, int pageSize);
     public Company getCompany(Company company);
+    public Company getCompanyByCompanyId(String companyId) throws CompNotFoundException;
+    public ResponseEntity getCompanyById(String companyId, HttpServletResponse res);
 }

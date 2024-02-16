@@ -27,14 +27,6 @@ public class MySQLOpenPositionService implements OpenPositionService {
     private OpenPositionRepository openPositionRepository;
 
     @Override
-    public ResponseEntity getAllOpenPositions() {
-        return new ResponseEntity(new ResponseObjectList(200,
-                "Open position's list is successfully sent.",
-                openPositionRepository.findAll()),
-                null, HttpStatus.OK);
-    }
-
-    @Override
     public void createOpenPosition(CreateOpenPositionDTO createOpenPositionDTO) {
         try {
             OpenPosition openPosition = modelMapper.map(createOpenPositionDTO, OpenPosition.class);
@@ -44,6 +36,13 @@ public class MySQLOpenPositionService implements OpenPositionService {
         }
     }
 
+    @Override
+    public ResponseEntity getAllOpenPositions() {
+        return new ResponseEntity(new ResponseObjectList(200,
+                "Open position's list is successfully sent.",
+                openPositionRepository.findAll()),
+                null, HttpStatus.OK);
+    }
 
     @Override
     public void updateOpenPosition(Post post, List<OpenPosition> updateOpenPositionList) throws EmptyPositionListException {

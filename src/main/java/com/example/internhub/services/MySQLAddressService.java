@@ -1,6 +1,7 @@
 package com.example.internhub.services;
 
 import com.example.internhub.dtos.CreateAddressDTO;
+import com.example.internhub.dtos.EditAddressDTO;
 import com.example.internhub.entities.Address;
 import com.example.internhub.exception.AddressNotFoundException;
 import com.example.internhub.repositories.AddressRepository;
@@ -27,11 +28,52 @@ public class MySQLAddressService implements AddressService{
     @Autowired
     private AddressRepository addressRepository;
 
+
     @Override
-    public ResponseEntity getAllAddresses() {
-        return new ResponseEntity(new ResponseObjectList(200, "Address's list is successfully sent.", addressRepository.findAll()),
-                null,
-                HttpStatus.OK);
+    public Address createAddress(CreateAddressDTO createAddressPostDTO) {
+        Address address = modelMapper.map(createAddressPostDTO, Address.class);
+        addressRepository.save(address);
+        return address;
+    }
+
+    @Override
+    public ResponseEntity editAddress(String addressId, EditAddressDTO editAddressDTO) {
+        try {
+            Address oldAddress = getAddressByAddressId(addressId);
+            Address newAddress = modelMapper.map(editAddressDTO, Address.class);
+            updateAddress(oldAddress, newAddress);
+            addressRepository.save(oldAddress);
+            return new ResponseEntity(new ResponseObject(200, "Edit address id " + addressId + " successfully.", null),
+                    null, HttpStatus.OK);
+        } catch (AddressNotFoundException ex) {
+            return new ResponseEntity(new ResponseObject(404, ex.getMessage(), null),
+                    null, HttpStatus.NOT_FOUND);
+        } catch (Exception ex) {
+            return new ResponseEntity(new ResponseObject(400, ex.getMessage(), null),
+                    null, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @Override
+    public Address getAddress(Address address) {
+        try {
+            return new Address(address.getAddressId(), address.getArea(),
+                    address.getCity(), address.getCountry(),
+                    address.getDistrict(), address.getLatitude(), address.getLongitude(),
+                    address.getPostalCode(),
+                    address.getSubDistrict());
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @Override
+    public Address getAddressByAddressId(String addressId) throws AddressNotFoundException {
+        try {
+            return addressRepository.findById(addressId).orElseThrow();
+        } catch (Exception ex) {
+            throw new AddressNotFoundException(addressId);
+        }
     }
 
     @Override
@@ -48,32 +90,10 @@ public class MySQLAddressService implements AddressService{
     }
 
     @Override
-    public Address createAddress(CreateAddressDTO createAddressPostDTO) {
-        Address address = modelMapper.map(createAddressPostDTO, Address.class);
-        addressRepository.save(address);
-        return address;
-    }
-
-    @Override
-    public Address getAddressByAddressId(String addressId) throws AddressNotFoundException {
-        try {
-            return addressRepository.findById(addressId).orElseThrow();
-        } catch (Exception ex) {
-            throw new AddressNotFoundException(addressId);
-        }
-    }
-
-    @Override
-    public Address getAddress(Address address) {
-        try {
-            return new Address(address.getAddressId(), address.getArea(),
-                    address.getCity(), address.getCountry(),
-                    address.getDistrict(), address.getLatitude(), address.getLongitude(),
-                    address.getPostalCode(),
-                    address.getSubDistrict());
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity getAllAddresses() {
+        return new ResponseEntity(new ResponseObjectList(200, "Address's list is successfully sent.", addressRepository.findAll()),
+                null,
+                HttpStatus.OK);
     }
 
     @Override

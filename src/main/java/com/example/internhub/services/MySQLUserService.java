@@ -13,6 +13,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -128,7 +129,7 @@ public class MySQLUserService implements UserService {
 
     @Override
     public ResponseEntity getAllUserPagination(int pageNumber, int pageSize,HttpServletResponse res) {
-        Page<User> userPage = userRepository.findAll(PageRequest.of(pageNumber, pageSize));
+        Page<User> userPage = userRepository.findAll(PageRequest.of(pageNumber, pageSize, Sort.by("lastActive").descending()));
         UserPagination userPagination = modelMapper.map(userPage, UserPagination.class);
         return new ResponseEntity(new ResponseObject(200, "The user's list is successfully sended.",
                 userPagination),

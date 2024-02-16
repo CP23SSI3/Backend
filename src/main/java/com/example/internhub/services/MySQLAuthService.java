@@ -43,13 +43,9 @@ public class MySQLAuthService implements AuthService{
 //    Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());
 
     @Override
-    public Date generateAccessTokenExpiredDate() {
-        return new Date(System.currentTimeMillis() + accessTokenMilliSecondsBeforeExpired);
-    }
-
-    @Override
-    public Date generateRefreshTokenExpiredDate() {
-        return new Date(System.currentTimeMillis() + refreshTokenMilliSecondsBeforeExpired);
+    public DecodedJWT decodeToken(String token) {
+        Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());
+        return JWT.require(algorithm).build().verify(token);
     }
 
     @Override
@@ -63,6 +59,11 @@ public class MySQLAuthService implements AuthService{
     }
 
     @Override
+    public Date generateAccessTokenExpiredDate() {
+        return new Date(System.currentTimeMillis() + accessTokenMilliSecondsBeforeExpired);
+    }
+
+    @Override
     public String generateRefreshToken(UserDetails userDetails) {
         Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());
         return JWT.create()
@@ -73,10 +74,13 @@ public class MySQLAuthService implements AuthService{
     }
 
     @Override
-    public boolean validateToken(String token, UserDetails userDetails) {
-        DecodedJWT decodeJwt = decodeToken(token);
-        return decodeJwt.getSubject().equals(userDetails.getUsername()) &&
-                !isTokenExpired(token, userDetails);
+    public Date generateRefreshTokenExpiredDate() {
+        return new Date(System.currentTimeMillis() + refreshTokenMilliSecondsBeforeExpired);
+    }
+
+    @Override
+    public boolean isPasswordMatch(String rawPassword, User user) {
+        return encoder.matches(rawPassword, user.getPassword());
     }
 
     @Override
@@ -118,13 +122,10 @@ public class MySQLAuthService implements AuthService{
     }
 
     @Override
-    public boolean isPasswordMatch(String rawPassword, User user) {
-        return encoder.matches(rawPassword, user.getPassword());
+    public boolean validateToken(String token, UserDetails userDetails) {
+        DecodedJWT decodeJwt = decodeToken(token);
+        return decodeJwt.getSubject().equals(userDetails.getUsername()) &&
+                !isTokenExpired(token, userDetails);
     }
 
-    @Override
-    public DecodedJWT decodeToken(String token) {
-        Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());
-        return JWT.require(algorithm).build().verify(token);
-    }
 }
