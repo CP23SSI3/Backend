@@ -1,6 +1,5 @@
 package com.example.internhub.entities;
 
-import com.example.internhub.responses.Object;
 import lombok.*;
 
 import javax.persistence.*;
@@ -10,7 +9,7 @@ import java.time.LocalDateTime;
 @Table(name = "companies")
 @Getter @Setter @ToString
 @AllArgsConstructor @NoArgsConstructor
-public class Company extends Object {
+public class Company {
 
     @OneToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "addressId", nullable = false)

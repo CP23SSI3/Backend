@@ -1,8 +1,6 @@
 package com.example.internhub.validators;
 
 import com.example.internhub.entities.Document;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

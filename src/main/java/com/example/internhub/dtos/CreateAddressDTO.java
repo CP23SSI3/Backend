@@ -26,12 +26,12 @@ public class CreateAddressDTO {
     @Size(max = 50, message = "District's name is too long, 50 characters maximum.")
     String district;
     @NotNull(message = "Latitude is required.")
-    @DecimalMax(value = "180", message = "Latitude is out of length.")
-    @DecimalMin(value = "-180", message = "Latitude is out of length.")
+//    @DecimalMax(value = "180", message = "Latitude is out of length.")
+//    @DecimalMin(value = "-180", message = "Latitude is out of length.")
     Double latitude;
     @NotNull(message = "Longitude is required.")
-    @DecimalMax(value = "90", message = "Longitude is out of length.")
-    @DecimalMin(value = "-90", message = "Longitude is out of length.")
+//    @DecimalMax(value = "90", message = "Longitude is out of length.")
+//    @DecimalMin(value = "-90", message = "Longitude is out of length.")
     Double longitude;
     @NotNull(message = "Postal code is required.")
     @Size(max = 10, message = "Postal code is too long, 10 characters maximum.")

@@ -1,28 +1,37 @@
 package com.example.internhub.services;
 
+import com.example.internhub.config.ListMapper;
 import com.example.internhub.dtos.CreatePostDTO;
 import com.example.internhub.dtos.EditPostDTO;
 import com.example.internhub.dtos.PostPagination;
 import com.example.internhub.entities.*;
-import com.example.internhub.repositories.PostPositionTagRepository;
+import com.example.internhub.exception.CompNotFoundException;
+import com.example.internhub.exception.EmptyPositionListException;
+import com.example.internhub.exception.PostNotFoundException;
 import com.example.internhub.repositories.PostRepository;
 import com.example.internhub.responses.ResponseObject;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
+
+import static java.lang.Math.abs;
 
 @Service
 @Primary
@@ -30,7 +39,8 @@ public class MySQLPostService implements PostService {
 
     @Autowired
     private ModelMapper modelMapper;
-
+    @Autowired
+    private ListMapper listMapper = ListMapper.getInstance();
     @Autowired
     private PostRepository postRepository;
     @Autowired
@@ -38,64 +48,35 @@ public class MySQLPostService implements PostService {
     @Autowired
     private AddressService addressService;
     @Autowired
-    private PositionTagService positionTagService;
-    @Autowired
-    private ClassService classService;
-    @Autowired
     private OpenPositionService openPositionService;
     @Autowired
     private PostPositionTagService postPositionTagService;
 
-    @Autowired
-    private PostPositionTagRepository postPositionTagRepository;
-
-    @Override
-    public List<Post> getAllPost() {
-        return postRepository.findAll();
-    }
-
-    @Override
-    public ResponseObject getAllPostPagination(int pageNumber, int pageSize) {
-        Page<Post> postList = postRepository.findAll(PageRequest.of(pageNumber, pageSize));
-        PostPagination postPagination = modelMapper.map(postList, PostPagination.class);
-        return new ResponseObject(200, "The post's list is successfully sent.", postPagination);
-    }
-
-    @Override
-    public ResponseObject getPostById(String postId, HttpServletResponse res) {
-        try {
-            Post post = getPostByPostId(postId);
-            post.view();
-            postRepository.save(post);
-            return new ResponseObject(200, "The post is successfully sent.", post);
-        } catch (Exception e) {
-            res.setStatus(404);
-            return new ResponseObject(404, e.getMessage(), null);
-        }
-    }
+    @Value("${milliseconds.before.closed.post}")
+    private long milliSecondsBeforeClosedPost;
+    @Value("${convert.day.to.minute}")
+    private long convertDayToMinute;
+    Timer timer = new Timer();
 
 
     @Override
-    public Post getPostByPostId(String postId) {
-        try {
-            return postRepository.findById(postId).orElseThrow();
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Post id " + postId + " not found.");
-        }
-    }
-
-    @Override
-    public ResponseObject createPost(CreatePostDTO createPostDTO, HttpServletResponse res) {
+    public ResponseEntity createPost(CreatePostDTO createPostDTO, HttpServletResponse res) {
         try {
             Post post = modelMapper.map(createPostDTO, Post.class);
             if (post.getOpenPositionList().size() == 0) {
-                res.setStatus(400);
-                return new ResponseObject(400, "At least one position is required.", null);
+                throw new EmptyPositionListException();
             }
             LocalDateTime now = LocalDateTime.now();
             post.setCreatedDate(now);
             post.setLastUpdateDate(now);
-            post.setStatus(PostStatus.OPENED);
+            LocalDate closedDate = post.getClosedDate();
+            long milliSecondsBeforeClosed = (closedDate == null) ? 0 : abs((closedDate.atStartOfDay().plusDays(1)).until(LocalDateTime.now(), ChronoUnit.MILLIS))/convertDayToMinute;
+            long milliSecondsBeforeNearlyClosed = milliSecondsBeforeClosed - milliSecondsBeforeClosedPost;
+            if(closedDate == null) {
+                post.alwaysOpenedPost();
+            } else if (milliSecondsBeforeNearlyClosed > 0) {
+                post.openedPost();
+            } else {post.nearlyClosedPost();}
             Company company = companyService.getCompanyByCompanyId(post.getComp().getCompId());
             post.setComp(companyService.getCompany(company));
             List<OpenPosition> openPositionList = post.getOpenPositionList();
@@ -109,19 +90,54 @@ public class MySQLPostService implements PostService {
                 post.addPostTag(tag);
             }
             postRepository.save(post);
-            return new ResponseObject(200, "Create post successfully.", post);
-        } catch (ResponseStatusException e) {
-            int statusCode= e.getStatus().value();
-            res.setStatus(statusCode);
-            return new ResponseObject(statusCode, e.getMessage(), null);
+            TimerTask nearlyClosedPostTimerTask = new TimerTask() {
+                @Override
+                public void run() {
+                    post.nearlyClosedPost();
+                    postRepository.save(post);
+                }
+            };
+            TimerTask closedPostTimerTask =  new TimerTask() {
+                @Override
+                public void run() {
+                    post.closedPost();
+                    postRepository.save(post);
+                }
+            };
+            if (milliSecondsBeforeClosed > 0) timer.schedule(closedPostTimerTask, milliSecondsBeforeClosed);
+            if (milliSecondsBeforeNearlyClosed > 0) timer.schedule(nearlyClosedPostTimerTask, milliSecondsBeforeNearlyClosed);
+            return new ResponseEntity(new ResponseObject(200, "Create post successfully.", post),
+                    null, HttpStatus.OK);
+        } catch (EmptyPositionListException ex) {
+            return new ResponseEntity(new ResponseObject(400, ex.getMessage(), null),
+                    null, HttpStatus.BAD_REQUEST);
+        } catch (CompNotFoundException ex) {
+            return new ResponseEntity(new ResponseObject(404, ex.getMessage(), null),
+                    null, HttpStatus.NOT_FOUND);
         } catch (Exception e) {
-            res.setStatus(400);
-            return new ResponseObject(400, e.getMessage(), null);
+            return new ResponseEntity(new ResponseObject(400, e.getMessage(), null),
+                    null, HttpStatus.BAD_REQUEST);
         }
     }
 
     @Override
-    public ResponseObject editPost(String postId, EditPostDTO editPostDTO, HttpServletRequest req, HttpServletResponse res) throws IllegalAccessException {
+    public ResponseEntity deletePost(String postId, HttpServletRequest req, HttpServletResponse res) {
+        try {
+            getPostByPostId(postId);
+            postRepository.deleteById(postId);
+            return new ResponseEntity(new ResponseObject(200, "Delete post id " + postId + " successfully", null),
+                    null, HttpStatus.OK);
+        } catch (PostNotFoundException ex) {
+            return new ResponseEntity(new ResponseObject(404, ex.getMessage(), null),
+                    null, HttpStatus.NOT_FOUND);
+        } catch (Exception ex) {
+            return new ResponseEntity(new ResponseObject(400, ex.getMessage(), null),
+                    null, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @Override
+    public ResponseEntity editPost(String postId, EditPostDTO editPostDTO, HttpServletRequest req, HttpServletResponse res) throws IllegalAccessException {
         try {
             Post post = getPostByPostId(postId);
             Post editPost = modelMapper.map(editPostDTO, Post.class);
@@ -144,26 +160,119 @@ public class MySQLPostService implements PostService {
             openPositionService.updateOpenPosition(post, editPost.getOpenPositionList());
             postPositionTagService.updatePostPositionTag(post, editPost.getPostTagListObject());
             postRepository.save(post);
-            return new ResponseObject(200, "Edit post id " + postId + " successful.", post);
-        } catch (ResponseStatusException e){
-            int statusCode= e.getStatus().value();
-            res.setStatus(statusCode);
-            return new ResponseObject(statusCode, e.getMessage(), null);
+            return new ResponseEntity(new ResponseObject(200, "Edit post id " + postId + " successful.", post),
+                    null, HttpStatus.OK);
+        } catch (PostNotFoundException ex) {
+            return new ResponseEntity(new ResponseObject(404, ex.getMessage(), null),
+                    null, HttpStatus.NOT_FOUND);
+        } catch (EmptyPositionListException ex) {
+            return new ResponseEntity(new ResponseObject(400, ex.getMessage(), null),
+                    null, HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity(new ResponseObject(400, e.getMessage(), null),
+                    null, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+    @Override
+    public List<Post> getAllPost() {
+        return postRepository.findAll();
+    }
+
+    @Override
+    public ResponseEntity getAllPostPagination(int pageNumber, int pageSize, String searchText, String city, String district,
+                                               String[] status, String[] tags, Integer month, Integer salary,
+                                               HttpServletResponse res) {
+        String[] defaultStatus = {"OPENED", "ALWAYS_OPENED", "NEARLY_CLOSED"};
+        List<String> postTag = new ArrayList<>();
+        try {
+            if (status == null) {
+                status = defaultStatus;
+            } else {
+                for (String s : status) {
+                    PostStatus.valueOf(s);
+                }
+            }
+            if (tags != null) {
+                if (tags.length == 0) {
+                    tags = null;
+                } else {
+                    for (String tag : tags) {
+                        postTag.add(URLDecoder.decode(tag, StandardCharsets.UTF_8.toString()));
+                    }
+                }
+            }
+            Page<Post> postList = postRepository.findByQuery(searchText, city, district,
+                    status, postTag, tags, month, salary,
+                    PageRequest.of(pageNumber, pageSize));
+            PostPagination postPagination = modelMapper.map(postList, PostPagination.class);
+            return new ResponseEntity(new ResponseObject(200, "The post's list is successfully sent.",
+                    postPagination),
+                    null, HttpStatus.OK);
         } catch (Exception e) {
             res.setStatus(400);
-            return new ResponseObject(400, e.getMessage(), null);
+            return new ResponseEntity(new ResponseObject(400, e.getMessage(), null),
+                    null, HttpStatus.BAD_REQUEST);
         }
     }
 
     @Override
-    public ResponseObject deletePost(String postId, HttpServletRequest req, HttpServletResponse res) {
+    public ResponseEntity getPostById(String postId, HttpServletResponse res) {
         try {
-            postRepository.deleteById(postId);
-            return new ResponseObject(200, "Delete post id " + postId + " successfully", null);
+            Post post = getPostByPostId(postId);
+            post.view();
+            postRepository.save(post);
+            return new ResponseEntity(new ResponseObject(200, "The post is successfully sent.", post),
+                    null, HttpStatus.OK);
+        } catch (PostNotFoundException ex) {
+          return new ResponseEntity(new ResponseObject(404, ex.getMessage(), null),
+                  null, HttpStatus.NOT_FOUND);
         } catch (Exception e) {
-            res.setStatus(404);
-            return new ResponseObject(404, e.getMessage(), null);
+            res.setStatus(400);
+            return new ResponseEntity(new ResponseObject(400, e.getMessage(), null),
+                    null, HttpStatus.BAD_REQUEST);
         }
     }
+
+
+    @Override
+    public Post getPostByPostId(String postId) throws PostNotFoundException {
+        try {
+            return postRepository.findById(postId).orElseThrow();
+        } catch (Exception e) {
+            throw new PostNotFoundException(postId);
+        }
+    }
+
+    @Override
+    public void postCheck() {
+        List<Post> postList = postRepository.findAll();
+        for (Post post : postList) {
+//            switch (post.getStatus()) {
+//                case ALWAYS_OPENED, CLOSED, DELETED : break;
+//                case NEARLY_CLOSED: {
+//                    LocalDate closedDate = post.getClosedDate();
+//                    LocalDate now = LocalDate.now();
+//                    if(closedDate.isBefore(now)) {
+//                        // post already closed
+//                        post.setStatus(PostStatus.CLOSED);
+//                    } else {
+//                        // post still not closed
+//                        // need nearly closed timer
+//                    }
+//                }
+//                case OPENED: {
+//                    LocalDate closedDate = post.getClosedDate();
+//                    LocalDate now = LocalDate.now();
+//                    if(closedDate.isBefore(now)) {
+//                        // post already closed
+//                        post.setStatus(PostStatus.CLOSED);
+//                    }
+//                }
+//            }
+        }
+    }
+
 
 }

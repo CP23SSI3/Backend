@@ -6,6 +6,8 @@ import com.example.internhub.repositories.PostPositionTagRepository;
 import com.example.internhub.responses.ResponseObjectList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,9 +20,10 @@ public class MySQLPostPositionTagService implements PostPositionTagService{
     public PostPositionTagRepository postPositionTagRepository;
 
     @Override
-    public ResponseObjectList getAllPostPositionTag() {
+    public ResponseEntity getAllPostPositionTag() {
         List<PostPositionTag> postPositionTagList= postPositionTagRepository.findAll();
-        return new ResponseObjectList(200, "PostPositionTag's list is successfully sended.", postPositionTagList);
+        return new ResponseEntity(new ResponseObjectList(200, "PostPositionTag's list is successfully sended.", postPositionTagList),
+                null, HttpStatus.OK);
     }
 
     @Override

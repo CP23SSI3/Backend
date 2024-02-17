@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ public class EditPostDTO {
     @NotNull(message = "Address is required.")
     CreateAddressDTO address;
     @Future(message = "Closed date must be in future.")
-    LocalDateTime closedDate;
+    LocalDate closedDate;
     @NotNull(message = "Coordinator name is required.")
     @Size(max = 100, message = "Coordinator name is too long, 100 characters maximum.")
     String coordinatorName;
