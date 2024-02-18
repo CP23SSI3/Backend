@@ -34,6 +34,14 @@ public class MySQLUserService implements UserService {
 
 
     @Override
+    public ResponseEntity checkIfUsernameExisted(String username) {
+        if (isUsernameExisted(username)) return new ResponseEntity(new ResponseObject(400, "This username has an existing account.", null),
+                null, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity(new ResponseObject(200, "This ussername don't has an existing account.", null),
+                null, HttpStatus.OK);
+    }
+
+    @Override
     public ResponseEntity checkIfUsernameAndEmailExisted(String username, String email) {
         String errorMessage = "";
         if (isUsernameExisted(username)) errorMessage += "This username has an existed account. ";
@@ -91,6 +99,7 @@ public class MySQLUserService implements UserService {
             user.setLastUpdate(editUser.getLastUpdate());
             user.setPhoneNumber(editUserDTO.getPhoneNumber());
             user.setUserDesc(editUser.getUserDesc());
+            if (user.getUsername() != editUser.getUsername() && isUsernameExisted(editUserDTO.getUsername())) throw new UsernameExistedException();
             user.setUsername(editUser.getUsername());
             user.setUserProfileKey(editUser.getUserProfileKey());
             userRepository.save(user);
@@ -99,7 +108,11 @@ public class MySQLUserService implements UserService {
         } catch (UserNotFoundException ex) {
             return new ResponseEntity(new ResponseObject(404, ex.getMessage(), null),
                     null, HttpStatus.NOT_FOUND);
-        } catch (Exception ex) {
+        } catch (UsernameExistedException ex) {
+            return new ResponseEntity(new ResponseObject(400, ex.getMessage(), null),
+                    null, HttpStatus.BAD_REQUEST);
+        }
+        catch (Exception ex) {
             return new ResponseEntity(new ResponseObject(400, ex.getMessage(), null),
                     null, HttpStatus.BAD_REQUEST);
         }
