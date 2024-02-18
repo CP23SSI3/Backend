@@ -108,6 +108,7 @@ public class MySQLUserService implements UserService {
             user.setUserProfileKey(editUser.getUserProfileKey());
             if (user.getAddress() == null) {
                 editUser.getAddress().setAddressId(UUID.randomUUID().toString());
+                user.setAddress(editUser.getAddress());
             } else {
                 addressService.updateAddress(user.getAddress(), editUser.getAddress());
             }
