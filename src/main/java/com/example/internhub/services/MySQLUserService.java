@@ -40,17 +40,17 @@ public class MySQLUserService implements UserService {
     public ResponseEntity checkIfUsernameExisted(String username) {
         if (isUsernameExisted(username)) return new ResponseEntity(new ResponseObject(400, "This username has an existing account.", null),
                 null, HttpStatus.BAD_REQUEST);
-        return new ResponseEntity(new ResponseObject(200, "This ussername don't has an existing account.", null),
+        return new ResponseEntity(new ResponseObject(200, "This username don't has an existing account.", null),
                 null, HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity checkIfUsernameAndEmailExisted(String username, String email) {
         String errorMessage = "";
-        if (isUsernameExisted(username)) errorMessage += "This username has an existed account. ";
-        if (isEmailExisted(email)) errorMessage += "This email has an existed account. ";
+        if (isUsernameExisted(username)) errorMessage += "This username has an existing account. ";
+        if (isEmailExisted(email)) errorMessage += "This email has an existing account. ";
         if (errorMessage != "") return new ResponseEntity(new ResponseObject(400, errorMessage, null), null, HttpStatus.BAD_REQUEST);
-        return new ResponseEntity(new ResponseObject(200, "This email and username don't has an existed account.", null), null, HttpStatus.OK);
+        return new ResponseEntity(new ResponseObject(200, "This email and username don't has an existing account.", null), null, HttpStatus.OK);
     }
 
     @Override
@@ -101,28 +101,27 @@ public class MySQLUserService implements UserService {
             user.setLastActive(editUser.getLastActive());
             user.setLastname(editUser.getLastname());
             user.setLastUpdate(editUser.getLastUpdate());
-            user.setPhoneNumber(editUserDTO.getPhoneNumber());
+            user.setPhoneNumber(editUser.getPhoneNumber());
             user.setUserDesc(editUser.getUserDesc());
-            if (user.getUsername() != editUserDTO.getUsername()) {
-                if (!isUsernameExisted(editUserDTO.getUsername())) throw new UsernameExistedException();
-            }
+            if (!user.getUsername().equals(editUser.getUsername()) && isUsernameExisted(editUser.getUsername())) throw new UsernameExistedException();
             user.setUsername(editUser.getUsername());
             user.setUserProfileKey(editUser.getUserProfileKey());
-//            if (editUser.getAddress() == null) {
-//                editUser.getAddress().setAddressId(UUID.randomUUID().toString());
-//            } else {
-//                addressService.updateAddress(user.getAddress(), editUser.getAddress());
-//            }
+            if (user.getAddress() == null) {
+                editUser.getAddress().setAddressId(UUID.randomUUID().toString());
+            } else {
+                addressService.updateAddress(user.getAddress(), editUser.getAddress());
+            }
             userRepository.save(user);
             return new ResponseEntity(new ResponseObject(200, "Edit user id " + userId + "successful.", user),
                     null, HttpStatus.OK);
         } catch (UserNotFoundException ex) {
             return new ResponseEntity(new ResponseObject(404, ex.getMessage(), null),
                     null, HttpStatus.NOT_FOUND);
-        } catch (UsernameExistedException ex) {
-            return new ResponseEntity(new ResponseObject(400, ex.getMessage(), null),
-                    null, HttpStatus.BAD_REQUEST);
         }
+//        catch (UsernameExistedException ex) {
+//            return new ResponseEntity(new ResponseObject(400, ex.getMessage(), null),
+//                    null, HttpStatus.BAD_REQUEST);
+//        }
         catch (Exception ex) {
             return new ResponseEntity(new ResponseObject(400, ex.getMessage(), null),
                     null, HttpStatus.BAD_REQUEST);
