@@ -20,7 +20,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-//        http.authorizeRequests().anyRequest().permitAll();
+        http.authorizeRequests().anyRequest().permitAll();
 //        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 //        http.authorizeRequests()
 //                .antMatchers("/api/v1/posts")
@@ -29,12 +29,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                .antMatchers("/api/v1/users")
 //                        .hasAuthority("ADMIN");
 //        http.addFilterBefore(new JwtRequestFilter(), FilterSecurityInterceptor.class);
-//        http.cors().and().csrf().disable();
-        http.addFilterBefore(new JwtRequestFilter(), FilterSecurityInterceptor.class)
-                .authorizeRequests()
-                .antMatchers(HttpMethod.GET,"api/v1/posts").permitAll()
-                .antMatchers(HttpMethod.POST, "api/v1/posts").authenticated()
-                .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http.cors().and().csrf().disable();
+//        http.addFilterBefore(new JwtRequestFilter(), FilterSecurityInterceptor.class)
+//                .authorizeRequests()
+//                .antMatchers(HttpMethod.GET,"api/v1/posts").permitAll()
+//                .antMatchers(HttpMethod.POST, "api/v1/posts").authenticated()
+//                .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 
 //    @Override
