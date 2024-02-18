@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Getter @Setter
 public class EditUserDTO {
     @Valid
-    EditAddressDTO editAddressDTO;
+    EditAddressDTO address;
     @NotNull(message = "Date of birth is required.")
     @Past(message = "Input birthdate is in the future.")
     LocalDate dateOfBirth;
