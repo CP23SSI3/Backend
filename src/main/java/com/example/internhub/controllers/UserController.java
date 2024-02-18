@@ -15,9 +15,14 @@ import javax.validation.Valid;
 @RequestMapping("/api/v1/users")
 @CrossOrigin(origins = "${cors.allow.origin}")
 public class UserController {
+
     @Autowired
     UserService userService;
 
+    @GetMapping("/username-checking")
+    public ResponseEntity checkIfUsernameExisted(@RequestParam String username) {
+        return userService.checkIfUsernameExisted(username);
+    }
 
     @GetMapping("/username-email-checking")
     public ResponseEntity checkIfUsernameAndEmailExisted(@RequestParam String username, @RequestParam String email){

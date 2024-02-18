@@ -5,6 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -16,10 +19,12 @@ import java.util.Set;
 @Entity
 @Table(name = "users")
 @Getter @Setter
+@ToString
 public class User {
 
     @ManyToOne(fetch = FetchType.EAGER, optional = true, cascade = CascadeType.ALL)
     @JoinColumn(name = "addressId", nullable = true)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Address address;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = true, cascade = CascadeType.ALL)
