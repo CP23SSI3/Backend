@@ -28,7 +28,7 @@ public class OpenPosition {
     private String openPositionTitle;
 
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
     @JoinColumn(name = "postId", nullable = false)
     private Post post;
 
