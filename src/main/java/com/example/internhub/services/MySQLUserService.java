@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.UUID;
 
 @Service
 public class MySQLUserService implements UserService {
@@ -30,6 +31,8 @@ public class MySQLUserService implements UserService {
     private UserRepository userRepository;
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private AddressService addressService;
     private PasswordEncoder encoder = new BCryptPasswordEncoder();
 
 
@@ -49,6 +52,7 @@ public class MySQLUserService implements UserService {
         if (errorMessage != "") return new ResponseEntity(new ResponseObject(400, errorMessage, null), null, HttpStatus.BAD_REQUEST);
         return new ResponseEntity(new ResponseObject(200, "This email and username don't has an existed account.", null), null, HttpStatus.OK);
     }
+
     @Override
     public ResponseEntity createUser(CreateUserDTO createUserDTO) {
         try {
@@ -99,9 +103,16 @@ public class MySQLUserService implements UserService {
             user.setLastUpdate(editUser.getLastUpdate());
             user.setPhoneNumber(editUserDTO.getPhoneNumber());
             user.setUserDesc(editUser.getUserDesc());
-            if (user.getUsername() != editUser.getUsername() && isUsernameExisted(editUserDTO.getUsername())) throw new UsernameExistedException();
+            if (user.getUsername() != editUserDTO.getUsername()) {
+                if (!isUsernameExisted(editUserDTO.getUsername())) throw new UsernameExistedException();
+            }
             user.setUsername(editUser.getUsername());
             user.setUserProfileKey(editUser.getUserProfileKey());
+//            if (editUser.getAddress() == null) {
+//                editUser.getAddress().setAddressId(UUID.randomUUID().toString());
+//            } else {
+//                addressService.updateAddress(user.getAddress(), editUser.getAddress());
+//            }
             userRepository.save(user);
             return new ResponseEntity(new ResponseObject(200, "Edit user id " + userId + "successful.", user),
                     null, HttpStatus.OK);
@@ -182,6 +193,8 @@ public class MySQLUserService implements UserService {
     }
 
     private boolean isUsernameExisted(String username) {
+        //If exists -> false
+        //If not exist -> true
         return findUserByUserName(username) != null;
     }
 
