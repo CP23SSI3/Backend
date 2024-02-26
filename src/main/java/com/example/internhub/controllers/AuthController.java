@@ -26,4 +26,9 @@ public class AuthController {
         return authService.logIn(userLoginDTO);
     }
 
+    @PostMapping(value = "/refresh-token")
+    public ResponseEntity generateNewToken(HttpServletRequest req) {
+        return authService.generateNewToken(req);
+    }
+
 }

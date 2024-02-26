@@ -203,6 +203,7 @@ public class MySQLPostService implements PostService {
                     }
                 }
             }
+            System.out.println(status[0]);
             Page<Post> postList = postRepository.findByQuery(searchText, city, district,
                     status, postTag, tags, month, salary,
                     PageRequest.of(pageNumber, pageSize));

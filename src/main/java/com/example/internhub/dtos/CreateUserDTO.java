@@ -16,8 +16,8 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 @Getter @Setter
 public class CreateUserDTO {
-    @NotNull(message = "Address is required.")
-            @Valid
+//    @NotNull(message = "Address is required.")
+    @Valid
     CreateAddressDTO address;
     String compId;
     LocalDateTime createdDate = LocalDateTime.now();

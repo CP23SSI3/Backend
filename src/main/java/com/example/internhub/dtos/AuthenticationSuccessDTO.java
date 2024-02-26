@@ -7,8 +7,8 @@ import lombok.Setter;
 
 @Getter @Setter @AllArgsConstructor
 public class AuthenticationSuccessDTO {
-    String accessToken;
-    String refreshToken;
+//    String accessToken;
+//    String refreshToken;
     Role role;
     String userId;
     String username;
