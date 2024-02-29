@@ -18,8 +18,8 @@ public class SecurityConfig {
     @Bean
     public DefaultSecurityFilterChain securityFilterChain(HttpSecurity http) {
         try {
-            http.addFilterBefore(new JwtRequestFilter(), FilterSecurityInterceptor.class);
-            http.authorizeRequests()
+            http.addFilterBefore(new JwtRequestFilter(), FilterSecurityInterceptor.class)
+                    .authorizeRequests()
                     .antMatchers(HttpMethod.GET, "/api/v1/auth").permitAll()
                     .antMatchers(HttpMethod.PUT, "/api/v1/addresses/**").permitAll()
                     .antMatchers(HttpMethod.GET, "/api/v1/companies/**").permitAll()
