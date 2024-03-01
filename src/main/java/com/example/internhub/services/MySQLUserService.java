@@ -3,8 +3,10 @@ package com.example.internhub.services;
 import com.example.internhub.dtos.CreateUserDTO;
 import com.example.internhub.dtos.EditUserDTO;
 import com.example.internhub.dtos.UserPagination;
+import com.example.internhub.entities.Role;
 import com.example.internhub.entities.User;
 import com.example.internhub.exception.EmailExistedException;
+import com.example.internhub.exception.UserCreateCompanyException;
 import com.example.internhub.exception.UserNotFoundException;
 import com.example.internhub.exception.UsernameExistedException;
 import com.example.internhub.repositories.UserRepository;
@@ -59,11 +61,12 @@ public class MySQLUserService implements UserService {
             User user = modelMapper.map(createUserDTO, User.class);
             if (findUserByEmail(user.getEmail()) != null) throw new EmailExistedException();
             if (findUserByUserName(user.getUsername()) != null) throw new UsernameExistedException();
+            if (user.getRole() == Role.USER && user.getCompany() != null) throw new UserCreateCompanyException();
             user.setPassword(encryptedPassword(createUserDTO.getRawPassword()));
             userRepository.save(user);
             return new ResponseEntity(new ResponseObject(200, "Create user successfully.", user),
                     null, HttpStatus.OK);
-        } catch (EmailExistedException | UsernameExistedException ex) {
+        } catch (EmailExistedException | UsernameExistedException | UserCreateCompanyException ex) {
             return new ResponseEntity(new ResponseObject(400, ex.getMessage(), null),
                     null, HttpStatus.BAD_REQUEST);
         } catch (Exception ex) {

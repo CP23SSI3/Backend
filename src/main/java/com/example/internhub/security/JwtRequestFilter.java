@@ -3,6 +3,8 @@ package com.example.internhub.security;
 import com.example.internhub.entities.User;
 import com.example.internhub.exception.TokenException;
 import com.example.internhub.services.AuthService;
+import com.example.internhub.services.MySQLAuthService;
+import com.example.internhub.services.UserDetailServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -25,27 +27,27 @@ import java.io.IOException;
 @WebFilter()
 public class JwtRequestFilter extends OncePerRequestFilter {
     @Autowired
-    private UserDetailsService userDetailsService;
+    private UserDetailsService userDetailsService = new UserDetailServiceImpl();
     @Autowired
-    private AuthService authService;
+    private AuthService authService = new MySQLAuthService();
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-//        String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-//        String bearer = new AuthTokenType().BEARER;
-//        if (authorizationHeader != null && authorizationHeader.startsWith(bearer)) {
-//            String jwt = authorizationHeader.replace(bearer, "");
-//            String username = authService.decodeToken(jwt).getSubject();
-//            UserDetails user = userDetailsService.loadUserByUsername(username);
-//            if (user != null) {
-//                if (authService.validateToken(jwt, user)) {
-//                    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-//                            new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-//                    usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-//                    SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-//                }
-//            }
-//        }
+        String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        String bearer = new AuthTokenType().BEARER;
+        if (authorizationHeader != null && authorizationHeader.startsWith(bearer)) {
+            String jwt = authorizationHeader.replace(bearer, "");
+            String username = authService.decodeToken(jwt).getSubject();
+            UserDetails user = userDetailsService.loadUserByUsername(username);
+            if (user != null) {
+                if (authService.validateToken(jwt, user)) {
+                    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+                            new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                    usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                }
+            }
+        }
         filterChain.doFilter(request, response);
     }
 }

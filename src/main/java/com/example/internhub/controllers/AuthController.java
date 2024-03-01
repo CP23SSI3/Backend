@@ -19,11 +19,16 @@ public class AuthController {
     @Autowired
     AuthService authService;
 
-    @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/login")
     public ResponseEntity logIn(@Valid @RequestBody UserLoginDTO userLoginDTO,
                                 HttpServletRequest req,
                                 HttpServletResponse res) {
         return authService.logIn(userLoginDTO);
+    }
+
+    @PostMapping(value = "/refresh-token")
+    public ResponseEntity generateNewToken(HttpServletRequest req) {
+        return authService.generateNewToken(req);
     }
 
 }
