@@ -34,8 +34,8 @@ public class Education {
     @Column(name = "schoolName", nullable = false, length = 100)
     private String schoolName;
 
-    @Column(name = "endedYear")
-    private int endedYear;
+    @Column(name = "startedYear")
+    private int startedYear;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.ALL})

@@ -51,19 +51,6 @@ public class SecurityConfig {
         }
     }
 
-//    @Bean
-//    public InMemoryUserDetailsManager userDetailsService() {
-//        UserDetails user = User.withUsername("user")
-//                .password(encoder().encode("userPass"))
-//                .roles("USER")
-//                .build();
-//        return new InMemoryUserDetailsManager(user);
-//    }
-
-    @Bean
-    public PasswordEncoder encoder() {
-        return new BCryptPasswordEncoder();
-    }
 
     //    @Bean
 //    fun securityFilterChain(http: HttpSecurity, jwtRequestFilter: JwtRequestFilter): DefaultSecurityFilterChain? {
