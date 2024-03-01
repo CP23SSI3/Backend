@@ -19,7 +19,7 @@ public class AuthController {
     @Autowired
     AuthService authService;
 
-    @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/login")
     public ResponseEntity logIn(@Valid @RequestBody UserLoginDTO userLoginDTO,
                                 HttpServletRequest req,
                                 HttpServletResponse res) {

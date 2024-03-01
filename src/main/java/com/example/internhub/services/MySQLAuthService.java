@@ -73,21 +73,6 @@ public class MySQLAuthService implements AuthService{
     }
 
     @Override
-    public String generateRefreshToken(UserDetails userDetails) {
-        Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());
-        return JWT.create()
-                .withSubject(userDetails.getUsername())
-                .withExpiresAt(generateRefreshTokenExpiredDate())
-                .withClaim("role", userDetails.getAuthorities().stream().toList().get(0).toString())
-                .sign(algorithm);
-    }
-
-    @Override
-    public Date generateRefreshTokenExpiredDate() {
-        return new Date(System.currentTimeMillis() + refreshTokenMilliSecondsBeforeExpired);
-    }
-
-    @Override
     public ResponseEntity generateNewToken(HttpServletRequest req) {
         HttpHeaders headers = new HttpHeaders();
         ResponseEntity responseEntity;
@@ -118,6 +103,21 @@ public class MySQLAuthService implements AuthService{
             responseEntity = new ResponseEntity(responseObject, headers, HttpStatus.BAD_REQUEST);
         }
         return responseEntity;
+    }
+
+    @Override
+    public String generateRefreshToken(UserDetails userDetails) {
+        Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());
+        return JWT.create()
+                .withSubject(userDetails.getUsername())
+                .withExpiresAt(generateRefreshTokenExpiredDate())
+                .withClaim("role", userDetails.getAuthorities().stream().toList().get(0).toString())
+                .sign(algorithm);
+    }
+
+    @Override
+    public Date generateRefreshTokenExpiredDate() {
+        return new Date(System.currentTimeMillis() + refreshTokenMilliSecondsBeforeExpired);
     }
 
     @Override

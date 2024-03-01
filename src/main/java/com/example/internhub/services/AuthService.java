@@ -15,9 +15,9 @@ public interface AuthService {
     public DecodedJWT decodeToken(String token);
     public String generateAccessToken(UserDetails userDetails);
     public Date generateAccessTokenExpiredDate();
+    public ResponseEntity generateNewToken(HttpServletRequest req);
     public String generateRefreshToken(UserDetails userDetails);
     public Date generateRefreshTokenExpiredDate();
-    public ResponseEntity generateNewToken(HttpServletRequest req);
     public boolean isPasswordMatch(String rawPassword, User user);
     public boolean isTokenExpired(String token, UserDetails userDetails);
     public ResponseEntity logIn(UserLoginDTO userLoginDTO);
