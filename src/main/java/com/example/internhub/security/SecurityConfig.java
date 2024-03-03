@@ -1,14 +1,17 @@
 package com.example.internhub.security;
 
+import com.example.internhub.entities.Role;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
@@ -20,10 +23,28 @@ import org.springframework.security.web.access.intercept.FilterSecurityIntercept
 @EnableWebSecurity
 public class SecurityConfig {
 
+//    @Bean
+//    public DaoAuthenticationProvider authenticationProvider(UserDetailsService userDetailsService) {
+//        DaoAuthenticationProvider dao = new DaoAuthenticationProvider();
+//        dao.setUserDetailsService(userDetailsService);
+//        dao.setPasswordEncoder(passwordEncoder());
+//        return dao;
+//    }
+
     @Bean
-    public DefaultSecurityFilterChain securityFilterChain(HttpSecurity http) {
+    public DefaultSecurityFilterChain securityFilterChain(HttpSecurity http, JwtRequestFilter jwtRequestFilter) {
         try {
-            http.addFilterBefore(new JwtRequestFilter(), FilterSecurityInterceptor.class);
+//            http.addFilterBefore(jwtRequestFilter, FilterSecurityInterceptor.class);
+//            .authorizeRequests()
+//                    .antMatchers(HttpMethod.POST,"/api/v1/auth/login").permitAll()
+//                    .antMatchers("/api/v1/users").hasAnyRole("ADMIN")
+//                    .antMatchers("/api/v1/leave-request").hasAnyRole("ADMIN")
+//                    .antMatchers("/api/v1/attendance").hasAnyRole("ADMIN")
+//                    .and().cors()
+//                    .and().csrf().disable()
+//                    .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+//            http.addFilterBefore(new JwtRequestFilter(), FilterSecurityInterceptor.class);
 //            http.authorizeRequests()
 //                    .antMatchers(HttpMethod.GET, "/api/v1/auth").permitAll()
 //                    .antMatchers(HttpMethod.PUT, "/api/v1/addresses/**").permitAll()
@@ -40,11 +61,14 @@ public class SecurityConfig {
 //                    .antMatchers(HttpMethod.DELETE, "/api/v1/users").permitAll()
 //                    .antMatchers(HttpMethod.GET, "/api/v1/users/**").permitAll()
 //                    .antMatchers(HttpMethod.GET, "/api/v1/username-email-checking").permitAll()
-//                    .antMatchers(HttpMethod.POST, "/api/v1/users").permitAll()
-//                    ;
+//                    .antMatchers(HttpMethod.POST, "/api/v1/users").permitAll();
 //            http.antMatcher("");
-            http.authorizeRequests().antMatchers("/api/v1/users").permitAll();
-            http.cors().and().csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+//            http.authorizeRequests().requestMatchers(HttpMethod.GET, "/api/v1/users").hasAnyRole(Role.ADMIN.toString());
+//            http.antMatcher("/api/v1").authorizeRequests()
+//                    .antMatchers(HttpMethod.GET, "api/v1/users").hasAnyRole("ADMIN")
+//                    .anyRequest().permitAll();
+//            http.antMatcher();
+//            http.cors().and().csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
             return http.build();
         } catch (Exception ex) {
             return null;
@@ -65,6 +89,7 @@ public class SecurityConfig {
 //                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 //        return http.build()
 //    }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
