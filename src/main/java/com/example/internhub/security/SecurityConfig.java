@@ -34,15 +34,16 @@ public class SecurityConfig {
     @Bean
     public DefaultSecurityFilterChain securityFilterChain(HttpSecurity http, JwtRequestFilter jwtRequestFilter) {
         try {
-//            http.addFilterBefore(jwtRequestFilter, FilterSecurityInterceptor.class);
-//            .authorizeRequests()
+            http.addFilterBefore(jwtRequestFilter, FilterSecurityInterceptor.class)
+            .authorizeRequests()
+                    .antMatchers("/api/v1/**").permitAll()
 //                    .antMatchers(HttpMethod.POST,"/api/v1/auth/login").permitAll()
 //                    .antMatchers("/api/v1/users").hasAnyRole("ADMIN")
 //                    .antMatchers("/api/v1/leave-request").hasAnyRole("ADMIN")
 //                    .antMatchers("/api/v1/attendance").hasAnyRole("ADMIN")
-//                    .and().cors()
-//                    .and().csrf().disable()
-//                    .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                    .and().cors()
+                    .and().csrf().disable()
+                    .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
 //            http.addFilterBefore(new JwtRequestFilter(), FilterSecurityInterceptor.class);
 //            http.authorizeRequests()
