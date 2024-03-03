@@ -13,7 +13,9 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/auth")
-@CrossOrigin(origins = "${cors.allow.origin}", exposedHeaders = {"access-token", "refresh-token"})
+@CrossOrigin(origins = "${cors.allow.origin}",
+        exposedHeaders = {"access-token", "refresh-token"},
+        allowedHeaders = {"access-token", "refresh-token"})
 public class AuthController {
 
     @Autowired
