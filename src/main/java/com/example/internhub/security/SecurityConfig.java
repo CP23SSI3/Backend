@@ -55,8 +55,8 @@ public class SecurityConfig {
                     .antMatchers(HttpMethod.GET, "/api/v1/users/username-checking").permitAll()
                     .antMatchers(HttpMethod.GET, "/api/v1/users/username-email-checking").permitAll()
                     .antMatchers(HttpMethod.GET, "/api/v1/users/**").authenticated()
-                    .antMatchers(HttpMethod.POST, "/api/v1/users").anonymous()
-                    .antMatchers(HttpMethod.POST, "/api/v1/users").hasAnyAuthority("ADMIN")
+//                    .antMatchers(HttpMethod.POST, "/api/v1/users").
+                    .antMatchers(HttpMethod.POST, "/api/v1/users").access("hasAuthority('ADMIN') or not isAuthenticated()")
                     .antMatchers(HttpMethod.PUT, "/api/v1/users/**").authenticated()
                     .antMatchers("/api/**").denyAll()
                     .and().cors()
