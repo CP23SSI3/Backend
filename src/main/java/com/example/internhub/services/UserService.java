@@ -28,4 +28,5 @@ public interface UserService {
     public ResponseEntity getResponseUserById(String userId, HttpServletRequest req, HttpServletResponse res);
     public User getUserById(String userId) throws UserNotFoundException;
     public boolean isPasswordMatch(String rawPassword, String encryptedPassword);
+    public void userActive(User user);
 }

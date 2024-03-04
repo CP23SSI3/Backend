@@ -5,6 +5,7 @@ import com.example.internhub.exception.TokenException;
 import com.example.internhub.services.AuthService;
 import com.example.internhub.services.MySQLAuthService;
 import com.example.internhub.services.UserDetailServiceImpl;
+import com.example.internhub.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -30,6 +31,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private UserDetailsService userDetailsService = new UserDetailServiceImpl();
     @Autowired
     private AuthService authService = new MySQLAuthService();
+    @Autowired
+    private UserService userService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -37,7 +40,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String bearer = new AuthTokenType().BEARER;
         if (authorizationHeader != null && authorizationHeader.startsWith(bearer)) {
             String jwt = authorizationHeader.replace(bearer, "");
-            String username = authService.decodeToken(jwt).getSubject();
+            String username = authService.decodeToken(authorizationHeader).getSubject();
             UserDetails user = userDetailsService.loadUserByUsername(username);
             if (user != null) {
                 if (authService.validateToken(jwt, user)) {
@@ -46,6 +49,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
                 }
+                userService.userActive((User) user);
             }
         }
         filterChain.doFilter(request, response);
