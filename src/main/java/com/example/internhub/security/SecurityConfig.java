@@ -38,7 +38,7 @@ public class SecurityConfig {
     public DefaultSecurityFilterChain securityFilterChain(HttpSecurity http, JwtRequestFilter jwtRequestFilter) {
         try {
             http
-//                    .addFilterBefore(jwtRequestFilter, FilterSecurityInterceptor.class)
+                    .addFilterBefore(jwtRequestFilter, FilterSecurityInterceptor.class)
                     .addFilterBefore(jwtRequestFilter, JwtRequestFilter.class)
                     .authorizeRequests()
                     .antMatchers(HttpMethod.POST,"/api/v1/auth/**").permitAll()
