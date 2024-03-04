@@ -1,5 +1,6 @@
 package com.example.internhub.security;
 
 public class AuthTokenType {
-    final String BEARER = "Bearer ";
+    public static final String BEARER = "Bearer ";
+//    final String BEARER = "Bearer ";
 }

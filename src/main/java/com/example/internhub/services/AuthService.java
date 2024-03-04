@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
 @Service
@@ -14,6 +15,7 @@ public interface AuthService {
     public DecodedJWT decodeToken(String token);
     public String generateAccessToken(UserDetails userDetails);
     public Date generateAccessTokenExpiredDate();
+    public ResponseEntity generateNewToken(HttpServletRequest req);
     public String generateRefreshToken(UserDetails userDetails);
     public Date generateRefreshTokenExpiredDate();
     public boolean isPasswordMatch(String rawPassword, User user);
