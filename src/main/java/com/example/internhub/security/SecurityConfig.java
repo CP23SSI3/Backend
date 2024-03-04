@@ -37,7 +37,8 @@ public class SecurityConfig {
     @Bean
     public DefaultSecurityFilterChain securityFilterChain(HttpSecurity http, JwtRequestFilter jwtRequestFilter) {
         try {
-            http.addFilterBefore(jwtRequestFilter, FilterSecurityInterceptor.class)
+            http
+//                    .addFilterBefore(jwtRequestFilter, FilterSecurityInterceptor.class)
                     .addFilterBefore(jwtRequestFilter, JwtRequestFilter.class)
                     .authorizeRequests()
                     .antMatchers(HttpMethod.POST,"/api/v1/auth/**").permitAll()
@@ -51,9 +52,9 @@ public class SecurityConfig {
                     .antMatchers(HttpMethod.PUT, "/api/v1/posts/**").hasAnyAuthority( "ADMIN", "COMPANY")
                     .antMatchers(HttpMethod.DELETE, "/api/v1/users/**").hasAuthority("ADMIN")
                     .antMatchers(HttpMethod.GET, "/api/v1/users").hasAuthority("ADMIN")
-                    .antMatchers(HttpMethod.GET, "/api/v1/users/**").authenticated()
                     .antMatchers(HttpMethod.GET, "/api/v1/users/username-checking").permitAll()
                     .antMatchers(HttpMethod.GET, "/api/v1/users/username-email-checking").permitAll()
+                    .antMatchers(HttpMethod.GET, "/api/v1/users/**").authenticated()
                     .antMatchers(HttpMethod.POST, "/api/v1/users").anonymous()
                     .antMatchers(HttpMethod.POST, "/api/v1/users").hasAnyAuthority("ADMIN")
                     .antMatchers(HttpMethod.PUT, "/api/v1/users/**").authenticated()

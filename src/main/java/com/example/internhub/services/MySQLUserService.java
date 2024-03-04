@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -177,10 +178,6 @@ public class MySQLUserService implements UserService {
         }
     }
 
-    private boolean isEmailExisted(String email) {
-        return findUserByEmail(email) != null;
-    }
-
     @Override
     public User getUserById(String userId) throws UserNotFoundException {
         try{
@@ -188,6 +185,10 @@ public class MySQLUserService implements UserService {
         } catch (Exception ex) {
             throw new UserNotFoundException("User id " + userId + " not found.");
         }
+    }
+
+    private boolean isEmailExisted(String email) {
+        return findUserByEmail(email) != null;
     }
 
     @Override
@@ -199,6 +200,12 @@ public class MySQLUserService implements UserService {
         //If exists -> false
         //If not exist -> true
         return findUserByUserName(username) != null;
+    }
+
+    @Override
+    public void userActive(User user) {
+           user.setLastActive(LocalDateTime.now());
+           userRepository.save(user);
     }
 
 
