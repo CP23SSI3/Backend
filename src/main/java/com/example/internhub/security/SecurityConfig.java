@@ -9,6 +9,9 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -35,15 +38,30 @@ public class SecurityConfig {
     public DefaultSecurityFilterChain securityFilterChain(HttpSecurity http, JwtRequestFilter jwtRequestFilter) {
         try {
             http.addFilterBefore(jwtRequestFilter, FilterSecurityInterceptor.class)
-            .authorizeRequests()
-                    .antMatchers("/api/v1/**").permitAll()
-//                    .antMatchers(HttpMethod.POST,"/api/v1/auth/login").permitAll()
-//                    .antMatchers("/api/v1/users").hasAnyRole("ADMIN")
-//                    .antMatchers("/api/v1/leave-request").hasAnyRole("ADMIN")
-//                    .antMatchers("/api/v1/attendance").hasAnyRole("ADMIN")
+                    .addFilterBefore(jwtRequestFilter, JwtRequestFilter.class)
+                    .authorizeRequests()
+                    .antMatchers(HttpMethod.POST,"/api/v1/auth/**").permitAll()
+                    .antMatchers(HttpMethod.GET, "/api/v1/companies").hasAnyAuthority("ADMIN")
+                    .antMatchers(HttpMethod.GET, "/api/v1/companies/**").permitAll()
+                    .antMatchers(HttpMethod.GET, "/api/v1/position-tags").permitAll()
+                    .antMatchers(HttpMethod.DELETE, "/api/v1/posts").hasAnyAuthority("ADMIN", "COMPANY")
+                    .antMatchers(HttpMethod.GET, "/api/v1/posts").permitAll()
+                    .antMatchers(HttpMethod.GET, "/api/v1/posts/**").permitAll()
+                    .antMatchers(HttpMethod.POST, "/api/v1/posts").hasAnyAuthority( "ADMIN", "COMPANY")
+                    .antMatchers(HttpMethod.PUT, "/api/v1/posts/**").hasAnyAuthority( "ADMIN", "COMPANY")
+                    .antMatchers(HttpMethod.DELETE, "/api/v1/users/**").hasAuthority("ADMIN")
+                    .antMatchers(HttpMethod.GET, "/api/v1/users").hasAuthority("ADMIN")
+                    .antMatchers(HttpMethod.GET, "/api/v1/users/**").authenticated()
+                    .antMatchers(HttpMethod.GET, "/api/v1/users/username-checking").permitAll()
+                    .antMatchers(HttpMethod.GET, "/api/v1/users/username-email-checking").permitAll()
+                    .antMatchers(HttpMethod.POST, "/api/v1/users").anonymous()
+                    .antMatchers(HttpMethod.POST, "/api/v1/users").hasAnyAuthority("ADMIN")
+                    .antMatchers(HttpMethod.PUT, "/api/v1/users/**").authenticated()
+                    .antMatchers("/api/**").denyAll()
                     .and().cors()
                     .and().csrf().disable()
                     .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
 
 //            http.addFilterBefore(new JwtRequestFilter(), FilterSecurityInterceptor.class);
 //            http.authorizeRequests()
@@ -63,13 +81,6 @@ public class SecurityConfig {
 //                    .antMatchers(HttpMethod.GET, "/api/v1/users/**").permitAll()
 //                    .antMatchers(HttpMethod.GET, "/api/v1/username-email-checking").permitAll()
 //                    .antMatchers(HttpMethod.POST, "/api/v1/users").permitAll();
-//            http.antMatcher("");
-//            http.authorizeRequests().requestMatchers(HttpMethod.GET, "/api/v1/users").hasAnyRole(Role.ADMIN.toString());
-//            http.antMatcher("/api/v1").authorizeRequests()
-//                    .antMatchers(HttpMethod.GET, "api/v1/users").hasAnyRole("ADMIN")
-//                    .anyRequest().permitAll();
-//            http.antMatcher();
-//            http.cors().and().csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
             return http.build();
         } catch (Exception ex) {
             return null;
