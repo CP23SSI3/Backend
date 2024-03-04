@@ -86,6 +86,7 @@ public class MySQLAuthService implements AuthService{
             }
             if (user == null) throw new UsernameNotFoundException("User with input data is not existed.");
             UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
+            userService.userActive(user);
             AuthenticationSuccessDTO authenticationSuccessDTO = new AuthenticationSuccessDTO(
                     user.getRole(), user.getUserId(), user.getUsername());
             headers.add("access-token", generateAccessToken(userDetails));
@@ -145,7 +146,7 @@ public class MySQLAuthService implements AuthService{
             boolean isPasswordMatches = userService.isPasswordMatch(userLoginDTO.getPassword(), user.getPassword());
             if(!isPasswordMatches) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password is incorrect");
             userDetails = userDetailsService.loadUserByUsername(user.getUsername());
-//            userService
+            userService.userActive(user);
             AuthenticationSuccessDTO authenticationSuccessDTO = new AuthenticationSuccessDTO(
                     user.getRole(), user.getUserId(), user.getUsername());
             headers.add("access-token", generateAccessToken(userDetails));

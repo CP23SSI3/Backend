@@ -45,7 +45,7 @@ public class SecurityConfig {
                     .antMatchers(HttpMethod.GET, "/api/v1/companies").hasAnyAuthority("ADMIN")
                     .antMatchers(HttpMethod.GET, "/api/v1/companies/**").permitAll()
                     .antMatchers(HttpMethod.GET, "/api/v1/position-tags").permitAll()
-                    .antMatchers(HttpMethod.DELETE, "/api/v1/posts").hasAnyAuthority("ADMIN", "COMPANY")
+                    .antMatchers(HttpMethod.DELETE, "/api/v1/posts/**").hasAnyAuthority("ADMIN", "COMPANY")
                     .antMatchers(HttpMethod.GET, "/api/v1/posts").permitAll()
                     .antMatchers(HttpMethod.GET, "/api/v1/posts/**").permitAll()
                     .antMatchers(HttpMethod.POST, "/api/v1/posts").hasAnyAuthority( "ADMIN", "COMPANY")
