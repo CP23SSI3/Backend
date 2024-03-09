@@ -11,8 +11,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor @NoArgsConstructor
 public class Company {
 
-    @OneToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
-    @JoinColumn(name = "addressId", nullable = false)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "addressId")
     private Address address;
 
     @Column(name = "compDesc", nullable = false, length = 500)

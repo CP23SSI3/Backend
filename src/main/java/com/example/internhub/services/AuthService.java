@@ -13,6 +13,7 @@ import java.util.Date;
 @Service
 public interface AuthService {
     public DecodedJWT decodeToken(String token);
+    public DecodedJWT decodeBearerToken(String token);
     public String generateAccessToken(UserDetails userDetails);
     public Date generateAccessTokenExpiredDate();
     public ResponseEntity generateNewToken(HttpServletRequest req);

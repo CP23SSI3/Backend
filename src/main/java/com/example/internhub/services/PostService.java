@@ -14,7 +14,7 @@ import java.util.List;
 
 @Service
 public interface PostService {
-    public ResponseEntity createPost(CreatePostDTO createPostDTO, HttpServletResponse res);
+    public ResponseEntity createPost(CreatePostDTO createPostDTO, HttpServletRequest req, HttpServletResponse res);
     public ResponseEntity deletePost(String postId, HttpServletRequest req, HttpServletResponse res);
     public ResponseEntity editPost(String postId, EditPostDTO editPostDTO, HttpServletRequest req, HttpServletResponse res) throws IllegalAccessException;
     public List<Post> getAllPost();
