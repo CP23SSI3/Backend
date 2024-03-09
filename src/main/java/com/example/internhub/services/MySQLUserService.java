@@ -1,14 +1,12 @@
 package com.example.internhub.services;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.internhub.dtos.CreateUserDTO;
 import com.example.internhub.dtos.EditUserDTO;
 import com.example.internhub.dtos.UserPagination;
 import com.example.internhub.entities.Role;
 import com.example.internhub.entities.User;
-import com.example.internhub.exception.EmailExistedException;
-import com.example.internhub.exception.UserCreateCompanyException;
-import com.example.internhub.exception.UserNotFoundException;
-import com.example.internhub.exception.UsernameExistedException;
+import com.example.internhub.exception.*;
 import com.example.internhub.repositories.UserRepository;
 import com.example.internhub.responses.ResponseObject;
 import org.modelmapper.ModelMapper;
@@ -16,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -31,6 +30,8 @@ import java.util.UUID;
 public class MySQLUserService implements UserService {
 
     @Autowired
+    private DecodeBearerTokenService decodeBearerTokenService;
+    @Autowired
     private UserRepository userRepository;
     @Autowired
     private ModelMapper modelMapper;
@@ -38,6 +39,14 @@ public class MySQLUserService implements UserService {
     private AddressService addressService;
     private PasswordEncoder encoder = new BCryptPasswordEncoder();
 
+    private void checkIfUserCanModifyUser(HttpServletRequest req, String userId) throws UserModifyUserException {
+        String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
+        DecodedJWT token = decodeBearerTokenService.decodeBearerToken(authorizationHeader);
+        if (!token.getClaim("role").asString().equals(Role.ADMIN.toString())) {
+            User user = findUserByUserName(token.getSubject());
+            if (!user.getUserId().equals(userId)) throw new UserModifyUserException();
+        }
+    }
 
     @Override
     public ResponseEntity checkIfUsernameExisted(String username) {
@@ -77,7 +86,7 @@ public class MySQLUserService implements UserService {
     }
 
     @Override
-    public ResponseEntity deleteUser(String userId) {
+    public ResponseEntity deleteUser(HttpServletRequest req, String userId) {
         try {
             deleteUserByUserId(userId);
             return new ResponseEntity(new ResponseObject(200, "Delete user id " + userId + " successfully.", null),
@@ -95,8 +104,10 @@ public class MySQLUserService implements UserService {
     }
 
     @Override
-    public ResponseEntity editUserGeneralInformation(String userId, EditUserDTO editUserDTO) {
+    public ResponseEntity editUserGeneralInformation(HttpServletRequest req,
+                                                     String userId, EditUserDTO editUserDTO) {
         try {
+            checkIfUserCanModifyUser(req, userId);
             User user = getUserById(userId);
             User editUser = modelMapper.map(editUserDTO, User.class);
             user.setDateOfBirth(editUser.getDateOfBirth());
@@ -123,10 +134,10 @@ public class MySQLUserService implements UserService {
             return new ResponseEntity(new ResponseObject(404, ex.getMessage(), null),
                     null, HttpStatus.NOT_FOUND);
         }
-//        catch (UsernameExistedException ex) {
-//            return new ResponseEntity(new ResponseObject(400, ex.getMessage(), null),
-//                    null, HttpStatus.BAD_REQUEST);
-//        }
+        catch (UsernameExistedException ex) {
+            return new ResponseEntity(new ResponseObject(400, ex.getMessage(), null),
+                    null, HttpStatus.BAD_REQUEST);
+        }
         catch (Exception ex) {
             return new ResponseEntity(new ResponseObject(400, ex.getMessage(), null),
                     null, HttpStatus.BAD_REQUEST);

@@ -134,7 +134,7 @@ public class MySQLPostService implements PostService {
     private void checkIfCompanyCanModifyPost(HttpServletRequest req, String checkCompId) throws CompanyModifyPostException {
         String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
         DecodedJWT token = authService.decodeBearerToken(authorizationHeader);
-        if (token.getSignature() != "ADMIN") {
+        if (!token.getClaim("role").asString().equals(Role.ADMIN.toString())) {
             User user = userService.findUserByUserName(token.getSubject());
             if (!user.getCompany().getCompId().equals(checkCompId)) throw new CompanyModifyPostException();
         }
