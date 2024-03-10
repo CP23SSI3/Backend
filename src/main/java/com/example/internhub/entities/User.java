@@ -37,9 +37,11 @@ public class User {
     @Column(name = "dateOfBirth", nullable = false)
     private LocalDate dateOfBirth;
 
-//    @JsonIgnore
     @OneToMany(mappedBy = "user")
     private Set<Education> educations = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "user")
+    private Set<Experience> experiences = new LinkedHashSet<>();
 
     @Column(name = "email", length = 320, nullable = false)
     private String email;
@@ -73,6 +75,9 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(name = "role", length = 7, nullable = false)
     private Role role;
+
+    @OneToMany(mappedBy = "user")
+    private Set<Skill> skills = new LinkedHashSet<>();
 
     @Id
     @Column(name = "userId", length = 36 ,nullable = false)
