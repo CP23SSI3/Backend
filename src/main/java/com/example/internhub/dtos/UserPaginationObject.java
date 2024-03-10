@@ -16,4 +16,5 @@ public class UserPaginationObject {
     private Role role;
     private String userId;
     private String username;
+    private String userProfileKey;
 }
