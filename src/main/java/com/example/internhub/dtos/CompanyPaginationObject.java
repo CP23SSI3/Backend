@@ -9,5 +9,4 @@ public class CompanyPaginationObject {
     private String compId;
     private String compLogoKey;
     private String compName;
-    private Address address;
 }

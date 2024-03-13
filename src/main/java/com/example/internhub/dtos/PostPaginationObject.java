@@ -1,9 +1,6 @@
 package com.example.internhub.dtos;
 
-import com.example.internhub.entities.Company;
-import com.example.internhub.entities.OpenPosition;
-import com.example.internhub.entities.PostPositionTag;
-import com.example.internhub.entities.PostStatus;
+import com.example.internhub.entities.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,11 +9,12 @@ import java.util.List;
 
 @Getter @Setter
 public class PostPaginationObject {
-    private String postId;
+    private Address address;
     private LocalDate closedDate;
     private CompanyPaginationObject comp;
     private List<OpenPositionPaginationObject> openPositionList;
     private String postDesc;
+    private String postId;
     private List<Object> postTagList;
     private PostStatus status;
     private String title;
