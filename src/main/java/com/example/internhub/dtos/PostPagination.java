@@ -16,5 +16,5 @@ public class PostPagination {
     int size;
     int totalPages;
     int totalElements;
-    List<Post> content;
+    List<PostPaginationObject> content;
 }

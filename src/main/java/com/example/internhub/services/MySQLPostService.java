@@ -1,11 +1,13 @@
 package com.example.internhub.services;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.internhub.config.ListMapper;
 import com.example.internhub.dtos.CreatePostDTO;
 import com.example.internhub.dtos.EditPostDTO;
 import com.example.internhub.dtos.PostPagination;
 import com.example.internhub.entities.*;
 import com.example.internhub.exception.CompNotFoundException;
+import com.example.internhub.exception.CompanyModifyPostException;
 import com.example.internhub.exception.EmptyPositionListException;
 import com.example.internhub.exception.PostNotFoundException;
 import com.example.internhub.repositories.PostRepository;
@@ -17,6 +19,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -42,15 +45,19 @@ public class MySQLPostService implements PostService {
     @Autowired
     private ListMapper listMapper = ListMapper.getInstance();
     @Autowired
-    private PostRepository postRepository;
+    private AddressService addressService;
+    @Autowired
+    private AuthService authService;
     @Autowired
     private CompanyService companyService;
-    @Autowired
-    private AddressService addressService;
     @Autowired
     private OpenPositionService openPositionService;
     @Autowired
     private PostPositionTagService postPositionTagService;
+    @Autowired
+    private PostRepository postRepository;
+    @Autowired
+    private UserService userService;
 
     @Value("${milliseconds.before.closed.post}")
     private long milliSecondsBeforeClosedPost;
@@ -60,8 +67,9 @@ public class MySQLPostService implements PostService {
 
 
     @Override
-    public ResponseEntity createPost(CreatePostDTO createPostDTO, HttpServletResponse res) {
+    public ResponseEntity createPost(CreatePostDTO createPostDTO, HttpServletRequest req, HttpServletResponse res) {
         try {
+            checkIfCompanyCanModifyPost(req, createPostDTO.getComp().getCompId());
             Post post = modelMapper.map(createPostDTO, Post.class);
             if (post.getOpenPositionList().size() == 0) {
                 throw new EmptyPositionListException();
@@ -78,7 +86,7 @@ public class MySQLPostService implements PostService {
                 post.openedPost();
             } else {post.nearlyClosedPost();}
             Company company = companyService.getCompanyByCompanyId(post.getComp().getCompId());
-            post.setComp(companyService.getCompany(company));
+            post.setComp(company);
             List<OpenPosition> openPositionList = post.getOpenPositionList();
             post.setOpenPositionList(new ArrayList<>());
             for (OpenPosition openPosition : openPositionList) {
@@ -111,6 +119,9 @@ public class MySQLPostService implements PostService {
         } catch (EmptyPositionListException ex) {
             return new ResponseEntity(new ResponseObject(400, ex.getMessage(), null),
                     null, HttpStatus.BAD_REQUEST);
+        } catch (CompanyModifyPostException ex) {
+            return new ResponseEntity(new ResponseObject(403, ex.getMessage(), null),
+                    null, HttpStatus.FORBIDDEN);
         } catch (CompNotFoundException ex) {
             return new ResponseEntity(new ResponseObject(404, ex.getMessage(), null),
                     null, HttpStatus.NOT_FOUND);
@@ -120,9 +131,19 @@ public class MySQLPostService implements PostService {
         }
     }
 
+    private void checkIfCompanyCanModifyPost(HttpServletRequest req, String checkCompId) throws CompanyModifyPostException {
+        String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
+        DecodedJWT token = authService.decodeBearerToken(authorizationHeader);
+        if (!token.getClaim("role").asString().equals(Role.ADMIN.toString())) {
+            User user = userService.findUserByUserName(token.getSubject());
+            if (!user.getCompany().getCompId().equals(checkCompId)) throw new CompanyModifyPostException();
+        }
+    }
+
     @Override
     public ResponseEntity deletePost(String postId, HttpServletRequest req, HttpServletResponse res) {
         try {
+            checkIfCompanyCanModifyPost(req, postId);
             getPostByPostId(postId);
             postRepository.deleteById(postId);
             return new ResponseEntity(new ResponseObject(200, "Delete post id " + postId + " successfully", null),
@@ -139,6 +160,7 @@ public class MySQLPostService implements PostService {
     @Override
     public ResponseEntity editPost(String postId, EditPostDTO editPostDTO, HttpServletRequest req, HttpServletResponse res) throws IllegalAccessException {
         try {
+            checkIfCompanyCanModifyPost(req, postId);
             Post post = getPostByPostId(postId);
             Post editPost = modelMapper.map(editPostDTO, Post.class);
             post.setClosedDate(editPost.getClosedDate());
@@ -203,7 +225,7 @@ public class MySQLPostService implements PostService {
                     }
                 }
             }
-            System.out.println(status[0]);
+
             Page<Post> postList = postRepository.findByQuery(searchText, city, district,
                     status, postTag, tags, month, salary,
                     PageRequest.of(pageNumber, pageSize));

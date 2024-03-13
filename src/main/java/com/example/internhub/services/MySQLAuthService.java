@@ -51,6 +51,7 @@ public class MySQLAuthService implements AuthService{
         return JWT.require(algorithm).build().verify(token);
     }
 
+    @Override
     public DecodedJWT decodeBearerToken(String token) {
         String bearer = new AuthTokenType().BEARER;
         Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());
