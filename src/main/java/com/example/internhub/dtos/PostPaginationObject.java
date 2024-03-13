@@ -16,6 +16,7 @@ public class PostPaginationObject {
     private LocalDate closedDate;
     private CompanyPaginationObject comp;
     private List<OpenPositionPaginationObject> openPositionList;
+    private String postDesc;
     private List<Object> postTagList;
     private PostStatus status;
     private String title;
