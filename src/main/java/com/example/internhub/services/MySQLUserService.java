@@ -41,6 +41,7 @@ public class MySQLUserService implements UserService {
         if (errorMessage != "") return new ResponseEntity(new ResponseObject(400, errorMessage, null), null, HttpStatus.BAD_REQUEST);
         return new ResponseEntity(new ResponseObject(200, "This email and username don't has an existed account.", null), null, HttpStatus.OK);
     }
+
     @Override
     public ResponseEntity createUser(CreateUserDTO createUserDTO) {
         try {
