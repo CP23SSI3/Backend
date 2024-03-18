@@ -6,10 +6,7 @@ import com.example.internhub.dtos.CreatePostDTO;
 import com.example.internhub.dtos.EditPostDTO;
 import com.example.internhub.dtos.PostPagination;
 import com.example.internhub.entities.*;
-import com.example.internhub.exception.CompNotFoundException;
-import com.example.internhub.exception.CompanyModifyPostException;
-import com.example.internhub.exception.EmptyPositionListException;
-import com.example.internhub.exception.PostNotFoundException;
+import com.example.internhub.exception.*;
 import com.example.internhub.repositories.PostRepository;
 import com.example.internhub.responses.ResponseObject;
 import org.modelmapper.ModelMapper;
@@ -71,6 +68,7 @@ public class MySQLPostService implements PostService {
         try {
             checkIfCompanyCanModifyPost(req, createPostDTO.getComp().getCompId());
             Post post = modelMapper.map(createPostDTO, Post.class);
+//            if (createPostDTO.getAddress() == null && !createPostDTO.getSameAddressAsCompany()) throw new AddressIsRequiredException();
             if (post.getOpenPositionList().size() == 0) {
                 throw new EmptyPositionListException();
             }
@@ -87,6 +85,7 @@ public class MySQLPostService implements PostService {
             } else {post.nearlyClosedPost();}
             Company company = companyService.getCompanyByCompanyId(post.getComp().getCompId());
             post.setComp(company);
+            if (createPostDTO.getAddress() == null) post.setAddress(company.getAddress());
             List<OpenPosition> openPositionList = post.getOpenPositionList();
             post.setOpenPositionList(new ArrayList<>());
             for (OpenPosition openPosition : openPositionList) {
@@ -160,9 +159,14 @@ public class MySQLPostService implements PostService {
     @Override
     public ResponseEntity editPost(String postId, EditPostDTO editPostDTO, HttpServletRequest req, HttpServletResponse res) throws IllegalAccessException {
         try {
-            checkIfCompanyCanModifyPost(req, postId);
             Post post = getPostByPostId(postId);
+            checkIfCompanyCanModifyPost(req, post.getComp().getCompId());
             Post editPost = modelMapper.map(editPostDTO, Post.class);
+            boolean sameAddressAsComp = post.getAddress().getAddressId().equals(post.getComp().getAddress().getAddressId());
+            boolean changedToCompanyAddress = editPostDTO.getAddress() == null &&
+                    !post.getAddress().getAddressId().equals(post.getComp().getAddress().getAddressId());
+//            if (editPostDTO.getAddress() == null && !editPostDTO.getSameAddressAsCompany()) throw new AddressIsRequiredException();
+            Address address = post.getAddress();
             post.setClosedDate(editPost.getClosedDate());
             post.setCoordinatorName(editPost.getCoordinatorName());
             post.setDocuments(editPostDTO.getDocuments());
@@ -178,10 +182,17 @@ public class MySQLPostService implements PostService {
             post.setWorkEndTime(editPost.getWorkEndTime());
             post.setWorkDay(editPostDTO.getWorkDay());
             post.setWorkType(editPost.getWorkType());
-            addressService.updateAddress(post.getAddress(), editPost.getAddress());
+            if (editPostDTO.getAddress() == null && !sameAddressAsComp) {
+                post.setAddress(post.getComp().getAddress());
+            } else if (editPostDTO.getAddress() != null && !sameAddressAsComp ) {
+                addressService.updateAddress(post.getAddress(), editPost.getAddress());
+            } else if (editPostDTO.getAddress() != null && sameAddressAsComp) {
+                post.setAddress(editPost.getAddress());
+            }
             openPositionService.updateOpenPosition(post, editPost.getOpenPositionList());
             postPositionTagService.updatePostPositionTag(post, editPost.getPostTagListObject());
             postRepository.save(post);
+            if (editPostDTO.getAddress() == null && sameAddressAsComp) {addressService.deleteAddress(address);}
             return new ResponseEntity(new ResponseObject(200, "Edit post id " + postId + " successful.", post),
                     null, HttpStatus.OK);
         } catch (PostNotFoundException ex) {

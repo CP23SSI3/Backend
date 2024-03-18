@@ -37,6 +37,11 @@ public class MySQLAddressService implements AddressService{
     }
 
     @Override
+    public void deleteAddress(Address address) {
+        addressRepository.delete(address);
+    }
+
+    @Override
     public ResponseEntity editAddress(String addressId, EditAddressDTO editAddressDTO) {
         try {
             Address oldAddress = getAddressByAddressId(addressId);

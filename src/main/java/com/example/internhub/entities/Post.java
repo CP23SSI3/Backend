@@ -17,15 +17,15 @@ import java.util.List;
 @NoArgsConstructor @AllArgsConstructor
 public class Post {
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
-    @JoinColumn(name = "addressId", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "addressId")
     private Address address;
 
     @Column(name = "closedDate")
     private LocalDate closedDate;
+
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "compId", nullable = false)
-
     private Company comp;
 
     @Column(name = "coordinatorName", nullable = false, length = 100)
