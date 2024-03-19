@@ -1,5 +1,6 @@
 package com.example.internhub.repositories;
 
+import com.example.internhub.entities.Company;
 import com.example.internhub.entities.Post;
 import com.example.internhub.entities.PostStatus;
 import org.springframework.data.domain.Page;
@@ -16,7 +17,7 @@ public interface PostRepository extends JpaRepository<Post, String> {
 
     @Query(
             value = "select distinct p.* from (((posts p join companies c on p.compId = c.compId) join addresses a on p.addressId = a.addressId) join postPositionTags ppt on p.postId = ppt.postId) " +
-                    "join (select min(o.salary) as minSalary, min(o.workMonth) as minMonth, max(o.salary) as maxSalary, max(o.workMonth) as maxMonth, p2.postId from posts p2 join openpositions o on p2.postId = o.postId group by p2.postId) salaryTable on  p.postId = salaryTable.postId " +
+                    "join (select min(o.salary) as minSalary, min(o.workMonth) as minMonth, max(o.salary) as maxSalary, max(o.workMonth) as maxMonth, p2.postId from posts p2 join openPositions o on p2.postId = o.postId group by p2.postId) salaryTable on  p.postId = salaryTable.postId " +
                     "where ((lower(p.title) like concat('%', :searchText, '%')) or (lower(c.compName) like concat('%', :searchText, '%'))) " +
                     "and ((lower(a.city) like concat('%', :city, '%')) and (lower(a.district) like concat('%', :district, '%'))) " +
                     "and (p.status in :status) " +
@@ -27,7 +28,7 @@ public interface PostRepository extends JpaRepository<Post, String> {
 
             ,
             countQuery = "select count(distinct p.postId) from (((posts p join companies c on p.compId = c.compId) join addresses a on p.addressId = a.addressId) join postPositionTags ppt on p.postId = ppt.postId) " +
-                    "join (select min(o.salary) as minSalary, min(o.workMonth) as minMonth, max(o.salary) as maxSalary, max(o.workMonth) as maxMonth, p2.postId from posts p2 join openpositions o on p2.postId = o.postId group by p2.postId) salaryTable on  p.postId = salaryTable.postId " +
+                    "join (select min(o.salary) as minSalary, min(o.workMonth) as minMonth, max(o.salary) as maxSalary, max(o.workMonth) as maxMonth, p2.postId from posts p2 join openPositions o on p2.postId = o.postId group by p2.postId) salaryTable on  p.postId = salaryTable.postId " +
                     "where ((lower(p.title) like concat('%', :searchText, '%')) or (lower(c.compName) like concat('%', :searchText, '%'))) " +
                     "and ((lower(a.city) like concat('%', :city, '%')) and (lower(a.district) like concat('%', :district, '%'))) " +
                     "and (p.status in :status) " +
@@ -46,4 +47,6 @@ public interface PostRepository extends JpaRepository<Post, String> {
                                   @Param("month") int month,
                                   @Param("salary") int salary,
                                   Pageable pageable);
+
+    public Page<Post> getPostByComp(Company company, Pageable pageable);
 }

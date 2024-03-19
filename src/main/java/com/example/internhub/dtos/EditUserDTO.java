@@ -4,6 +4,7 @@ import com.example.internhub.validators.EnumGenderTypeConstraint;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
@@ -12,6 +13,8 @@ import java.time.LocalDateTime;
 
 @Getter @Setter
 public class EditUserDTO {
+    @Valid
+    EditAddressDTO address;
     @NotNull(message = "Date of birth is required.")
     @Past(message = "Input birthdate is in the future.")
     LocalDate dateOfBirth;

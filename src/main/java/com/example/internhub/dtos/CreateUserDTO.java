@@ -16,10 +16,12 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 @Getter @Setter
 public class CreateUserDTO {
-    @NotNull(message = "Address is required.")
-            @Valid
+//    @NotNull(message = "Address is required.")
+    @Valid
     CreateAddressDTO address;
-    String compId;
+//    String compId;
+    @Valid
+    CreateCompanyDTO company;
     LocalDateTime createdDate = LocalDateTime.now();
     @NotNull(message = "Date of birth is required.")
     @Past(message = "Input birthdate is in the future.")

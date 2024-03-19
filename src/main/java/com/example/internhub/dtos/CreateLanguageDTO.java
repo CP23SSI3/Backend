@@ -12,5 +12,9 @@ public class CreateLanguageDTO {
     @NotNull(message = "Language name is required.")
     String languageName;
     @NotNull(message = "User's id must be given.")
-    String userId;
+    UUID userId;
+
+    public String getUserId() {
+        return  userId.toString();
+    }
 }

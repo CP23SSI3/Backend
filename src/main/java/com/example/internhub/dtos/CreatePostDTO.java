@@ -21,7 +21,7 @@ import java.util.UUID;
 
 @Getter @Setter
 public class CreatePostDTO {
-    @NotNull(message = "Address is required.")
+//    @NotNull(message = "Address is required.")
     @Valid
     CreateAddressDTO address;
     @Future(message = "Closed date must be in future.")
@@ -61,6 +61,7 @@ public class CreatePostDTO {
     @NotNull(message = "Post's title is required.")
     @Size(max = 100, message = "Post's title is too long, 100 characters maximum.")
     String title;
+//    boolean sameAddressAsCompany;
     @NotNull(message = "Work start time is required.")
     LocalTime workStartTime;
     @NotNull(message = "Work end time is required.")
@@ -99,5 +100,9 @@ public class CreatePostDTO {
         }
         return tagList;
     }
+
+//    public boolean getSameAddressAsCompany() {
+//        return this.sameAddressAsCompany;
+//    }
 
 }

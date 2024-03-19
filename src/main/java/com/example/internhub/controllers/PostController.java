@@ -22,8 +22,10 @@ public class PostController {
     private PostService postService;
 
     @PostMapping("")
-    public ResponseEntity createPost(@Valid @RequestBody CreatePostDTO post, HttpServletResponse res){
-        return postService.createPost(post, res);
+    public ResponseEntity createPost(@Valid @RequestBody CreatePostDTO post,
+                                     HttpServletRequest req,
+                                     HttpServletResponse res){
+        return postService.createPost(post, req, res);
     }
 
     @DeleteMapping("/{postId}")
@@ -51,6 +53,12 @@ public class PostController {
         return postService.getAllPostPagination(page, pageSize, q, city, district, status, tags, month, salary, res);
     }
 
+    @GetMapping("/company/{compId}")
+    public ResponseEntity getPostByCompanyId(@RequestParam(defaultValue = "0") int page,
+                                             @RequestParam(defaultValue = "10") int pageSize,
+                                             @PathVariable String compId) {
+        return postService.getPostByCompanyPagination(page, pageSize, compId);
+    }
     @GetMapping("/{postId}")
     public ResponseEntity getPostById(@PathVariable String postId, HttpServletResponse res) {
         return postService.getPostById(postId, res);

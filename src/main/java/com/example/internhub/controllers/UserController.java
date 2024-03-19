@@ -4,6 +4,7 @@ import com.example.internhub.dtos.CreateUserDTO;
 import com.example.internhub.dtos.EditUserDTO;
 import com.example.internhub.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,9 +16,14 @@ import javax.validation.Valid;
 @RequestMapping("/api/v1/users")
 @CrossOrigin(origins = "${cors.allow.origin}")
 public class UserController {
+
     @Autowired
     UserService userService;
 
+    @GetMapping("/username-checking")
+    public ResponseEntity checkIfUsernameExisted(@RequestParam String username) {
+        return userService.checkIfUsernameExisted(username);
+    }
 
     @GetMapping("/username-email-checking")
     public ResponseEntity checkIfUsernameAndEmailExisted(@RequestParam String username, @RequestParam String email){
@@ -30,14 +36,15 @@ public class UserController {
     };
 
     @DeleteMapping("/{userId}")
-    public ResponseEntity deleteUser(@PathVariable String userId){
-        return userService.deleteUser(userId);
+    public ResponseEntity deleteUser(@PathVariable String userId, HttpServletRequest req){
+        return userService.deleteUser(req, userId);
     }
 
     @PutMapping("/{userId}")
     public ResponseEntity editUserGeneralInformation(@PathVariable String userId,
-                                                     @Valid @RequestBody EditUserDTO editUserDTO) {
-        return userService.editUserGeneralInformation(userId, editUserDTO);
+                                                     @Valid @RequestBody EditUserDTO editUserDTO,
+                                                     HttpServletRequest req) {
+        return userService.editUserGeneralInformation(req, userId, editUserDTO);
     }
 
     @GetMapping("")
