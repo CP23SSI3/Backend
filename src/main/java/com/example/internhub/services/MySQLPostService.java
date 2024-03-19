@@ -63,6 +63,15 @@ public class MySQLPostService implements PostService {
     Timer timer = new Timer();
 
 
+    private void checkIfCompanyCanModifyPost(HttpServletRequest req, String checkCompId) throws CompanyModifyPostException {
+        String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
+        DecodedJWT token = authService.decodeBearerToken(authorizationHeader);
+        if (!token.getClaim("role").asString().equals(Role.ADMIN.toString())) {
+            User user = userService.findUserByUserName(token.getSubject());
+            if (!user.getCompany().getCompId().equals(checkCompId)) throw new CompanyModifyPostException();
+        }
+    }
+
     @Override
     public ResponseEntity createPost(CreatePostDTO createPostDTO, HttpServletRequest req, HttpServletResponse res) {
         try {
@@ -127,15 +136,6 @@ public class MySQLPostService implements PostService {
         } catch (Exception e) {
             return new ResponseEntity(new ResponseObject(400, e.getMessage(), null),
                     null, HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    private void checkIfCompanyCanModifyPost(HttpServletRequest req, String checkCompId) throws CompanyModifyPostException {
-        String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
-        DecodedJWT token = authService.decodeBearerToken(authorizationHeader);
-        if (!token.getClaim("role").asString().equals(Role.ADMIN.toString())) {
-            User user = userService.findUserByUserName(token.getSubject());
-            if (!user.getCompany().getCompId().equals(checkCompId)) throw new CompanyModifyPostException();
         }
     }
 
@@ -263,8 +263,24 @@ public class MySQLPostService implements PostService {
           return new ResponseEntity(new ResponseObject(404, ex.getMessage(), null),
                   null, HttpStatus.NOT_FOUND);
         } catch (Exception e) {
-            res.setStatus(400);
             return new ResponseEntity(new ResponseObject(400, e.getMessage(), null),
+                    null, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @Override
+    public ResponseEntity getPostByCompanyPagination(int page, int pageSize, String compId) {
+        try {
+            Company company = companyService.getCompanyByCompanyId(compId);
+            Page<Post> postPage = postRepository.getPostByComp(company, PageRequest.of(page, pageSize));
+            PostPagination postPagination = modelMapper.map(postPage, PostPagination.class);
+            return new ResponseEntity(new ResponseObject(200, "Posts by company id is successfully sent.", postPagination),
+                    null, HttpStatus.OK);
+        } catch (CompNotFoundException ex) {
+            return new ResponseEntity(new ResponseObject(404, ex.getMessage(), null),
+                    null, HttpStatus.NOT_FOUND);
+        } catch (Exception ex) {
+            return new ResponseEntity(new ResponseObject(400, ex.getMessage(), null),
                     null, HttpStatus.BAD_REQUEST);
         }
     }

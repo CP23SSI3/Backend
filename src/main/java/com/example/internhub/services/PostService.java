@@ -21,7 +21,7 @@ public interface PostService {
     public ResponseEntity getAllPostPagination(int pageNumber, int pageSize, String searchText, String city, String district,
                                                String[] status, String[] tags, Integer month, Integer salary, HttpServletResponse res);
     public ResponseEntity getPostById(String postId, HttpServletResponse res);
-
+    public ResponseEntity getPostByCompanyPagination(int page, int pageSize, String compId);
     public Post getPostByPostId(String postId) throws PostNotFoundException;
     public void postCheck();
 }

@@ -7,6 +7,7 @@ import com.auth0.jwt.interfaces.Header;
 import com.example.internhub.dtos.AuthenticationSuccessDTO;
 import com.example.internhub.dtos.UserLoginDTO;
 import com.example.internhub.entities.User;
+import com.example.internhub.exception.UserNotFoundException;
 import com.example.internhub.responses.ResponseObject;
 import com.example.internhub.security.AuthTokenType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,6 +121,15 @@ public class MySQLAuthService implements AuthService{
     @Override
     public Date generateRefreshTokenExpiredDate() {
         return new Date(System.currentTimeMillis() + refreshTokenMilliSecondsBeforeExpired);
+    }
+
+    @Override
+    public User getUserFromServletRequest(HttpServletRequest req) {
+        String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
+        System.out.println(authorizationHeader);
+        DecodedJWT token = decodeBearerToken(authorizationHeader);
+        User user = userService.findUserByUserName(token.getSubject());
+        return user;
     }
 
     @Override
