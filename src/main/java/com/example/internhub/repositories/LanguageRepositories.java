@@ -10,4 +10,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface LanguageRepositories extends JpaRepository<Language, String> {
     public Language[] getLanguagesByUser(User user);
+    public Language getLanguagesByUserAndLanguageName(User user, String languageName);
 }

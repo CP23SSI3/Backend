@@ -1,8 +1,10 @@
 package com.example.internhub.services;
 
 import com.example.internhub.dtos.CreateLanguageDTO;
+import com.example.internhub.dtos.EditLanguageDTO;
 import com.example.internhub.entities.Language;
 import com.example.internhub.entities.User;
+import com.example.internhub.exception.LanguageExistedException;
 import com.example.internhub.exception.UserModifyUserException;
 import com.example.internhub.exception.UserNotFoundException;
 import com.example.internhub.repositories.LanguageRepositories;
@@ -30,21 +32,52 @@ public class MYSQLLanguageService implements LanguageService {
     public ResponseEntity addLanguage(CreateLanguageDTO createLanguageDTO, HttpServletRequest req) {
         try {
             User loginUser = authService.getUserFromServletRequest(req);
-            System.out.println(loginUser.toString());
             if (!loginUser.getRole().equals("ADMIN") &&
                     !loginUser.getUserId().equals(createLanguageDTO.getUserId())) throw new UserModifyUserException();
             Language language = modelMapper.map(createLanguageDTO, Language.class);
             User user = userService.getUserById(createLanguageDTO.getUserId());
             language.setUser(user);
+            if (languageRepositories.getLanguagesByUserAndLanguageName(user, language.getLanguageName()) != null)
+                throw new LanguageExistedException();
             languageRepositories.save(language);
-            return new ResponseEntity(new ResponseObject(200, "Add language successful.", languageRepositories.getLanguagesByUser(user)),
+            return new ResponseEntity(new ResponseObject(200, "Add language successful.", language),
                     null, HttpStatus.OK);
-        } catch (UserModifyUserException e) {
+        } catch (UserModifyUserException | LanguageExistedException e) {
             return new ResponseEntity(new ResponseObject(400 ,e.getMessage(), null),
                     null, HttpStatus.BAD_REQUEST);
         } catch (UserNotFoundException e) {
             return new ResponseEntity(new ResponseObject(404 ,e.getMessage(), null),
                     null, HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity(new ResponseObject(400 ,e.getMessage(), null),
+                    null, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @Override
+    public ResponseEntity editLannguage(EditLanguageDTO editLanguageDTO, String languageId, HttpServletRequest req) {
+        try {
+            Language oldLanguage = languageRepositories.getById(languageId);
+            User loginUser = authService.getUserFromServletRequest(req);
+            if (!loginUser.getRole().equals("ADMIN") &&
+                    !loginUser.getUserId().equals(oldLanguage.getUser().getUserId())) throw new UserModifyUserException();
+            if (!oldLanguage.getLanguageName().equals(editLanguageDTO.getLanguageName())) {
+                if (languageRepositories.getLanguagesByUserAndLanguageName(oldLanguage.getUser(), editLanguageDTO.getLanguageName()) != null)
+                    throw new LanguageExistedException();
+                oldLanguage.setLanguageName(editLanguageDTO.getLanguageName());
+                languageRepositories.save(oldLanguage);
+            }
+            return new ResponseEntity(new ResponseObject(200, "Language is succesfully updated.", null),
+                    null, HttpStatus.OK);
+        } catch (UserModifyUserException |LanguageExistedException e) {
+            return new ResponseEntity(new ResponseObject(400 ,e.getMessage(), null),
+                    null, HttpStatus.BAD_REQUEST);
+        }  catch (UserNotFoundException e) {
+            return new ResponseEntity(new ResponseObject(404 ,e.getMessage(), null),
+                    null, HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity(new ResponseObject(400 ,e.getMessage(), null),
+                    null, HttpStatus.BAD_REQUEST);
         }
     }
 
