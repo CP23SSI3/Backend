@@ -8,6 +8,9 @@ import com.example.internhub.dtos.PostPagination;
 import com.example.internhub.entities.*;
 import com.example.internhub.exception.*;
 import com.example.internhub.repositories.PostRepository;
+import com.example.internhub.responses.BadRequestResponseEntity;
+import com.example.internhub.responses.ForbiddenResponseEntity;
+import com.example.internhub.responses.NotFoundResponseEntity;
 import com.example.internhub.responses.ResponseObject;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,7 +80,6 @@ public class MySQLPostService implements PostService {
         try {
             checkIfCompanyCanModifyPost(req, createPostDTO.getComp().getCompId());
             Post post = modelMapper.map(createPostDTO, Post.class);
-//            if (createPostDTO.getAddress() == null && !createPostDTO.getSameAddressAsCompany()) throw new AddressIsRequiredException();
             if (post.getOpenPositionList().size() == 0) {
                 throw new EmptyPositionListException();
             }
@@ -125,17 +127,13 @@ public class MySQLPostService implements PostService {
             return new ResponseEntity(new ResponseObject(200, "Create post successfully.", post),
                     null, HttpStatus.OK);
         } catch (EmptyPositionListException ex) {
-            return new ResponseEntity(new ResponseObject(400, ex.getMessage(), null),
-                    null, HttpStatus.BAD_REQUEST);
+            return new BadRequestResponseEntity(ex);
         } catch (CompanyModifyPostException ex) {
-            return new ResponseEntity(new ResponseObject(403, ex.getMessage(), null),
-                    null, HttpStatus.FORBIDDEN);
+            return new ForbiddenResponseEntity(ex);
         } catch (CompNotFoundException ex) {
-            return new ResponseEntity(new ResponseObject(404, ex.getMessage(), null),
-                    null, HttpStatus.NOT_FOUND);
+            return new NotFoundResponseEntity(ex);
         } catch (Exception e) {
-            return new ResponseEntity(new ResponseObject(400, e.getMessage(), null),
-                    null, HttpStatus.BAD_REQUEST);
+            return new BadRequestResponseEntity(e);
         }
     }
 
@@ -148,11 +146,9 @@ public class MySQLPostService implements PostService {
             return new ResponseEntity(new ResponseObject(200, "Delete post id " + postId + " successfully", null),
                     null, HttpStatus.OK);
         } catch (PostNotFoundException ex) {
-            return new ResponseEntity(new ResponseObject(404, ex.getMessage(), null),
-                    null, HttpStatus.NOT_FOUND);
+            return new NotFoundResponseEntity(ex);
         } catch (Exception ex) {
-            return new ResponseEntity(new ResponseObject(400, ex.getMessage(), null),
-                    null, HttpStatus.BAD_REQUEST);
+            return new BadRequestResponseEntity(ex);
         }
     }
 
@@ -165,7 +161,6 @@ public class MySQLPostService implements PostService {
             boolean sameAddressAsComp = post.getAddress().getAddressId().equals(post.getComp().getAddress().getAddressId());
             boolean changedToCompanyAddress = editPostDTO.getAddress() == null &&
                     !post.getAddress().getAddressId().equals(post.getComp().getAddress().getAddressId());
-//            if (editPostDTO.getAddress() == null && !editPostDTO.getSameAddressAsCompany()) throw new AddressIsRequiredException();
             Address address = post.getAddress();
             post.setClosedDate(editPost.getClosedDate());
             post.setCoordinatorName(editPost.getCoordinatorName());
@@ -196,14 +191,13 @@ public class MySQLPostService implements PostService {
             return new ResponseEntity(new ResponseObject(200, "Edit post id " + postId + " successful.", post),
                     null, HttpStatus.OK);
         } catch (PostNotFoundException ex) {
-            return new ResponseEntity(new ResponseObject(404, ex.getMessage(), null),
-                    null, HttpStatus.NOT_FOUND);
+            return new NotFoundResponseEntity(ex);
+        } catch (CompanyModifyPostException ex) {
+            return new ForbiddenResponseEntity(ex);
         } catch (EmptyPositionListException ex) {
-            return new ResponseEntity(new ResponseObject(400, ex.getMessage(), null),
-                    null, HttpStatus.BAD_REQUEST);
+            return new BadRequestResponseEntity(ex);
         } catch (Exception e) {
-            return new ResponseEntity(new ResponseObject(400, e.getMessage(), null),
-                    null, HttpStatus.BAD_REQUEST);
+            return new BadRequestResponseEntity(e);
         }
     }
 
@@ -245,9 +239,7 @@ public class MySQLPostService implements PostService {
                     postPagination),
                     null, HttpStatus.OK);
         } catch (Exception e) {
-            res.setStatus(400);
-            return new ResponseEntity(new ResponseObject(400, e.getMessage(), null),
-                    null, HttpStatus.BAD_REQUEST);
+            return new BadRequestResponseEntity(e);
         }
     }
 
@@ -260,11 +252,9 @@ public class MySQLPostService implements PostService {
             return new ResponseEntity(new ResponseObject(200, "The post is successfully sent.", post),
                     null, HttpStatus.OK);
         } catch (PostNotFoundException ex) {
-          return new ResponseEntity(new ResponseObject(404, ex.getMessage(), null),
-                  null, HttpStatus.NOT_FOUND);
+          return new NotFoundResponseEntity(ex);
         } catch (Exception e) {
-            return new ResponseEntity(new ResponseObject(400, e.getMessage(), null),
-                    null, HttpStatus.BAD_REQUEST);
+            return new BadRequestResponseEntity(e);
         }
     }
 
@@ -277,11 +267,9 @@ public class MySQLPostService implements PostService {
             return new ResponseEntity(new ResponseObject(200, "Posts by company id is successfully sent.", postPagination),
                     null, HttpStatus.OK);
         } catch (CompNotFoundException ex) {
-            return new ResponseEntity(new ResponseObject(404, ex.getMessage(), null),
-                    null, HttpStatus.NOT_FOUND);
+            return new NotFoundResponseEntity(ex);
         } catch (Exception ex) {
-            return new ResponseEntity(new ResponseObject(400, ex.getMessage(), null),
-                    null, HttpStatus.BAD_REQUEST);
+            return new BadRequestResponseEntity(ex);
         }
     }
 

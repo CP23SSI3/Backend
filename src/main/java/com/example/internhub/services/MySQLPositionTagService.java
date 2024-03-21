@@ -1,7 +1,10 @@
 package com.example.internhub.services;
 
 import com.example.internhub.entities.PositionTag;
+import com.example.internhub.exception.PositionTagNotFoundException;
 import com.example.internhub.repositories.PositionTagRepository;
+import com.example.internhub.responses.BadRequestResponseEntity;
+import com.example.internhub.responses.NotFoundResponseEntity;
 import com.example.internhub.responses.ResponseObject;
 import com.example.internhub.responses.ResponseObjectList;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,18 +38,20 @@ public class MySQLPositionTagService implements PositionTagService {
                     getPositionTagByPositionTagId(positionTagId)),
                     null,
                     HttpStatus.OK);
+        } catch (PositionTagNotFoundException ex) {
+            return new NotFoundResponseEntity(ex);
         } catch (Exception e) {
-            return new ResponseEntity(new ResponseObject(404,
-                    "Position tag id " + positionTagId + " not found.",
-                    null),
-                    null,
-                    HttpStatus.BAD_REQUEST);
+            return new BadRequestResponseEntity(e);
         }
     }
 
     @Override
-    public PositionTag getPositionTagByPositionTagId(String positionTagId) {
-        return positionTagRepository.getById(positionTagId);
+    public PositionTag getPositionTagByPositionTagId(String positionTagId) throws PositionTagNotFoundException {
+        try {
+            return positionTagRepository.findById(positionTagId).orElseThrow();
+        } catch (Exception ex) {
+            throw new PositionTagNotFoundException(positionTagId);
+        }
     }
 
     @Override

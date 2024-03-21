@@ -5,7 +5,10 @@ import com.example.internhub.dtos.EditLanguageDTO;
 import com.example.internhub.entities.Language;
 import com.example.internhub.entities.User;
 import com.example.internhub.exception.*;
-import com.example.internhub.repositories.LanguageRepositories;
+import com.example.internhub.repositories.LanguageRepository;
+import com.example.internhub.responses.BadRequestResponseEntity;
+import com.example.internhub.responses.ForbiddenResponseEntity;
+import com.example.internhub.responses.NotFoundResponseEntity;
 import com.example.internhub.responses.ResponseObject;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +23,7 @@ public class MYSQLLanguageService implements LanguageService {
     @Autowired
     private AuthService authService;
     @Autowired
-    private LanguageRepositories languageRepositories;
+    private LanguageRepository languageRepositories;
     @Autowired
     private ModelMapper modelMapper;
     @Autowired
@@ -36,24 +39,23 @@ public class MYSQLLanguageService implements LanguageService {
             if (languageRepositories.getLanguagesByUserAndLanguageName(user, language.getLanguageName()) != null)
                 throw new LanguageExistedException();
             languageRepositories.save(language);
-            return new ResponseEntity(new ResponseObject(200, "Add language successful.", language),
+            return new ResponseEntity(new ResponseObject(200, "Add language successfully.", language),
                     null, HttpStatus.OK);
-        } catch (UserModifyUserException | LanguageExistedException e) {
-            return new ResponseEntity(new ResponseObject(400 ,e.getMessage(), null),
-                    null, HttpStatus.BAD_REQUEST);
+        } catch (LanguageExistedException e) {
+            return new BadRequestResponseEntity(e);
+        } catch (UserModifyLanguageException e) {
+            return new ForbiddenResponseEntity(e);
         } catch (UserNotFoundException e) {
-            return new ResponseEntity(new ResponseObject(404 ,e.getMessage(), null),
-                    null, HttpStatus.NOT_FOUND);
+            return new NotFoundResponseEntity(e);
         } catch (Exception e) {
-            return new ResponseEntity(new ResponseObject(400 ,e.getMessage(), null),
-                    null, HttpStatus.BAD_REQUEST);
+            return new BadRequestResponseEntity(e);
         }
     }
 
-    private void checkAuthForLanguage(String userId, HttpServletRequest req) throws UserNotFoundException, UserModifyUserException {
+    private void checkAuthForLanguage(String userId, HttpServletRequest req) throws UserNotFoundException, UserModifyLanguageException {
         User loginUser = authService.getUserFromServletRequest(req);
         if (!loginUser.getRole().equals("ADMIN") &&
-                !loginUser.getUserId().equals(userId)) throw new UserModifyUserException();
+                !loginUser.getUserId().equals(userId)) throw new UserModifyLanguageException();
     }
 
     @Override
@@ -64,15 +66,12 @@ public class MYSQLLanguageService implements LanguageService {
             languageRepositories.delete(language);
             return new ResponseEntity(new ResponseObject(200, "Delete language id " + languageId + " successfully.", null),
                     null, HttpStatus.OK);
-        } catch (UserModifyUserException e) {
-            return new ResponseEntity(new ResponseObject(400 ,e.getMessage(), null),
-                    null, HttpStatus.BAD_REQUEST);
+        } catch (UserModifyLanguageException e) {
+            return new ForbiddenResponseEntity(e);
         } catch (UserNotFoundException | LanguageNotFoundException e) {
-            return new ResponseEntity(new ResponseObject(404 ,e.getMessage(), null),
-                    null, HttpStatus.NOT_FOUND);
-        } catch (Exception ex) {
-            return new ResponseEntity(new ResponseObject(400 ,ex.getMessage(), null),
-                    null, HttpStatus.BAD_REQUEST);
+            return new NotFoundResponseEntity(e);
+        } catch (Exception e) {
+            return new BadRequestResponseEntity(e);
         }
     }
 
@@ -88,15 +87,14 @@ public class MYSQLLanguageService implements LanguageService {
             languageRepositories.save(oldLanguage);
             return new ResponseEntity(new ResponseObject(200, "Language is successfully updated.", null),
                     null, HttpStatus.OK);
-        } catch (UserModifyUserException |LanguageExistedException | NoEditedDataException e) {
-            return new ResponseEntity(new ResponseObject(400 ,e.getMessage(), null),
-                    null, HttpStatus.BAD_REQUEST);
-        }  catch (UserNotFoundException | LanguageNotFoundException e) {
-            return new ResponseEntity(new ResponseObject(404 ,e.getMessage(), null),
-                    null, HttpStatus.NOT_FOUND);
+        } catch (LanguageExistedException | NoEditedDataException e) {
+            return new BadRequestResponseEntity(e);
+        } catch (UserModifyLanguageException e) {
+            return new ForbiddenResponseEntity(e);
+        } catch (UserNotFoundException | LanguageNotFoundException e) {
+            return new NotFoundResponseEntity(e);
         } catch (Exception e) {
-            return new ResponseEntity(new ResponseObject(400 ,e.getMessage(), null),
-                    null, HttpStatus.BAD_REQUEST);
+            return new BadRequestResponseEntity(e);
         }
     }
 
