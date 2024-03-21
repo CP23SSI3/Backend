@@ -126,7 +126,6 @@ public class MySQLAuthService implements AuthService{
     @Override
     public User getUserFromServletRequest(HttpServletRequest req) {
         String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
-        System.out.println(authorizationHeader);
         DecodedJWT token = decodeBearerToken(authorizationHeader);
         User user = userService.findUserByUserName(token.getSubject());
         return user;

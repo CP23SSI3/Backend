@@ -22,11 +22,16 @@ public class LanguageController {
         return languageService.addLanguage(createLanguageDTO, req);
     }
 
+    @DeleteMapping("/{languageId}")
+    public ResponseEntity deleteLanguage(@PathVariable String languageId, HttpServletRequest req) {
+        return languageService.deleteLanguage(languageId, req);
+    }
+
     @PutMapping("/{languageId}")
     public ResponseEntity editLanguage(@RequestBody EditLanguageDTO editLanguageDTO,
                                        @PathVariable String languageId,
                                        HttpServletRequest req) {
-        return languageService.editLannguage(editLanguageDTO,languageId, req);
+        return languageService.editLanguage(editLanguageDTO,languageId, req);
     }
 
     @GetMapping("")
