@@ -29,9 +29,9 @@ public class MYSQLLanguageService implements LanguageService {
     @Override
     public ResponseEntity addLanguage(CreateLanguageDTO createLanguageDTO, HttpServletRequest req) {
         try {
-            checkAuthForLanguage(createLanguageDTO.getUserId(), req);
+            checkAuthForLanguage(createLanguageDTO.getUser().getUserId(), req);
             Language language = modelMapper.map(createLanguageDTO, Language.class);
-            User user = userService.getUserById(createLanguageDTO.getUserId());
+            User user = userService.getUserById(createLanguageDTO.getUser().getUserId());
             language.setUser(user);
             if (languageRepositories.getLanguagesByUserAndLanguageName(user, language.getLanguageName()) != null)
                 throw new LanguageExistedException();
