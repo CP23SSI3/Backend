@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/languages")
@@ -18,7 +19,7 @@ public class LanguageController {
     private LanguageService languageService;
 
     @PostMapping("")
-    public ResponseEntity addLanguage(@RequestBody CreateLanguageDTO createLanguageDTO, HttpServletRequest req) {
+    public ResponseEntity addLanguage(@RequestBody @Valid CreateLanguageDTO createLanguageDTO, HttpServletRequest req) {
         return languageService.addLanguage(createLanguageDTO, req);
     }
 
@@ -28,7 +29,7 @@ public class LanguageController {
     }
 
     @PutMapping("/{languageId}")
-    public ResponseEntity editLanguage(@RequestBody EditLanguageDTO editLanguageDTO,
+    public ResponseEntity editLanguage(@RequestBody @Valid EditLanguageDTO editLanguageDTO,
                                        @PathVariable String languageId,
                                        HttpServletRequest req) {
         return languageService.editLanguage(editLanguageDTO,languageId, req);

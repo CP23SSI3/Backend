@@ -42,6 +42,7 @@ public class SecurityConfig {
                     .antMatchers(HttpMethod.GET, "/api/v1/posts/**").permitAll()
                     .antMatchers(HttpMethod.POST, "/api/v1/posts").hasAnyAuthority( "ADMIN", "COMPANY")
                     .antMatchers(HttpMethod.PUT, "/api/v1/posts/**").hasAnyAuthority( "ADMIN", "COMPANY")
+                    .antMatchers("/api/v1/skills/**").hasAnyAuthority("ADMIN", "USER")
                     .antMatchers(HttpMethod.DELETE, "/api/v1/users/**").hasAuthority("ADMIN")
                     .antMatchers(HttpMethod.GET, "/api/v1/users").hasAuthority("ADMIN")
                     .antMatchers(HttpMethod.GET, "/api/v1/users/username-checking").permitAll()

@@ -8,6 +8,8 @@ import com.example.internhub.entities.Role;
 import com.example.internhub.entities.User;
 import com.example.internhub.exception.*;
 import com.example.internhub.repositories.UserRepository;
+import com.example.internhub.responses.BadRequestResponseEntity;
+import com.example.internhub.responses.NotFoundResponseEntity;
 import com.example.internhub.responses.ResponseObject;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +52,8 @@ public class MySQLUserService implements UserService {
 
     @Override
     public ResponseEntity checkIfUsernameExisted(String username) {
-        if (isUsernameExisted(username)) return new ResponseEntity(new ResponseObject(400, "This username has an existing account.", null),
+        if (isUsernameExisted(username))
+            return new ResponseEntity(new ResponseObject(400, "This username has an existing account.", null),
                 null, HttpStatus.BAD_REQUEST);
         return new ResponseEntity(new ResponseObject(200, "This username don't has an existing account.", null),
                 null, HttpStatus.OK);
@@ -77,11 +80,9 @@ public class MySQLUserService implements UserService {
             return new ResponseEntity(new ResponseObject(200, "Create user successfully.", user),
                     null, HttpStatus.OK);
         } catch (EmailExistedException | UsernameExistedException | UserCreateCompanyException ex) {
-            return new ResponseEntity(new ResponseObject(400, ex.getMessage(), null),
-                    null, HttpStatus.BAD_REQUEST);
+            return new BadRequestResponseEntity(ex);
         } catch (Exception ex) {
-            return new ResponseEntity(new ResponseObject(400, ex.getMessage(), null),
-                    null, HttpStatus.BAD_REQUEST);
+            return new BadRequestResponseEntity(ex);
         }
     }
 
@@ -92,8 +93,9 @@ public class MySQLUserService implements UserService {
             return new ResponseEntity(new ResponseObject(200, "Delete user id " + userId + " successfully.", null),
                     null, HttpStatus.OK);
         } catch (UserNotFoundException ex) {
-            return new ResponseEntity(new ResponseObject(404, ex.getMessage(), null),
-                    null, HttpStatus.NOT_FOUND);
+            return new NotFoundResponseEntity(ex);
+        } catch (Exception ex) {
+            return new BadRequestResponseEntity(ex);
         }
     }
 
@@ -130,17 +132,12 @@ public class MySQLUserService implements UserService {
             userRepository.save(user);
             return new ResponseEntity(new ResponseObject(200, "Edit user id " + userId + "successful.", user),
                     null, HttpStatus.OK);
+        } catch (UsernameExistedException ex) {
+            return new BadRequestResponseEntity(ex);
         } catch (UserNotFoundException ex) {
-            return new ResponseEntity(new ResponseObject(404, ex.getMessage(), null),
-                    null, HttpStatus.NOT_FOUND);
-        }
-        catch (UsernameExistedException ex) {
-            return new ResponseEntity(new ResponseObject(400, ex.getMessage(), null),
-                    null, HttpStatus.BAD_REQUEST);
-        }
-        catch (Exception ex) {
-            return new ResponseEntity(new ResponseObject(400, ex.getMessage(), null),
-                    null, HttpStatus.BAD_REQUEST);
+            return new NotFoundResponseEntity(ex);
+        } catch (Exception ex) {
+            return new BadRequestResponseEntity(ex);
         }
     }
 
@@ -170,7 +167,7 @@ public class MySQLUserService implements UserService {
     public ResponseEntity getAllUserPagination(int pageNumber, int pageSize,HttpServletResponse res) {
         Page<User> userPage = userRepository.findAll(PageRequest.of(pageNumber, pageSize, Sort.by("lastActive").descending()));
         UserPagination userPagination = modelMapper.map(userPage, UserPagination.class);
-        return new ResponseEntity(new ResponseObject(200, "The user's list is successfully sended.",
+        return new ResponseEntity(new ResponseObject(200, "The user's list is successfully sent.",
                 userPagination),
                 null, HttpStatus.OK);
     }
@@ -181,11 +178,9 @@ public class MySQLUserService implements UserService {
             return new ResponseEntity(new ResponseObject(200, "The user's data is already sent.", getUserById(userId)),
                     null, HttpStatus.OK);
         } catch (UserNotFoundException ex) {
-            return new ResponseEntity(new ResponseObject(404, ex.getMessage(), null),
-                    null, HttpStatus.NOT_FOUND);
+            return new NotFoundResponseEntity(ex);
         } catch (Exception ex) {
-            return new ResponseEntity(new ResponseObject(400, ex.getMessage(), null),
-                    null, HttpStatus.BAD_REQUEST);
+            return new BadRequestResponseEntity(ex);
         }
     }
 

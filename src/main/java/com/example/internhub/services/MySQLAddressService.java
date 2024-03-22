@@ -5,6 +5,8 @@ import com.example.internhub.dtos.EditAddressDTO;
 import com.example.internhub.entities.Address;
 import com.example.internhub.exception.AddressNotFoundException;
 import com.example.internhub.repositories.AddressRepository;
+import com.example.internhub.responses.BadRequestResponseEntity;
+import com.example.internhub.responses.NotFoundResponseEntity;
 import com.example.internhub.responses.ResponseObject;
 import org.hibernate.ObjectNotFoundException;
 import org.modelmapper.ModelMapper;
@@ -51,11 +53,9 @@ public class MySQLAddressService implements AddressService{
             return new ResponseEntity(new ResponseObject(200, "Edit address id " + addressId + " successfully.", null),
                     null, HttpStatus.OK);
         } catch (AddressNotFoundException ex) {
-            return new ResponseEntity(new ResponseObject(404, ex.getMessage(), null),
-                    null, HttpStatus.NOT_FOUND);
+            return new NotFoundResponseEntity(ex);
         } catch (Exception ex) {
-            return new ResponseEntity(new ResponseObject(400, ex.getMessage(), null),
-                    null, HttpStatus.BAD_REQUEST);
+            return new BadRequestResponseEntity(ex);
         }
     }
 
@@ -85,20 +85,16 @@ public class MySQLAddressService implements AddressService{
     public ResponseEntity getAddressById(String addressId) {
         try {
             return new ResponseEntity(new ResponseObject(200, ("Address id " + addressId + " is successfully sent."), getAddressByAddressId(addressId)),
-                    null,
-                    HttpStatus.OK);
+                    null, HttpStatus.OK);
         } catch (AddressNotFoundException ex) {
-            return new ResponseEntity(new ResponseObject(404, ex.getMessage(), null),
-                    null,
-                    HttpStatus.BAD_REQUEST);
+            return new NotFoundResponseEntity(ex);
         }
     }
 
     @Override
     public ResponseEntity getAllAddresses() {
         return new ResponseEntity(new ResponseObjectList(200, "Address's list is successfully sent.", addressRepository.findAll()),
-                null,
-                HttpStatus.OK);
+                null, HttpStatus.OK);
     }
 
     @Override
