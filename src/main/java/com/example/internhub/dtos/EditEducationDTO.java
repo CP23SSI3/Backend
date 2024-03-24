@@ -13,7 +13,6 @@ public class EditEducationDTO {
     String degree;
     @Size(max = 1500, message = "Education description's length is too long, 1500 characters maximum.")
     String educationDesc;
-    String educationId = UUID.randomUUID().toString();
     @Size(max = 100, message = "Field's length is too long, 5 characters maximum.")
     String field;
     @Size(max = 5, message = "Grade's length is too long, 5 characters maximum.")

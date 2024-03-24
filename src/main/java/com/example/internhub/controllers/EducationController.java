@@ -1,6 +1,7 @@
 package com.example.internhub.controllers;
 
 import com.example.internhub.dtos.CreateEducationDTO;
+import com.example.internhub.dtos.EditEducationDTO;
 import com.example.internhub.services.EducationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,9 +19,21 @@ public class EducationController {
     private EducationService educationService;
 
     @PostMapping("")
-    private ResponseEntity addEducation(@RequestBody @Valid CreateEducationDTO createEducationDTO,
+    public ResponseEntity addEducation(@RequestBody @Valid CreateEducationDTO createEducationDTO,
                                         HttpServletRequest req) {
         return educationService.addEducation(createEducationDTO, req);
+    }
+
+    @DeleteMapping("/{educationId}")
+    public ResponseEntity deleteEducation(@PathVariable String educationId, HttpServletRequest req) {
+        return educationService.deleteEducation(educationId, req);
+    }
+
+    @PutMapping("/{educationId}")
+    public ResponseEntity editEducation(@RequestBody @Valid EditEducationDTO editEducationDTO,
+                                        @PathVariable String educationId,
+                                        HttpServletRequest req) {
+        return educationService.editEducation(editEducationDTO, educationId, req);
     }
 
     @GetMapping("")
