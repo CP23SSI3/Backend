@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 @Service
 public interface AddressService {
     public Address createAddress(CreateAddressDTO createAddressPostDTO);
+    public void deleteAddress(Address address);
     public ResponseEntity editAddress(String addressId, EditAddressDTO editAddressDTO);
     public Address getAddress(Address address);
     public Address getAddressByAddressId(String addressId) throws AddressNotFoundException;

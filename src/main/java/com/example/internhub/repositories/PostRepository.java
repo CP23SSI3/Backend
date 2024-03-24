@@ -1,5 +1,6 @@
 package com.example.internhub.repositories;
 
+import com.example.internhub.entities.Company;
 import com.example.internhub.entities.Post;
 import com.example.internhub.entities.PostStatus;
 import org.springframework.data.domain.Page;
@@ -46,4 +47,6 @@ public interface PostRepository extends JpaRepository<Post, String> {
                                   @Param("month") int month,
                                   @Param("salary") int salary,
                                   Pageable pageable);
+
+    public Page<Post> getPostByComp(Company company, Pageable pageable);
 }

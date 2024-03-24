@@ -15,5 +15,5 @@ public class UserPagination {
     int size;
     int totalPages;
     int totalElements;
-    List<User> content;
+    List<UserPaginationObject> content;
 }
