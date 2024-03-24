@@ -18,7 +18,7 @@ public class Language {
     private String languageName;
 
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.ALL})
-    @JoinColumn(name = "userId")
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.DETACH, CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "userId", nullable = false)
     private User user;
 }

@@ -7,6 +7,9 @@ import com.auth0.jwt.interfaces.Header;
 import com.example.internhub.dtos.AuthenticationSuccessDTO;
 import com.example.internhub.dtos.UserLoginDTO;
 import com.example.internhub.entities.User;
+import com.example.internhub.exception.UserNotFoundException;
+import com.example.internhub.responses.BadRequestResponseEntity;
+import com.example.internhub.responses.NotFoundResponseEntity;
 import com.example.internhub.responses.ResponseObject;
 import com.example.internhub.security.AuthTokenType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +54,7 @@ public class MySQLAuthService implements AuthService{
         return JWT.require(algorithm).build().verify(token);
     }
 
+    @Override
     public DecodedJWT decodeBearerToken(String token) {
         String bearer = new AuthTokenType().BEARER;
         Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());
@@ -122,6 +126,14 @@ public class MySQLAuthService implements AuthService{
     }
 
     @Override
+    public User getUserFromServletRequest(HttpServletRequest req) {
+        String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
+        DecodedJWT token = decodeBearerToken(authorizationHeader);
+        User user = userService.findUserByUserName(token.getSubject());
+        return user;
+    }
+
+    @Override
     public boolean isPasswordMatch(String rawPassword, User user) {
         return encoder.matches(rawPassword, user.getPassword());
     }
@@ -135,7 +147,6 @@ public class MySQLAuthService implements AuthService{
     @Override
     public ResponseEntity logIn(UserLoginDTO userLoginDTO) {
         HttpHeaders headers = new HttpHeaders();
-        ResponseEntity responseEntity;
         UserDetails userDetails;
         try {
             User user = null;
@@ -151,19 +162,16 @@ public class MySQLAuthService implements AuthService{
                     user.getRole(), user.getUserId(), user.getUsername());
             headers.add("access-token", generateAccessToken(userDetails));
             headers.add("refresh-token", generateRefreshToken(userDetails));
-            responseEntity = new ResponseEntity(new ResponseObject(200, "Log in successful.", authenticationSuccessDTO)
+            return new ResponseEntity(new ResponseObject(200, "Log in successful.", authenticationSuccessDTO)
                     , headers, HttpStatus.OK);
         } catch (ResponseStatusException ex) {
             ResponseObject responseObject = new ResponseObject(ex.getStatus().value(), ex.getMessage(), null);
-            responseEntity = new ResponseEntity(responseObject, headers, ex.getStatus());
+            return new ResponseEntity(responseObject, headers, ex.getStatus());
         } catch(UsernameNotFoundException ex) {
-            ResponseObject responseObject = new ResponseObject(404, ex.getMessage(), null);
-            responseEntity = new ResponseEntity(responseObject, headers, HttpStatus.NOT_FOUND);
+            return  new NotFoundResponseEntity(ex);
         } catch (Exception ex) {
-            ResponseObject responseObject = new ResponseObject(400, ex.getMessage(), null);
-            responseEntity = new ResponseEntity(responseObject, headers, HttpStatus.BAD_REQUEST);
+            return new BadRequestResponseEntity(ex);
         }
-        return responseEntity;
     }
 
     @Override
