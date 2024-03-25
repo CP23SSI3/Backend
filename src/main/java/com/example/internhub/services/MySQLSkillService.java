@@ -1,12 +1,16 @@
 package com.example.internhub.services;
 
 import com.example.internhub.dtos.CreateSkillDTO;
+import com.example.internhub.dtos.EditSkillDTO;
 import com.example.internhub.entities.Skill;
 import com.example.internhub.entities.User;
+import com.example.internhub.exception.SkillNotFoundException;
 import com.example.internhub.exception.UserModifySkillException;
 import com.example.internhub.exception.UserNotFoundException;
 import com.example.internhub.repositories.LanguageRepository;
 import com.example.internhub.repositories.SkillRepository;
+import com.example.internhub.responses.BadRequestResponseEntity;
+import com.example.internhub.responses.ForbiddenResponseEntity;
 import com.example.internhub.responses.NotFoundResponseEntity;
 import com.example.internhub.responses.ResponseObject;
 import org.modelmapper.ModelMapper;
@@ -46,6 +50,8 @@ public class MySQLSkillService implements SkillService{
         } catch (UserModifySkillException e) {
             return new ResponseEntity(new ResponseObject(400 ,e.getMessage(), null),
                     null, HttpStatus.BAD_REQUEST);
+        } catch (Exception ex) {
+            return new BadRequestResponseEntity(ex);
         }
     }
 
@@ -54,4 +60,49 @@ public class MySQLSkillService implements SkillService{
         if (!loginUser.getRole().equals("ADMIN") &&
                 !loginUser.getUserId().equals(userId)) throw new UserModifySkillException();
     }
+
+    @Override
+    public ResponseEntity deleteSkill(String skillId, HttpServletRequest req) {
+        try {
+            Skill skill = getSkillById(skillId);
+            checkAuthForSkill(skill.getUser().getUserId(), req);
+            return new ResponseEntity(new ResponseObject(200, "Delete skill id " + skillId + "successfully.", null),
+                    null, HttpStatus.OK);
+        } catch (SkillNotFoundException | UserNotFoundException ex) {
+            return new NotFoundResponseEntity(ex);
+        } catch (UserModifySkillException e) {
+            return new ForbiddenResponseEntity(e);
+        } catch (Exception ex) {
+            return new BadRequestResponseEntity(ex);
+        }
+    }
+
+    @Override
+    public ResponseEntity editSkill(EditSkillDTO editSkillDTO, String skillId, HttpServletRequest req) {
+        try {
+            Skill skill = getSkillById(skillId);
+            checkAuthForSkill(skill.getUser().getUserId(), req);
+            skill.setSkillName(editSkillDTO.getSkillName());
+            skill.setSkillDesc(editSkillDTO.getSkillDesc());
+            skillRepository.save(skill);
+            return new ResponseEntity(new ResponseObject(200, "Skill is successfully updated.", skill),
+                    null, HttpStatus.OK);
+        } catch (UserModifySkillException e) {
+            return new ForbiddenResponseEntity(e);
+        } catch (SkillNotFoundException | UserNotFoundException e) {
+            return new NotFoundResponseEntity(e);
+        } catch (Exception e) {
+            return new BadRequestResponseEntity(e);
+        }
+    }
+
+
+    private Skill getSkillById(String skillId) throws SkillNotFoundException {
+        try {
+            return skillRepository.findById(skillId).orElseThrow();
+        } catch (Exception ex) {
+            throw new SkillNotFoundException(skillId);
+        }
+    }
+
 }

@@ -18,7 +18,4 @@ public class CreateLanguageDTO {
     @NotNull(message = "User id must be provide.")
     UserIdDTO user;
 
-//    public String getUserId() {
-//        return  userId.toString();
-//    }
 }
