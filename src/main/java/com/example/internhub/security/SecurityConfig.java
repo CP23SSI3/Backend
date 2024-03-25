@@ -36,6 +36,7 @@ public class SecurityConfig {
                     .antMatchers(HttpMethod.GET, "/api/v1/companies").hasAnyAuthority("ADMIN")
                     .antMatchers(HttpMethod.GET, "/api/v1/companies/**").permitAll()
                     .antMatchers("/api/v1/educations/**").hasAnyAuthority("ADMIN", "USER")
+                    .antMatchers("/api/v1/experiences/**").hasAnyAuthority("ADMIN", "USER")
                     .antMatchers("/api/v1/languages/**").hasAnyAuthority("ADMIN", "USER")
                     .antMatchers(HttpMethod.GET, "/api/v1/position-tags").permitAll()
                     .antMatchers(HttpMethod.DELETE, "/api/v1/posts/**").hasAnyAuthority("ADMIN", "COMPANY")
