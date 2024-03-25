@@ -71,6 +71,9 @@ public class MySQLPostService implements PostService {
         DecodedJWT token = authService.decodeBearerToken(authorizationHeader);
         if (!token.getClaim("role").asString().equals(Role.ADMIN.toString())) {
             User user = userService.findUserByUserName(token.getSubject());
+            System.out.println(user);
+            System.out.println(user.getCompany().getCompId());
+            System.out.println(checkCompId);
             if (!user.getCompany().getCompId().equals(checkCompId)) throw new CompanyModifyPostException();
         }
     }
@@ -140,8 +143,8 @@ public class MySQLPostService implements PostService {
     @Override
     public ResponseEntity deletePost(String postId, HttpServletRequest req, HttpServletResponse res) {
         try {
-            checkIfCompanyCanModifyPost(req, postId);
-            getPostByPostId(postId);
+            Post post = getPostByPostId(postId);
+            checkIfCompanyCanModifyPost(req, post.getComp().getCompId());
             postRepository.deleteById(postId);
             return new ResponseEntity(new ResponseObject(200, "Delete post id " + postId + " successfully", null),
                     null, HttpStatus.OK);

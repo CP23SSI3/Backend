@@ -66,8 +66,8 @@ public class MySQLExperienceService implements ExperienceService {
         try {
             Experience experience = getExperienceById(experienceId);
             checkAuthForExperience(experience.getUser().getUserId(), req);
-            experienceRepository.deleteById(experienceId);
-            return new ResponseEntity(new ResponseObject(200, "Delete experience id " + experienceId + "  successfully.", null),
+            experienceRepository.delete(experience);
+            return new ResponseEntity(new ResponseObject(200, "Delete experience id " + experienceId + " successfully.", null),
                     null, HttpStatus.OK);
         } catch (ExperienceNotFoundException | UserNotFoundException e) {
             return new NotFoundResponseEntity(e);
