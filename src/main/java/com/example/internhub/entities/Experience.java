@@ -33,7 +33,7 @@ public class Experience {
     private int startedYear;
 
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.ALL})
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST})
     @JoinColumn(name = "userId")
     private User user;
 }
