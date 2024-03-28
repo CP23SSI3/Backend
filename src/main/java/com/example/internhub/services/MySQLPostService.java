@@ -162,8 +162,6 @@ public class MySQLPostService implements PostService {
             checkIfCompanyCanModifyPost(req, post.getComp().getCompId());
             Post editPost = modelMapper.map(editPostDTO, Post.class);
             boolean sameAddressAsComp = post.getAddress().getAddressId().equals(post.getComp().getAddress().getAddressId());
-            boolean changedToCompanyAddress = editPostDTO.getAddress() == null &&
-                    !post.getAddress().getAddressId().equals(post.getComp().getAddress().getAddressId());
             Address address = post.getAddress();
             post.setClosedDate(editPost.getClosedDate());
             post.setCoordinatorName(editPost.getCoordinatorName());

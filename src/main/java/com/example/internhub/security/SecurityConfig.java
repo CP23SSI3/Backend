@@ -34,6 +34,7 @@ public class SecurityConfig {
                     .authorizeRequests()
                     .antMatchers(HttpMethod.POST,"/api/v1/auth/**").permitAll()
                     .antMatchers(HttpMethod.GET, "/api/v1/companies").hasAnyAuthority("ADMIN")
+                    .antMatchers(HttpMethod.PUT, "/api/v1/companies/**").hasAnyAuthority("ADMIN", "COMPANY")
                     .antMatchers(HttpMethod.GET, "/api/v1/companies/**").permitAll()
                     .antMatchers("/api/v1/educations/**").hasAnyAuthority("ADMIN", "USER")
                     .antMatchers("/api/v1/experiences/**").hasAnyAuthority("ADMIN", "USER")
