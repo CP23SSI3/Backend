@@ -25,7 +25,6 @@ public class CompanyController {
     public ResponseEntity editCompany(@RequestBody EditCompanyDTO editCompanyDTO,
                                       @PathVariable String compId,
                                       HttpServletRequest req) {
-        System.out.println(editCompanyDTO);
         return companyService.editCompany(editCompanyDTO, compId, req);
     }
 
