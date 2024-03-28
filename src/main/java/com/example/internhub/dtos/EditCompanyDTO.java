@@ -2,14 +2,15 @@ package com.example.internhub.dtos;
 
 import lombok.Getter;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Getter
 public class EditCompanyDTO {
+    @Valid
     public EditAddressDTO address;
-//    @NotNull(message = "Company's description is required.")
     @Size(max = 500, message = "Company's description is too long, 500 characters maximum.")
     String compDesc;
     @NotNull(message = "Company's logo is required.")
