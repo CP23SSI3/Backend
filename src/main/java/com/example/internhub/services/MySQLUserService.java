@@ -187,7 +187,10 @@ public class MySQLUserService implements UserService {
     @Override
     public User getUserById(String userId) throws UserNotFoundException {
         try{
-            return userRepository.findById(userId).orElseThrow();
+//            return userRepository.findById(userId).orElseThrow();
+            User user = userRepository.getUserByIdSort(userId);
+            if (user == null) throw new UserNotFoundException("User id " + userId + " not found.");
+            return user;
         } catch (Exception ex) {
             throw new UserNotFoundException("User id " + userId + " not found.");
         }
