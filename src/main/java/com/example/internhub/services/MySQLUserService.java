@@ -3,9 +3,9 @@ package com.example.internhub.services;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.internhub.dtos.CreateUserDTO;
 import com.example.internhub.dtos.EditUserDTO;
+import com.example.internhub.dtos.UserGeneralInformationListDTO;
 import com.example.internhub.dtos.UserPagination;
-import com.example.internhub.entities.Role;
-import com.example.internhub.entities.User;
+import com.example.internhub.entities.*;
 import com.example.internhub.exception.*;
 import com.example.internhub.repositories.UserRepository;
 import com.example.internhub.responses.BadRequestResponseEntity;
@@ -26,7 +26,8 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class MySQLUserService implements UserService {
@@ -175,7 +176,13 @@ public class MySQLUserService implements UserService {
     @Override
     public ResponseEntity getResponseUserById(String userId, HttpServletRequest req, HttpServletResponse res) {
         try {
-            return new ResponseEntity(new ResponseObject(200, "The user's data is already sent.", getUserById(userId)),
+            User user = getUserById(userId);
+            UserGeneralInformationListDTO dto = modelMapper.map(user, UserGeneralInformationListDTO.class);
+            dto.getEducations().sort(Comparator.comparing(Education::getStartedYear).reversed());
+            dto.getLanguages().sort(Comparator.comparing(Language::getLanguageName));
+            dto.getExperiences().sort(Comparator.comparing(Experience::getStartedYear).reversed());
+            dto.getSkills().sort(Comparator.comparing(Skill::getSkillName));
+            return new ResponseEntity(new ResponseObject(200, "The user's data is already sent.", dto),
                     null, HttpStatus.OK);
         } catch (UserNotFoundException ex) {
             return new NotFoundResponseEntity(ex);
@@ -187,8 +194,7 @@ public class MySQLUserService implements UserService {
     @Override
     public User getUserById(String userId) throws UserNotFoundException {
         try{
-//            return userRepository.findById(userId).orElseThrow();
-            User user = userRepository.getUserByIdSort(userId);
+            User user = userRepository.findById(userId).orElseThrow();
             if (user == null) throw new UserNotFoundException("User id " + userId + " not found.");
             return user;
         } catch (Exception ex) {
