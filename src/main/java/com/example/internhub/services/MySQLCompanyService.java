@@ -53,6 +53,7 @@ public class MySQLCompanyService implements CompanyService{
             checkAuthForCompany(compId, req);
             company.setCompDesc(editCompanyDTO.getCompDesc());
             company.setCompLogoKey(editCompanyDTO.getCompLogoKey());
+            company.setDefaultWelfare(editCompanyDTO.getDefaultWelfare());
             company.setCompName(editCompanyDTO.getCompName());
             company.setCompUrl(editCompanyDTO.getCompUrl());
             company.setLastActive(editCompanyDTO.getLastActive());
@@ -67,7 +68,7 @@ public class MySQLCompanyService implements CompanyService{
                 }
             }
             companyRepository.save(company);
-            return new ResponseEntity(new ResponseObject(200, "Edit company id "+ compId + " successfully.", null),
+            return new ResponseEntity(new ResponseObject(200, "Edit company id "+ compId + " successfully.", company),
                     null, HttpStatus.OK);
         } catch (CompNotFoundException | UserNotFoundException ex) {
             return new NotFoundResponseEntity(ex);

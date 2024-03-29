@@ -71,7 +71,6 @@ public class MYSQLLanguageService implements LanguageService {
         } catch (UserNotFoundException | LanguageNotFoundException e) {
             return new NotFoundResponseEntity(e);
         } catch (Exception e) {
-
             return new BadRequestResponseEntity(e);
         }
     }
