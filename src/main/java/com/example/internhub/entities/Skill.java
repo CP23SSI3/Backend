@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Getter @Setter
 public class Skill {
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.ALL})
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST})
     @JoinColumn(name = "userId")
     private User user;
 

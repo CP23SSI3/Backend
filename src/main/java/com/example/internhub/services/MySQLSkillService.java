@@ -67,7 +67,7 @@ public class MySQLSkillService implements SkillService{
         try {
             Skill skill = getSkillById(skillId);
             checkAuthForSkill(skill.getUser().getUserId(), req);
-            skillRepository.delete(skill);
+            skillRepository.deleteById(skillId);
             return new ResponseEntity(new ResponseObject(200, "Delete skill id " + skillId + "successfully.", null),
                     null, HttpStatus.OK);
         } catch (SkillNotFoundException | UserNotFoundException ex) {
