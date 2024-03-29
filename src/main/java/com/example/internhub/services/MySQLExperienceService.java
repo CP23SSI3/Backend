@@ -3,6 +3,7 @@ package com.example.internhub.services;
 import com.example.internhub.dtos.CreateExperienceDTO;
 import com.example.internhub.dtos.EditExperienceDTO;
 import com.example.internhub.entities.Experience;
+import com.example.internhub.entities.Role;
 import com.example.internhub.entities.User;
 import com.example.internhub.exception.ExperienceNotFoundException;
 import com.example.internhub.exception.UserModifyExperienceException;
@@ -56,7 +57,7 @@ public class MySQLExperienceService implements ExperienceService {
 
     private void checkAuthForExperience (String userId, HttpServletRequest req) throws UserNotFoundException, UserModifyExperienceException {
         User loginUser = authService.getUserFromServletRequest(req);
-        if (!loginUser.getRole().equals("ADMIN") &&
+        if (!loginUser.getRole().equals(Role.ADMIN) &&
                 !loginUser.getUserId().equals(userId)) throw new UserModifyExperienceException();
 
     }

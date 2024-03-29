@@ -3,6 +3,7 @@ package com.example.internhub.services;
 import com.example.internhub.dtos.CreateLanguageDTO;
 import com.example.internhub.dtos.EditLanguageDTO;
 import com.example.internhub.entities.Language;
+import com.example.internhub.entities.Role;
 import com.example.internhub.entities.User;
 import com.example.internhub.exception.*;
 import com.example.internhub.repositories.LanguageRepository;
@@ -54,7 +55,7 @@ public class MYSQLLanguageService implements LanguageService {
 
     private void checkAuthForLanguage(String userId, HttpServletRequest req) throws UserNotFoundException, UserModifyLanguageException {
         User loginUser = authService.getUserFromServletRequest(req);
-        if (!loginUser.getRole().equals("ADMIN") &&
+        if (!loginUser.getRole().equals(Role.ADMIN) &&
                 !loginUser.getUserId().equals(userId)) throw new UserModifyLanguageException();
     }
 

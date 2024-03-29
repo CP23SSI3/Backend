@@ -2,6 +2,7 @@ package com.example.internhub.services;
 
 import com.example.internhub.dtos.CreateSkillDTO;
 import com.example.internhub.dtos.EditSkillDTO;
+import com.example.internhub.entities.Role;
 import com.example.internhub.entities.Skill;
 import com.example.internhub.entities.User;
 import com.example.internhub.exception.SkillNotFoundException;
@@ -57,7 +58,7 @@ public class MySQLSkillService implements SkillService{
 
     private void checkAuthForSkill(String userId, HttpServletRequest req) throws UserModifySkillException, UserNotFoundException {
         User loginUser = authService.getUserFromServletRequest(req);
-        if (!loginUser.getRole().equals("ADMIN") &&
+        if (!loginUser.getRole().equals(Role.ADMIN) &&
                 !loginUser.getUserId().equals(userId)) throw new UserModifySkillException();
     }
 

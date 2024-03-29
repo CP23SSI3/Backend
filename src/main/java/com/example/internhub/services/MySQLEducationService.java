@@ -3,6 +3,7 @@ package com.example.internhub.services;
 import com.example.internhub.dtos.CreateEducationDTO;
 import com.example.internhub.dtos.EditEducationDTO;
 import com.example.internhub.entities.Education;
+import com.example.internhub.entities.Role;
 import com.example.internhub.entities.User;
 import com.example.internhub.exception.EducationNotFoundException;
 import com.example.internhub.exception.UserModifyEducationException;
@@ -55,7 +56,7 @@ public class MySQLEducationService implements EducationService{
 
     private void checkAuthForEducation(String userId, HttpServletRequest req) throws UserNotFoundException, UserModifyEducationException {
         User loginUser = authService.getUserFromServletRequest(req);
-        if (!loginUser.getRole().equals("ADMIN") &&
+        if (!loginUser.getRole().equals(Role.ADMIN) &&
                 !loginUser.getUserId().equals(userId)) throw new UserModifyEducationException();
     }
 
@@ -64,8 +65,6 @@ public class MySQLEducationService implements EducationService{
         try {
             Education education = getEducationById(educationId);
             checkAuthForEducation(education.getUser().getUserId(), req);
-            System.out.println(educationId);
-//            educationRepository.deleteById(educationId);
             educationRepository.delete(education);
             return new ResponseEntity(new ResponseObject(200, "Delete education id " + educationId + " successfully.", null),
                     null, HttpStatus.OK);
@@ -85,11 +84,12 @@ public class MySQLEducationService implements EducationService{
             checkAuthForEducation(education.getUser().getUserId(), req);
             education.setDegree(editEducationDTO.getDegree());
             education.setEducationDesc(editEducationDTO.getEducationDesc());
+            education.setGraduatedYear(editEducationDTO.getGraduatedYear());
             education.setField(editEducationDTO.getField());
             education.setGrade(editEducationDTO.getGrade());
-            education.setGraduatedYear(education.getGraduatedYear());
-            education.setSchoolName(education.getSchoolName());
-            education.setStartedYear(education.getStartedYear());
+            education.setGraduatedYear(editEducationDTO.getGraduatedYear());
+            education.setSchoolName(editEducationDTO.getSchoolName());
+            education.setStartedYear(editEducationDTO.getStartedYear());
             educationRepository.save(education);
             return new ResponseEntity(new ResponseObject(200, "Education is successfully updated.", education),
                     null, HttpStatus.OK);
