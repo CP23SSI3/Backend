@@ -36,7 +36,7 @@ public class MYSQLLanguageService implements LanguageService {
             Language language = modelMapper.map(createLanguageDTO, Language.class);
             User user = userService.getUserById(createLanguageDTO.getUser().getUserId());
             language.setUser(user);
-            if (languageRepositories.getLanguagesByUserAndLanguageName(user, language.getLanguageName()) != null)
+            if (languageRepositories.findExistedLanguageName(user.getUserId(), language.getLanguageName()) != null)
                 throw new LanguageExistedException();
             languageRepositories.save(language);
             return new ResponseEntity(new ResponseObject(200, "Add language successfully.", language),
@@ -81,7 +81,9 @@ public class MYSQLLanguageService implements LanguageService {
             Language oldLanguage = getLanguageById(languageId);
             checkAuthForLanguage(oldLanguage.getUser().getUserId(), req);
             if (oldLanguage.getLanguageName().equals(editLanguageDTO.getLanguageName())) throw new NoEditedDataException();
-            if (languageRepositories.getLanguagesByUserAndLanguageName(oldLanguage.getUser(), editLanguageDTO.getLanguageName()) != null)
+            System.out.println(oldLanguage.getUser().getUserId());
+            System.out.println(editLanguageDTO.getLanguageName());
+            if (languageRepositories.findExistedLanguageName(editLanguageDTO.getLanguageName(), oldLanguage.getUser().getUserId()) != null)
                 throw new LanguageExistedException();
             oldLanguage.setLanguageName(editLanguageDTO.getLanguageName());
             languageRepositories.save(oldLanguage);
