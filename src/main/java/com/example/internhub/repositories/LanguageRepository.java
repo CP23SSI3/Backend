@@ -15,7 +15,7 @@ public interface LanguageRepository extends JpaRepository<Language, String> {
 
     @Query(value = "select l.* " +
             "from languages l join users u on l.userId = u.userId " +
-            "where binary l.languageName = binary :languageName and u.userId = :userId;",
+            "where (binary l.languageName = binary :languageName) and (u.userId = :userId)",
             nativeQuery = true)
     public Language findExistedLanguageName(@Param("languageName") String languageName,
                                             @Param("userId") String userId);
