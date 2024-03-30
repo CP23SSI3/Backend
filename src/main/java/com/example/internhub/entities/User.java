@@ -12,6 +12,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -39,6 +40,7 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private Set<Education> educations = new LinkedHashSet<>();
+//    private ArrayList<Education> educations = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
     private Set<Experience> experiences = new LinkedHashSet<>();
