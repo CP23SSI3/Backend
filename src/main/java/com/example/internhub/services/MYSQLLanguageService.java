@@ -3,6 +3,7 @@ package com.example.internhub.services;
 import com.example.internhub.dtos.CreateLanguageDTO;
 import com.example.internhub.dtos.EditLanguageDTO;
 import com.example.internhub.entities.Language;
+import com.example.internhub.entities.Role;
 import com.example.internhub.entities.User;
 import com.example.internhub.exception.*;
 import com.example.internhub.repositories.LanguageRepository;
@@ -35,9 +36,9 @@ public class MYSQLLanguageService implements LanguageService {
             checkAuthForLanguage(createLanguageDTO.getUser().getUserId(), req);
             Language language = modelMapper.map(createLanguageDTO, Language.class);
             User user = userService.getUserById(createLanguageDTO.getUser().getUserId());
-            language.setUser(user);
-            if (languageRepositories.getLanguagesByUserAndLanguageName(user, language.getLanguageName()) != null)
+            if (languageRepositories.findExistedLanguageName(language.getLanguageName(), user.getUserId()) != null)
                 throw new LanguageExistedException();
+            language.setUser(user);
             languageRepositories.save(language);
             return new ResponseEntity(new ResponseObject(200, "Add language successfully.", language),
                     null, HttpStatus.OK);
@@ -54,7 +55,7 @@ public class MYSQLLanguageService implements LanguageService {
 
     private void checkAuthForLanguage(String userId, HttpServletRequest req) throws UserNotFoundException, UserModifyLanguageException {
         User loginUser = authService.getUserFromServletRequest(req);
-        if (!loginUser.getRole().equals("ADMIN") &&
+        if (!loginUser.getRole().equals(Role.ADMIN) &&
                 !loginUser.getUserId().equals(userId)) throw new UserModifyLanguageException();
     }
 
@@ -81,7 +82,7 @@ public class MYSQLLanguageService implements LanguageService {
             Language oldLanguage = getLanguageById(languageId);
             checkAuthForLanguage(oldLanguage.getUser().getUserId(), req);
             if (oldLanguage.getLanguageName().equals(editLanguageDTO.getLanguageName())) throw new NoEditedDataException();
-            if (languageRepositories.getLanguagesByUserAndLanguageName(oldLanguage.getUser(), editLanguageDTO.getLanguageName()) != null)
+            if (languageRepositories.findExistedLanguageName(editLanguageDTO.getLanguageName(), oldLanguage.getUser().getUserId()) != null)
                 throw new LanguageExistedException();
             oldLanguage.setLanguageName(editLanguageDTO.getLanguageName());
             languageRepositories.save(oldLanguage);
