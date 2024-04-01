@@ -9,6 +9,7 @@ import com.example.internhub.entities.*;
 import com.example.internhub.exception.*;
 import com.example.internhub.repositories.UserRepository;
 import com.example.internhub.responses.BadRequestResponseEntity;
+import com.example.internhub.responses.ForbiddenResponseEntity;
 import com.example.internhub.responses.NotFoundResponseEntity;
 import com.example.internhub.responses.ResponseObject;
 import org.modelmapper.ModelMapper;
@@ -121,7 +122,9 @@ public class MySQLUserService implements UserService {
             user.setLastUpdate(editUser.getLastUpdate());
             user.setPhoneNumber(editUser.getPhoneNumber());
             user.setUserDesc(editUser.getUserDesc());
+            System.out.println(!user.getUsername().equals(editUser.getUsername()) && isUsernameExisted(editUser.getUsername()));
             if (!user.getUsername().equals(editUser.getUsername()) && isUsernameExisted(editUser.getUsername())) throw new UsernameExistedException();
+            if (!user.getEmail().equals(editUser.getEmail()) && isEmailExisted(editUser.getEmail())) throw new EmailExistedException();
             user.setUsername(editUser.getUsername());
             user.setUserProfileKey(editUser.getUserProfileKey());
             if (user.getAddress() == null) {
@@ -133,8 +136,10 @@ public class MySQLUserService implements UserService {
             userRepository.save(user);
             return new ResponseEntity(new ResponseObject(200, "Edit user id " + userId + "successful.", user),
                     null, HttpStatus.OK);
-        } catch (UsernameExistedException ex) {
+        } catch (UsernameExistedException | EmailExistedException ex) {
             return new BadRequestResponseEntity(ex);
+        } catch (UserModifyUserException e) {
+            return new ForbiddenResponseEntity(e);
         } catch (UserNotFoundException ex) {
             return new NotFoundResponseEntity(ex);
         } catch (Exception ex) {
@@ -165,8 +170,8 @@ public class MySQLUserService implements UserService {
     }
 
     @Override
-    public ResponseEntity getAllUserPagination(int pageNumber, int pageSize,HttpServletResponse res) {
-        Page<User> userPage = userRepository.findAll(PageRequest.of(pageNumber, pageSize, Sort.by("lastActive").descending()));
+    public ResponseEntity getAllUserPagination(int pageNumber, int pageSize, String searchText, HttpServletResponse res) {
+        Page<User> userPage = userRepository.findByUsernameContainingOrEmailContaining(searchText, searchText, PageRequest.of(pageNumber, pageSize, Sort.by("lastActive").descending()));
         UserPagination userPagination = modelMapper.map(userPage, UserPagination.class);
         return new ResponseEntity(new ResponseObject(200, "The user's list is successfully sent.",
                 userPagination),
