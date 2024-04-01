@@ -50,8 +50,9 @@ public class UserController {
     @GetMapping("")
     public ResponseEntity getAllUsersPagination(@RequestParam(defaultValue = "0") int page,
                                                 @RequestParam(defaultValue = "10") int pageSize,
+                                                @RequestParam(defaultValue = "") String q,
                                                 HttpServletResponse res){
-        return userService.getAllUserPagination(page, pageSize, res);
+        return userService.getAllUserPagination(page, pageSize, q, res);
     }
 
     @GetMapping("/{userId}")
