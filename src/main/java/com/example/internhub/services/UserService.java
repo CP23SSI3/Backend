@@ -26,7 +26,7 @@ public interface UserService {
     public User findUserByUserName(String username);
     public User findUserByEmail(String email);
     public User findUserByUsernameOrEmail(String usernameOrEmail);
-    public ResponseEntity getAllUserPagination(int pageNumber, int pageSize, HttpServletResponse res);
+    public ResponseEntity getAllUserPagination(int pageNumber, int pageSize, String searchText, HttpServletResponse res);
     public ResponseEntity getResponseUserById(String userId, HttpServletRequest req, HttpServletResponse res);
     public User getUserById(String userId) throws UserNotFoundException;
     public boolean isPasswordMatch(String rawPassword, String encryptedPassword);

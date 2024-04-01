@@ -170,8 +170,8 @@ public class MySQLUserService implements UserService {
     }
 
     @Override
-    public ResponseEntity getAllUserPagination(int pageNumber, int pageSize,HttpServletResponse res) {
-        Page<User> userPage = userRepository.findAll(PageRequest.of(pageNumber, pageSize, Sort.by("lastActive").descending()));
+    public ResponseEntity getAllUserPagination(int pageNumber, int pageSize, String searchText, HttpServletResponse res) {
+        Page<User> userPage = userRepository.findByUsernameContainingOrEmailContaining(searchText, searchText, PageRequest.of(pageNumber, pageSize, Sort.by("lastActive").descending()));
         UserPagination userPagination = modelMapper.map(userPage, UserPagination.class);
         return new ResponseEntity(new ResponseObject(200, "The user's list is successfully sent.",
                 userPagination),
