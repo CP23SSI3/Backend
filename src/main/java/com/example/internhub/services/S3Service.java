@@ -38,7 +38,6 @@ import java.time.Duration;
 @Service
 public class S3Service {
     private static final Region AWS_REGION = Region.AP_SOUTHEAST_2;
-//    @Autowired
     private AwsConfig awsConfig;
 //    public S3Service(AwsConfig awsConfig) {
 //        this.awsConfig = awsConfig;
@@ -53,7 +52,6 @@ public class S3Service {
         this.awsConfig = awsConfig;
         ACCESS_KEY = awsConfig.getACCESS_KEY();
         SECRET_KEY = awsConfig.getSECRET_KEY();
-        System.out.println("access key " + awsConfig.getACCESS_KEY());
         AwsCredentials credentials = AwsBasicCredentials.create(ACCESS_KEY, SECRET_KEY);
         s3Client = S3Client.builder()
                 .credentialsProvider(StaticCredentialsProvider.create(credentials))
@@ -95,7 +93,6 @@ public class S3Service {
                 .contentType("image/jpeg")
                 .build();
         System.out.println("create request");
-        System.out.println(file);
 //        System.out.println(file.toPath().toString());
         try {
             byte[] bytes = file.getBytes();
