@@ -39,11 +39,7 @@ import java.time.Duration;
 public class S3Service {
     private static final Region AWS_REGION = Region.AP_SOUTHEAST_2;
     private AwsConfig awsConfig;
-//    public S3Service(AwsConfig awsConfig) {
-//        this.awsConfig = awsConfig;
-//    }
     private String ACCESS_KEY;
-//    @Value("${aws.secret.key}")
     private String SECRET_KEY;
 
     private static S3Client s3Client;
