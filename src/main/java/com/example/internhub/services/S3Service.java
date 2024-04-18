@@ -37,8 +37,6 @@ import java.time.Duration;
 
 @Service
 public class S3Service {
-//    private static final String ACCESS_KEY = "AKIAYS2NUBSTLT7J2TU6";
-//    private static final String SECRET_KEY = "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";
     private static final Region AWS_REGION = Region.AP_SOUTHEAST_2;
 //    @Autowired
     private AwsConfig awsConfig;
