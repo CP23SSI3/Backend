@@ -2,8 +2,10 @@ package com.example.internhub.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 @Component
+@Service
 public class AwsConfig {
     @Value("${aws.access.key.id}")
     private String ACCESS_KEY;

@@ -37,33 +37,24 @@ import java.time.Duration;
 
 @Service
 public class S3Service {
-    private static final String ACCESS_KEY = "AKIAYS2NUBSTLT7J2TU6";
-    private static final String SECRET_KEY = "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";
+//    private static final String ACCESS_KEY = "AKIAYS2NUBSTLT7J2TU6";
+//    private static final String SECRET_KEY = "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";
     private static final Region AWS_REGION = Region.AP_SOUTHEAST_2;
 //    @Autowired
     private AwsConfig awsConfig;
-//    @Autowired
-//    private S3Service(AwsConfig awsConfig){
+//    public S3Service(AwsConfig awsConfig) {
 //        this.awsConfig = awsConfig;
 //    }
-
-
-//    @Value("${aws.access.key.id}")
-//    private String ACCESS_KEY;
+    private String ACCESS_KEY;
 //    @Value("${aws.secret.key}")
-//    private String SECRET_KEY;
+    private String SECRET_KEY;
 
     private static S3Client s3Client;
-//    private final String COMP_LOGO_KEY_BUCKET = "internhub-company-logo";
 
-//    private AwsCredentials credentials = AwsBasicCredentials.create(ACCESS_KEY, SECRET_KEY);
-
-//    private S3Client s3Client = S3Client.builder()
-//            .credentialsProvider(StaticCredentialsProvider.create(credentials))
-//            .region(AWS_REGION)
-//            .build();
     public S3Service(AwsConfig awsConfig) {
         this.awsConfig = awsConfig;
+        ACCESS_KEY = awsConfig.getACCESS_KEY();
+        SECRET_KEY = awsConfig.getSECRET_KEY();
         System.out.println("access key " + awsConfig.getACCESS_KEY());
         AwsCredentials credentials = AwsBasicCredentials.create(ACCESS_KEY, SECRET_KEY);
         s3Client = S3Client.builder()
