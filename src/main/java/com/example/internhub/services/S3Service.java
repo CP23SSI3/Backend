@@ -6,6 +6,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.Upload;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 //import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -37,22 +38,29 @@ public class S3Service {
     private static final String ACCESS_KEY = "AKIAYS2NUBSTLT7J2TU6";
     private static final String SECRET_KEY = "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";
     private static final Region AWS_REGION = Region.AP_SOUTHEAST_2;
-//    private final S3Client s3Client;
+
+
+//    @Value("${aws.access.key.id}")
+//    private String ACCESS_KEY;
+//    @Value("${aws.secret.key}")
+//    private String SECRET_KEY;
+
+    private static S3Client s3Client;
 //    private final String COMP_LOGO_KEY_BUCKET = "internhub-company-logo";
 
-    private AwsCredentials credentials = AwsBasicCredentials.create(ACCESS_KEY, SECRET_KEY);
+//    private AwsCredentials credentials = AwsBasicCredentials.create(ACCESS_KEY, SECRET_KEY);
 
-    private S3Client s3Client = S3Client.builder()
-            .credentialsProvider(StaticCredentialsProvider.create(credentials))
-            .region(AWS_REGION)
-            .build();
-//    public S3Service() {
-//        AwsBasicCredentials awsBasicCredentials = AwsBasicCredentials.create(ACCESS_KEY, SECRET_KEY);
-//        this.s3Client = S3Client.builder()
-//                .region(AWS_REGION)
-//                .credentialsProvider(() ->awsBasicCredentials)
-//                .build();
-//    }
+//    private S3Client s3Client = S3Client.builder()
+//            .credentialsProvider(StaticCredentialsProvider.create(credentials))
+//            .region(AWS_REGION)
+//            .build();
+    public S3Service() {
+        AwsCredentials credentials = AwsBasicCredentials.create(ACCESS_KEY, SECRET_KEY);
+        s3Client = S3Client.builder()
+                .credentialsProvider(StaticCredentialsProvider.create(credentials))
+                .region(AWS_REGION)
+                .build();
+    }
 
     public void test() {
         try {
