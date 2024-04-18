@@ -6,6 +6,8 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.Upload;
+import com.example.internhub.config.AwsConfig;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,6 +40,12 @@ public class S3Service {
     private static final String ACCESS_KEY = "AKIAYS2NUBSTLT7J2TU6";
     private static final String SECRET_KEY = "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";
     private static final Region AWS_REGION = Region.AP_SOUTHEAST_2;
+//    @Autowired
+    private AwsConfig awsConfig;
+//    @Autowired
+//    private S3Service(AwsConfig awsConfig){
+//        this.awsConfig = awsConfig;
+//    }
 
 
 //    @Value("${aws.access.key.id}")
@@ -54,7 +62,9 @@ public class S3Service {
 //            .credentialsProvider(StaticCredentialsProvider.create(credentials))
 //            .region(AWS_REGION)
 //            .build();
-    public S3Service() {
+    public S3Service(AwsConfig awsConfig) {
+        this.awsConfig = awsConfig;
+        System.out.println("access key " + awsConfig.getACCESS_KEY());
         AwsCredentials credentials = AwsBasicCredentials.create(ACCESS_KEY, SECRET_KEY);
         s3Client = S3Client.builder()
                 .credentialsProvider(StaticCredentialsProvider.create(credentials))

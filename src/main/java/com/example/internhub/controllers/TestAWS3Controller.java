@@ -40,7 +40,7 @@ public class TestAWS3Controller {
         FileOutputStream fos = new FileOutputStream( convFile );
         fos.write( file.getBytes() );
         fos.close();
-        s3Service.testAgain("internhub-company-logo", "final.png", convFile);
+        s3Service.testAgain("internhub-company-logo", (UUID.randomUUID() + ".png"), convFile);
 //        return convFile;
     }
 
