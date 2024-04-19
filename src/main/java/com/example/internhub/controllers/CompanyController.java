@@ -7,6 +7,7 @@ import com.example.internhub.services.CompanyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -38,5 +39,10 @@ public class CompanyController {
     public ResponseEntity getCompanyById(@PathVariable String compId,
                                          HttpServletResponse res) {
         return companyService.getCompanyById(compId, res);
+    }
+
+    @PostMapping("/logo")
+    public ResponseEntity uploadCopmanyLogo(@RequestParam("file") MultipartFile file) {
+        return companyService.uploadCompanyLogo(file);
     }
 }

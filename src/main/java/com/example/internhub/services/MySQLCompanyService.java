@@ -6,14 +6,12 @@ import com.example.internhub.entities.Address;
 import com.example.internhub.entities.Company;
 import com.example.internhub.entities.Role;
 import com.example.internhub.entities.User;
-import com.example.internhub.exception.CompNotFoundException;
-import com.example.internhub.exception.UserModifyCompanyException;
-import com.example.internhub.exception.UserModifyLanguageException;
-import com.example.internhub.exception.UserNotFoundException;
+import com.example.internhub.exception.*;
 import com.example.internhub.repositories.CompanyRepository;
 import com.example.internhub.responses.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,10 +19,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.UUID;
 
 @Service
@@ -39,6 +39,10 @@ public class MySQLCompanyService implements CompanyService{
     private CompanyRepository companyRepository;
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private S3Service s3Service;
+    @Value("${company.logo.bucket.name}")
+    private String bucketName;
 
     private void checkAuthForCompany(String compId, HttpServletRequest req) throws UserNotFoundException, UserModifyCompanyException {
         User loginUser = authService.getUserFromServletRequest(req);
@@ -123,6 +127,20 @@ public class MySQLCompanyService implements CompanyService{
             return new NotFoundResponseEntity(ex);
         } catch (Exception ex) {
             return new BadRequestResponseEntity(ex);
+        }
+    }
+
+    @Override
+    public ResponseEntity uploadCompanyLogo(MultipartFile file) {
+        try {
+            String logo = s3Service.uploadMultiPartFileToS3(bucketName, file);
+            return new ResponseEntity(new ResponseObject(200,
+                    "Company logo is successfully uploaded.",
+                    logo), null, HttpStatus.OK);
+        } catch (AmazonSDKException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
