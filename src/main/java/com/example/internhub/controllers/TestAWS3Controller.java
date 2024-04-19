@@ -1,11 +1,11 @@
 package com.example.internhub.controllers;
 
+import com.example.internhub.services.MySQLS3Service;
 import com.example.internhub.services.S3Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.websocket.server.PathParam;
 import java.io.*;
 import java.util.UUID;
 
@@ -21,30 +21,32 @@ public class TestAWS3Controller {
     public void uploadPicture(@RequestParam("file") MultipartFile file) {
         System.out.println(file.getName());
         System.out.println(file.getContentType());
-        s3Service.uploadFileToS3("internhub-company-logo", (UUID.randomUUID().toString() + ".png"), file);
+//        s3Service.testBytes("internhub-company-logo", (UUID.randomUUID().toString() + ".png"), file);
     }
 
     @GetMapping("")
     public void getPicture() {
 //        s3Service.getPicture("internhub-company-logo", "02peekside-128.png");
-        s3Service.test();
+//        s3Service.test();
     }
 
     @PostMapping("/a")
-    public void test(@RequestParam("file") MultipartFile file) throws IOException {
-        System.out.println(file.getName());
-        File convFile = new File( file.getOriginalFilename() );
-        convFile.deleteOnExit();
-        FileOutputStream fos = new FileOutputStream( convFile );
-        fos.write( file.getBytes() );
-        fos.close();
-        s3Service.testAgain("internhub-company-logo", (UUID.randomUUID() + ".png"),
-//convertMultipartFileToFile(file)
-                convFile
-//                new FileOutputStream(new File(file.getOriginalFilename())).write(file.getBytes())
-        );
-//        return convFile;
-        convFile.delete();
+    public String test(@RequestParam("file") MultipartFile file) throws Exception {
+//        System.out.println(file.getName());
+//        File convFile = new File( file.getOriginalFilename() );
+//        convFile.deleteOnExit();
+//        FileOutputStream fos = new FileOutputStream( convFile );
+//        fos.write( file.getBytes() );
+//        fos.close();
+//        s3Service.uploadFileToS3("a", convFile);
+////        s3Service.testAgain("internhub-company-logo", (UUID.randomUUID() + ".png"),
+//////convertMultipartFileToFile(file)
+////                convFile
+//////                new FileOutputStream(new File(file.getOriginalFilename())).write(file.getBytes())
+////        );
+////        return convFile;
+//        convFile.delete();
+        return s3Service.uploadMultiPartFileToS3("internhub-company-logo", file);
     }
 
     public File convertMultipartFileToFile(MultipartFile multipartFile) throws IOException {
