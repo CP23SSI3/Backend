@@ -124,13 +124,12 @@ public class MySQLS3Service implements S3Service{
     @Override
     public String uploadMultiPartFileToS3(String bucketName, MultipartFile file) throws IOException, AmazonSDKException {
         File convFile = new File(file.getOriginalFilename());
-        String key = "";
         try {
             convFile.deleteOnExit();
             FileOutputStream fos = new FileOutputStream(convFile);
             fos.write(file.getBytes());
             fos.close();
-            key = uploadFileToS3(bucketName, convFile);
+            String key = uploadFileToS3(bucketName, convFile);
             convFile.delete();
             return key;
         } catch (IOException e) {

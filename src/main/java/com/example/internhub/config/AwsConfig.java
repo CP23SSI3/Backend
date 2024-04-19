@@ -11,12 +11,18 @@ public class AwsConfig {
     private String ACCESS_KEY;
     @Value("${aws.secret.key}")
     private String SECRET_KEY;
+//    @Value("${company.logo.bucket.name}")
+//    private String bucketName;
 
-    public String getACCESS_KEY() {
+    public String getACCESS_KEY () {
         return ACCESS_KEY;
     }
 
-    public String getSECRET_KEY() {
+    public String getSECRET_KEY () {
         return SECRET_KEY;
     }
+
+//    public String getBucketName() {
+//        return bucketName;
+//    }
 }

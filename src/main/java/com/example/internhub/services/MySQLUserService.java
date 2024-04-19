@@ -14,6 +14,7 @@ import com.example.internhub.responses.NotFoundResponseEntity;
 import com.example.internhub.responses.ResponseObject;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -41,6 +42,8 @@ public class MySQLUserService implements UserService {
     private ModelMapper modelMapper;
     @Autowired
     private AddressService addressService;
+    @Value("${company.logo.link}")
+    private String COMPANY_LOGO_LINK;
     private PasswordEncoder encoder = new BCryptPasswordEncoder();
 
     private void checkIfUserCanModifyUser(HttpServletRequest req, String userId) throws UserModifyUserException {
@@ -77,6 +80,12 @@ public class MySQLUserService implements UserService {
             if (findUserByEmail(user.getEmail()) != null) throw new EmailExistedException();
             if (findUserByUserName(user.getUsername()) != null) throw new UsernameExistedException();
             if (user.getRole() == Role.USER && user.getCompany() != null) throw new UserCreateCompanyException();
+            if (user.getRole() == Role.COMPANY) {
+                String logoFile = user.getCompany().getCompLogoKey();
+                String id = logoFile.split("\\.")[0];
+                user.getCompany().setCompId(id);
+                user.getCompany().setCompLogoKey(COMPANY_LOGO_LINK + "/" + logoFile);
+            }
             user.setPassword(encryptedPassword(createUserDTO.getRawPassword()));
             userRepository.save(user);
             return new ResponseEntity(new ResponseObject(200, "Create user successfully.", user),

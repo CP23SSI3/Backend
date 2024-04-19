@@ -9,6 +9,7 @@ import com.example.internhub.responses.ResponseObjectList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,4 +22,5 @@ public interface CompanyService {
     public Company getCompany(Company company);
     public Company getCompanyByCompanyId(String companyId) throws CompNotFoundException;
     public ResponseEntity getCompanyById(String companyId, HttpServletResponse res);
+    public ResponseEntity uploadCompanyLogo(MultipartFile file);
 }
