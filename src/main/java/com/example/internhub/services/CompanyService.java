@@ -22,5 +22,6 @@ public interface CompanyService {
     public Company getCompany(Company company);
     public Company getCompanyByCompanyId(String companyId) throws CompNotFoundException;
     public ResponseEntity getCompanyById(String companyId, HttpServletResponse res);
+    public ResponseEntity updateCompanyLogo(String compId, MultipartFile file, HttpServletRequest req);
     public ResponseEntity uploadCompanyLogo(MultipartFile file);
 }

@@ -42,7 +42,9 @@ public class MySQLCompanyService implements CompanyService{
     @Autowired
     private S3Service s3Service;
     @Value("${company.logo.bucket.name}")
-    private String bucketName;
+    private String INTERNHUB_COMPANY_LOGO_BUCKET;
+    @Value("${company.logo.link}")
+    private String COMPANY_LOGO_LINK;
 
     private void checkAuthForCompany(String compId, HttpServletRequest req) throws UserNotFoundException, UserModifyCompanyException {
         User loginUser = authService.getUserFromServletRequest(req);
@@ -131,9 +133,27 @@ public class MySQLCompanyService implements CompanyService{
     }
 
     @Override
+    public ResponseEntity updateCompanyLogo(String compId, MultipartFile file, HttpServletRequest req) {
+        try {
+            Company comp = getCompanyByCompanyId(compId);
+            checkAuthForCompany(compId, req);
+            String key = s3Service.uploadMultiPartFileWithFilenameToS3(INTERNHUB_COMPANY_LOGO_BUCKET, compId, file);
+            comp.setCompLogoKey(COMPANY_LOGO_LINK + "/" + key);
+            return new ResponseEntity(new ResponseObject(200, "Company logo is successfully updated.", null),
+                    null, HttpStatus.OK);
+        } catch (CompNotFoundException | UserNotFoundException ex) {
+            return new NotFoundResponseEntity(ex);
+        } catch (UserModifyCompanyException e) {
+            return new ForbiddenResponseEntity(e);
+        } catch (Exception e) {
+            return new BadRequestResponseEntity(e);
+        }
+    }
+
+    @Override
     public ResponseEntity uploadCompanyLogo(MultipartFile file) {
         try {
-            String logo = s3Service.uploadMultiPartFileToS3(bucketName, file);
+            String logo = s3Service.uploadMultiPartFileToS3(INTERNHUB_COMPANY_LOGO_BUCKET, file);
             return new ResponseEntity(new ResponseObject(200,
                     "Company logo is successfully uploaded.",
                     logo), null, HttpStatus.OK);
