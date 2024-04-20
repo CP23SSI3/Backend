@@ -24,9 +24,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -44,6 +46,12 @@ public class MySQLUserService implements UserService {
     private AddressService addressService;
     @Value("${company.logo.link}")
     private String COMPANY_LOGO_LINK;
+    @Value("${user.profile.link}")
+    private String USER_PROFILE_LINK;
+    @Value("${user.profile.bucket.name}")
+    private String USER_PROFILE_BUCKET_NAME;
+    @Autowired
+    private S3Service s3Service;
     private PasswordEncoder encoder = new BCryptPasswordEncoder();
 
     private void checkIfUserCanModifyUser(HttpServletRequest req, String userId) throws UserModifyUserException {
@@ -223,6 +231,24 @@ public class MySQLUserService implements UserService {
     @Override
     public boolean isPasswordMatch(String rawPassword, String encryptedPassword) {
         return encoder.matches(rawPassword, encryptedPassword);
+    }
+
+    @Override
+    public ResponseEntity updateUserProfilePicture(String userId, MultipartFile file, HttpServletRequest req) {
+        try {
+            User user = getUserById(userId);
+            checkIfUserCanModifyUser(req, userId);
+            String key = s3Service.uploadMultiPartFileWithFilenameToS3(USER_PROFILE_BUCKET_NAME, userId, file);
+            user.setUserProfileKey(USER_PROFILE_LINK + "/" + key);
+            return new ResponseEntity(new ResponseObject(200, "User's profile picture is successfully updated.", null),
+                    null, HttpStatus.OK);
+        } catch (UserNotFoundException ex) {
+            return new NotFoundResponseEntity(ex);
+        } catch (UserModifyUserException e) {
+            return new ForbiddenResponseEntity(e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private boolean isUsernameExisted(String username) {

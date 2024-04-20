@@ -41,8 +41,16 @@ public class CompanyController {
         return companyService.getCompanyById(compId, res);
     }
 
+    @PutMapping("/{compId}/logo")
+    public ResponseEntity updateCompanyLogo(@PathVariable String compId,
+                                            @RequestParam("file") MultipartFile file,
+                                            HttpServletRequest req) {
+        return companyService.updateCompanyLogo(compId, file, req);
+    }
+
     @PostMapping("/logo")
     public ResponseEntity uploadCopmanyLogo(@RequestParam("file") MultipartFile file) {
         return companyService.uploadCompanyLogo(file);
     }
+
 }

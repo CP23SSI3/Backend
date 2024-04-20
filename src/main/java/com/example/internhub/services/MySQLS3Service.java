@@ -50,65 +50,43 @@ public class MySQLS3Service implements S3Service{
                 .build();
     }
 
-    public void test() {
+    @Override
+    public String testing(String bucketName, String fileName, MultipartFile file) throws IOException {
+        File convFile = new File(file.getOriginalFilename());
         try {
-            ListBucketsRequest listBucketsRequest = ListBucketsRequest.builder().build();
-            s3Client.listBuckets(listBucketsRequest);
-            System.out.println(s3Client.listBuckets(listBucketsRequest));
-            System.out.println("Credentials are valid and usable.");
+            convFile.deleteOnExit();
+            FileOutputStream fos = new FileOutputStream(convFile);
+            fos.write(file.getBytes());
+            fos.close();
+            String key = uploadFileWithFilenameToS3(bucketName, fileName, convFile);
+            convFile.delete();
+            return key;
+        } catch (IOException e) {
+            convFile.delete();
+            throw new IOException(e.getMessage());
         } catch (Exception e) {
-            System.err.println("Credentials are not valid or usable: " + e.getMessage());
-        }
-    }
-
-    public void testBytes(String bucketName, String key, MultipartFile file) {
-                System.out.println("uploading...?");
-        PutObjectRequest request = PutObjectRequest.builder()
-                .bucket(bucketName)
-                .key(key)
-                .contentType("image/jpeg")
-                .build();
-        System.out.println("create request");
-        try {
-            byte[] bytes = file.getBytes();
-            System.out.println(bytes);
-//            PutObjectResponse response = s3Client.putObject(request, )
-//            s3Client.putObject(bytes, bucketName, key);
-            PutObjectResponse response = s3Client.putObject(request, RequestBody.fromBytes(bytes));
-            System.out.println("Upload complete. ETag: " + response.eTag());
-        } catch (SdkException e) {
-            System.err.println("AWS SDK error during file upload: " + e.getMessage());
-            e.printStackTrace();
-        } catch (Exception e) {
-            System.err.println("Error during file upload: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    public void testAgain(String bucketName, String key, File file) {
-        PutObjectRequest request = PutObjectRequest.builder()
-                .bucket(bucketName)
-                .key(key)
-//                .contentType("image/jpeg")
-                .build();
-        System.out.println(file);
-        try {
-            PutObjectResponse response = s3Client.putObject(request, RequestBody.fromFile(file));
-            System.out.println("Upload complete. ETag: " + response.eTag());
-        } catch (SdkException e) {
-            System.err.println("AWS SDK error during file upload: " + e.getMessage());
-            e.printStackTrace();
-        } catch (Exception e) {
-            System.err.println("Error during file upload: " + e.getMessage());
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
     @Override
     public String uploadFileToS3(String bucketName, File file) throws AmazonSDKException {
-        String fileExtension = FileNameUtils.getExtension(file.getName());
-        String id = UUID.randomUUID().toString();
-        String key = id + "." + fileExtension;
+        String key = UUID.randomUUID() + "." + FileNameUtils.getExtension(file.getName());
+        PutObjectRequest request = PutObjectRequest.builder()
+                .bucket(bucketName)
+                .key(key)
+                .build();
+        try {
+            s3Client.putObject(request, RequestBody.fromFile(file));
+            return key;
+        } catch (SdkException e) {
+            throw new AmazonSDKException(e.getLocalizedMessage());
+        }
+    }
+
+    @Override
+    public String uploadFileWithFilenameToS3(String bucketName, String fileName, File file) throws Exception {
+        String key = fileName + "." + FileNameUtils.getExtension(file.getName());
         PutObjectRequest request = PutObjectRequest.builder()
                 .bucket(bucketName)
                 .key(key)
@@ -135,6 +113,25 @@ public class MySQLS3Service implements S3Service{
         } catch (IOException e) {
             convFile.delete();
             throw new IOException(e.getMessage());
+        }
+    }
+
+    @Override
+    public String uploadMultiPartFileWithFilenameToS3(String bucketName, String fileName, MultipartFile file) throws IOException, AmazonSDKException {
+        File convFile = new File(file.getOriginalFilename());
+        try {
+            convFile.deleteOnExit();
+            FileOutputStream fos = new FileOutputStream(convFile);
+            fos.write(file.getBytes());
+            fos.close();
+            String key = uploadFileWithFilenameToS3(bucketName, fileName, convFile);
+            convFile.delete();
+            return key;
+        } catch (IOException e) {
+            convFile.delete();
+            throw new IOException(e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 }
