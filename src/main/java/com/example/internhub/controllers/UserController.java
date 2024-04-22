@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -60,6 +61,13 @@ public class UserController {
                                       HttpServletRequest req,
                                       HttpServletResponse res) {
         return userService.getResponseUserById(userId, req, res);
+    }
+
+    @PutMapping("/{userId}/profile-picture")
+    public ResponseEntity updateUserProfilePicture(@PathVariable String userId,
+                                                   @RequestParam("file") MultipartFile file,
+                                                   HttpServletRequest req) {
+        return userService.updateUserProfilePicture(userId, file, req);
     }
 
 }
