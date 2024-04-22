@@ -21,6 +21,8 @@ import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -36,6 +38,7 @@ public class MySQLS3Service implements S3Service{
     private AwsConfig awsConfig;
     private String ACCESS_KEY;
     private String SECRET_KEY;
+    private ImageConverterService imageConverterService = new ImageConverterService();
 
     private static S3Client s3Client;
 
@@ -50,24 +53,24 @@ public class MySQLS3Service implements S3Service{
                 .build();
     }
 
-    @Override
-    public String testing(String bucketName, String fileName, MultipartFile file) throws IOException {
-        File convFile = new File(file.getOriginalFilename());
-        try {
-            convFile.deleteOnExit();
-            FileOutputStream fos = new FileOutputStream(convFile);
-            fos.write(file.getBytes());
-            fos.close();
-            String key = uploadFileWithFilenameToS3(bucketName, fileName, convFile);
-            convFile.delete();
-            return key;
-        } catch (IOException e) {
-            convFile.delete();
-            throw new IOException(e.getMessage());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+//    @Override
+//    public String testing(String bucketName, String fileName, MultipartFile file) throws IOException {
+//        File convFile = new File(file.getOriginalFilename());
+//        try {
+//            convFile.deleteOnExit();
+//            FileOutputStream fos = new FileOutputStream(convFile);
+//            fos.write(file.getBytes());
+//            fos.close();
+//            String key = uploadFileWithFilenameToS3(bucketName, fileName, convFile);
+//            convFile.delete();
+//            return key;
+//        } catch (IOException e) {
+//            convFile.delete();
+//            throw new IOException(e.getMessage());
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 
     @Override
     public String uploadFileToS3(String bucketName, File file) throws AmazonSDKException {
@@ -131,6 +134,36 @@ public class MySQLS3Service implements S3Service{
             convFile.delete();
             throw new IOException(e.getMessage());
         } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public String uploadMultiPartFilePictureWithFilenameToJPGToS3(String bucketName, String fileName, MultipartFile file) throws IOException {
+        File convFile = new File(file.getOriginalFilename());
+        File tempJpgFile = null;
+        try {
+            convFile.deleteOnExit();
+            FileOutputStream fos = new FileOutputStream(convFile);
+            fos.write(file.getBytes());
+            fos.close();
+            BufferedImage bufferedImage = ImageIO.read(convFile);
+            BufferedImage newBufferedImage = new BufferedImage(bufferedImage.getWidth(),
+                    bufferedImage.getHeight(), BufferedImage.TYPE_INT_RGB);
+            newBufferedImage.createGraphics().drawImage(bufferedImage, 0, 0, null);
+            tempJpgFile = File.createTempFile("converted_image", ".jpg");
+            ImageIO.write(newBufferedImage, "jpg", tempJpgFile);
+            String key = uploadFileWithFilenameToS3(bucketName, fileName, tempJpgFile);
+            tempJpgFile.delete();
+            convFile.delete();
+            return key;
+        } catch (IOException e) {
+            tempJpgFile.delete();
+            convFile.delete();
+            throw new IOException(e.getMessage());
+        } catch (Exception e) {
+            tempJpgFile.delete();
+            convFile.delete();
             throw new RuntimeException(e);
         }
     }

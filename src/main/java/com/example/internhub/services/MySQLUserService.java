@@ -28,10 +28,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class MySQLUserService implements UserService {
@@ -52,6 +50,7 @@ public class MySQLUserService implements UserService {
     private String USER_PROFILE_BUCKET_NAME;
     @Autowired
     private S3Service s3Service;
+    private ImageConverterService imageConverterService = new ImageConverterService();
     private PasswordEncoder encoder = new BCryptPasswordEncoder();
 
     private void checkIfUserCanModifyUser(HttpServletRequest req, String userId) throws UserModifyUserException {
@@ -238,7 +237,8 @@ public class MySQLUserService implements UserService {
         try {
             User user = getUserById(userId);
             checkIfUserCanModifyUser(req, userId);
-            String key = s3Service.uploadMultiPartFileWithFilenameToS3(USER_PROFILE_BUCKET_NAME, userId, file);
+            String key = s3Service.uploadMultiPartFilePictureWithFilenameToJPGToS3(USER_PROFILE_BUCKET_NAME, userId, file);
+            System.out.println(key);
             user.setUserProfileKey(USER_PROFILE_LINK + "/" + key);
             return new ResponseEntity(new ResponseObject(200, "User's profile picture is successfully updated.", null),
                     null, HttpStatus.OK);

@@ -137,7 +137,7 @@ public class MySQLCompanyService implements CompanyService{
         try {
             Company comp = getCompanyByCompanyId(compId);
             checkAuthForCompany(compId, req);
-            String key = s3Service.uploadMultiPartFileWithFilenameToS3(INTERNHUB_COMPANY_LOGO_BUCKET, compId, file);
+            String key = s3Service.uploadMultiPartFilePictureWithFilenameToJPGToS3(INTERNHUB_COMPANY_LOGO_BUCKET, compId, file);
             comp.setCompLogoKey(COMPANY_LOGO_LINK + "/" + key);
             return new ResponseEntity(new ResponseObject(200, "Company logo is successfully updated.", null),
                     null, HttpStatus.OK);
@@ -153,14 +153,12 @@ public class MySQLCompanyService implements CompanyService{
     @Override
     public ResponseEntity uploadCompanyLogo(MultipartFile file) {
         try {
-            String logo = s3Service.uploadMultiPartFileToS3(INTERNHUB_COMPANY_LOGO_BUCKET, file);
+            String logo = s3Service.uploadMultiPartFilePictureWithFilenameToJPGToS3(INTERNHUB_COMPANY_LOGO_BUCKET, UUID.randomUUID().toString(), file);
             return new ResponseEntity(new ResponseObject(200,
                     "Company logo is successfully uploaded.",
                     logo), null, HttpStatus.OK);
-        } catch (AmazonSDKException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            return new BadRequestResponseEntity(e);
         }
     }
 
