@@ -1,13 +1,12 @@
 package com.example.internhub.entities;
 
-import com.example.internhub.responses.Object;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -16,14 +15,14 @@ import java.util.List;
 @Getter @Setter
 //@ToString
 @NoArgsConstructor @AllArgsConstructor
-public class Post extends Object {
+public class Post {
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
-    @JoinColumn(name = "addressId", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "addressId")
     private Address address;
 
     @Column(name = "closedDate")
-    private LocalDateTime closedDate;
+    private LocalDate closedDate;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "compId", nullable = false)
@@ -143,5 +142,21 @@ public class Post extends Object {
 
     public void view(){
         this.totalView++;
+    }
+
+    public void openedPost() {
+        this.status = PostStatus.OPENED;
+    }
+
+    public void alwaysOpenedPost() {
+        this.status = PostStatus.ALWAYS_OPENED;
+    }
+
+    public void closedPost() {
+        this.status = PostStatus.CLOSED;
+    }
+
+    public void nearlyClosedPost() {
+        this.status = PostStatus.NEARLY_CLOSED;
     }
 }

@@ -3,7 +3,6 @@ package com.example.internhub.dtos;
 import com.example.internhub.entities.PositionTag;
 import com.example.internhub.entities.PostPositionTag;
 import com.example.internhub.entities.WorkType;
-import com.example.internhub.responses.Object;
 import com.example.internhub.services.ArrayStringService;
 import com.example.internhub.validators.EnumDocumentTypesConstraint;
 import com.example.internhub.validators.EnumWorkDayConstraint;
@@ -14,18 +13,19 @@ import lombok.Setter;
 
 import javax.validation.Valid;
 import javax.validation.constraints.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Getter @Setter
-public class CreatePostDTO extends Object {
-    @NotNull(message = "Address is required.")
+public class CreatePostDTO {
+//    @NotNull(message = "Address is required.")
+    @Valid
     CreateAddressDTO address;
     @Future(message = "Closed date must be in future.")
-    LocalDateTime closedDate;
+    LocalDate closedDate;
     @Valid
     @NotNull(message = "Company id must be provide.")
     CompanyIdDTO comp;
@@ -43,6 +43,7 @@ public class CreatePostDTO extends Object {
     String enrolling;
     @NotNull(message = "At least one open position must be provided.")
     @NotEmpty(message = "Post must have at least one open position.")
+    @Valid
     List<CreateOpenPositionDTO> openPositionList;
     String postId = UUID.randomUUID().toString();
     @NotNull(message = "Post's description is required.")
@@ -60,6 +61,7 @@ public class CreatePostDTO extends Object {
     @NotNull(message = "Post's title is required.")
     @Size(max = 100, message = "Post's title is too long, 100 characters maximum.")
     String title;
+//    boolean sameAddressAsCompany;
     @NotNull(message = "Work start time is required.")
     LocalTime workStartTime;
     @NotNull(message = "Work end time is required.")
@@ -98,5 +100,9 @@ public class CreatePostDTO extends Object {
         }
         return tagList;
     }
+
+//    public boolean getSameAddressAsCompany() {
+//        return this.sameAddressAsCompany;
+//    }
 
 }

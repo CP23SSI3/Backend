@@ -1,6 +1,5 @@
 package com.example.internhub.validators;
 
-import com.example.internhub.entities.Document;
 import com.example.internhub.entities.WorkDay;
 
 import javax.validation.ConstraintValidator;

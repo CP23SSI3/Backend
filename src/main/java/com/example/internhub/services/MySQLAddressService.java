@@ -1,14 +1,20 @@
 package com.example.internhub.services;
 
 import com.example.internhub.dtos.CreateAddressDTO;
+import com.example.internhub.dtos.EditAddressDTO;
 import com.example.internhub.entities.Address;
+import com.example.internhub.exception.AddressNotFoundException;
 import com.example.internhub.repositories.AddressRepository;
+import com.example.internhub.responses.BadRequestResponseEntity;
+import com.example.internhub.responses.NotFoundResponseEntity;
 import com.example.internhub.responses.ResponseObject;
+import org.hibernate.ObjectNotFoundException;
 import org.modelmapper.ModelMapper;
 import com.example.internhub.responses.ResponseObjectList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -24,31 +30,33 @@ public class MySQLAddressService implements AddressService{
     @Autowired
     private AddressRepository addressRepository;
 
-    @Override
-    public ResponseObjectList getAllAddresses() {
-        return new ResponseObjectList(200,
-                "Address's list is successfully sended.",
-                addressRepository.findAll());
-    }
-
-    @Override
-    public ResponseObject getAddressById(String addressId) {
-        return new ResponseObject(200,
-                ("Address id " + addressId + " is successfully sended."),
-                getAddressByAddressId(addressId));
-    }
 
     @Override
     public Address createAddress(CreateAddressDTO createAddressPostDTO) {
         Address address = modelMapper.map(createAddressPostDTO, Address.class);
-        System.out.println(address);
         addressRepository.save(address);
         return address;
     }
 
     @Override
-    public Address getAddressByAddressId(String addressId) {
-        return addressRepository.getById(addressId);
+    public void deleteAddress(Address address) {
+        addressRepository.delete(address);
+    }
+
+    @Override
+    public ResponseEntity editAddress(String addressId, EditAddressDTO editAddressDTO) {
+        try {
+            Address oldAddress = getAddressByAddressId(addressId);
+            Address newAddress = modelMapper.map(editAddressDTO, Address.class);
+            updateAddress(oldAddress, newAddress);
+            addressRepository.save(oldAddress);
+            return new ResponseEntity(new ResponseObject(200, "Edit address id " + addressId + " successfully.", null),
+                    null, HttpStatus.OK);
+        } catch (AddressNotFoundException ex) {
+            return new NotFoundResponseEntity(ex);
+        } catch (Exception ex) {
+            return new BadRequestResponseEntity(ex);
+        }
     }
 
     @Override
@@ -62,6 +70,31 @@ public class MySQLAddressService implements AddressService{
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @Override
+    public Address getAddressByAddressId(String addressId) throws AddressNotFoundException {
+        try {
+            return addressRepository.findById(addressId).orElseThrow();
+        } catch (Exception ex) {
+            throw new AddressNotFoundException(addressId);
+        }
+    }
+
+    @Override
+    public ResponseEntity getAddressById(String addressId) {
+        try {
+            return new ResponseEntity(new ResponseObject(200, ("Address id " + addressId + " is successfully sent."), getAddressByAddressId(addressId)),
+                    null, HttpStatus.OK);
+        } catch (AddressNotFoundException ex) {
+            return new NotFoundResponseEntity(ex);
+        }
+    }
+
+    @Override
+    public ResponseEntity getAllAddresses() {
+        return new ResponseEntity(new ResponseObjectList(200, "Address's list is successfully sent.", addressRepository.findAll()),
+                null, HttpStatus.OK);
     }
 
     @Override

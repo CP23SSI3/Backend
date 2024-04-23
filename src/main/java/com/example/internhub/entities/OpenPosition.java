@@ -1,6 +1,5 @@
 package com.example.internhub.entities;
 
-import com.example.internhub.responses.Object;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +12,7 @@ import java.math.BigDecimal;
 @Table(name = "openPositions")
 @Getter @Setter
 @ToString
-public class OpenPosition extends Object {
+public class OpenPosition {
 
     @Column(name = "openPositionDesc", nullable = false, length = 200)
     private String openPositionDesc;
@@ -29,7 +28,7 @@ public class OpenPosition extends Object {
     private String openPositionTitle;
 
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
     @JoinColumn(name = "postId", nullable = false)
     private Post post;
 

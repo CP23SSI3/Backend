@@ -1,12 +1,17 @@
 package com.example.internhub.controllers;
 
+import com.example.internhub.dtos.EditCompanyDTO;
+import com.example.internhub.responses.ResponseObject;
 import com.example.internhub.responses.ResponseObjectList;
 import com.example.internhub.services.CompanyService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 
 @RestController
@@ -17,8 +22,35 @@ public class CompanyController {
     @Autowired
     private CompanyService companyService;
 
-    @GetMapping("")
-    public ResponseObjectList getAllCompanies(){
-        return companyService.getAllCompanies();
+    @PutMapping("/{compId}")
+    public ResponseEntity editCompany(@RequestBody EditCompanyDTO editCompanyDTO,
+                                      @PathVariable String compId,
+                                      HttpServletRequest req) {
+        return companyService.editCompany(editCompanyDTO, compId, req);
     }
+
+    @GetMapping("")
+    public ResponseEntity getAllCompanies(@RequestParam(defaultValue = "0") int pageNumber,
+                                          @RequestParam(defaultValue = "10") int pageSize){
+        return companyService.getAllCompanies(pageNumber, pageSize);
+    }
+
+    @GetMapping("/{compId}")
+    public ResponseEntity getCompanyById(@PathVariable String compId,
+                                         HttpServletResponse res) {
+        return companyService.getCompanyById(compId, res);
+    }
+
+    @PutMapping("/{compId}/logo")
+    public ResponseEntity updateCompanyLogo(@PathVariable String compId,
+                                            @RequestParam("file") MultipartFile file,
+                                            HttpServletRequest req) {
+        return companyService.updateCompanyLogo(compId, file, req);
+    }
+
+    @PostMapping("/logo")
+    public ResponseEntity uploadCopmanyLogo(@RequestParam("file") MultipartFile file) {
+        return companyService.uploadCompanyLogo(file);
+    }
+
 }
