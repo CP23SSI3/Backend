@@ -238,8 +238,8 @@ public class MySQLUserService implements UserService {
             User user = getUserById(userId);
             checkIfUserCanModifyUser(req, userId);
             String key = s3Service.uploadMultiPartFilePictureWithFilenameToJPGToS3(USER_PROFILE_BUCKET_NAME, userId, file);
-            System.out.println(key);
             user.setUserProfileKey(USER_PROFILE_LINK + "/" + key);
+            userRepository.save(user);
             return new ResponseEntity(new ResponseObject(200, "User's profile picture is successfully updated.", null),
                     null, HttpStatus.OK);
         } catch (UserNotFoundException ex) {
