@@ -138,11 +138,9 @@ public class MySQLUserService implements UserService {
             user.setLastUpdate(editUser.getLastUpdate());
             user.setPhoneNumber(editUser.getPhoneNumber());
             user.setUserDesc(editUser.getUserDesc());
-            System.out.println(!user.getUsername().equals(editUser.getUsername()) && isUsernameExisted(editUser.getUsername()));
             if (!user.getUsername().equals(editUser.getUsername()) && isUsernameExisted(editUser.getUsername())) throw new UsernameExistedException();
             if (!user.getEmail().equals(editUser.getEmail()) && isEmailExisted(editUser.getEmail())) throw new EmailExistedException();
             user.setUsername(editUser.getUsername());
-            user.setUserProfileKey(editUser.getUserProfileKey());
             if (user.getAddress() == null) {
                 editUser.getAddress().setAddressId(UUID.randomUUID().toString());
                 user.setAddress(editUser.getAddress());
