@@ -64,6 +64,8 @@ public class MySQLPostService implements PostService {
     @Value("${convert.day.to.minute}")
     private long convertDayToMinute;
     Timer timer = new Timer();
+    @Autowired
+    TimerManagementService timerManagementService;
 
 
     private void checkIfCompanyCanModifyPost(HttpServletRequest req, String checkCompId) throws CompanyModifyPostException {
@@ -125,8 +127,8 @@ public class MySQLPostService implements PostService {
                     postRepository.save(post);
                 }
             };
-            if (milliSecondsBeforeClosed > 0) timer.schedule(closedPostTimerTask, milliSecondsBeforeClosed);
-            if (milliSecondsBeforeNearlyClosed > 0) timer.schedule(nearlyClosedPostTimerTask, milliSecondsBeforeNearlyClosed);
+            if (milliSecondsBeforeClosed > 0) timerManagementService.setTimer((PostStatus.CLOSED + "-" + post.getPostId()), closedPostTimerTask, milliSecondsBeforeClosed);
+            if (milliSecondsBeforeNearlyClosed > 0) timerManagementService.setTimer((PostStatus.NEARLY_CLOSED + "-" + post.getPostId()), nearlyClosedPostTimerTask, milliSecondsBeforeNearlyClosed);
             return new ResponseEntity(new ResponseObject(200, "Create post successfully.", post),
                     null, HttpStatus.OK);
         } catch (EmptyPositionListException ex) {
@@ -189,6 +191,32 @@ public class MySQLPostService implements PostService {
             postPositionTagService.updatePostPositionTag(post, editPost.getPostTagListObject());
             postRepository.save(post);
             if (editPostDTO.getAddress() == null && sameAddressAsComp) {addressService.deleteAddress(address);}
+            timerManagementService.cancelTimer(PostStatus.NEARLY_CLOSED + "-" + postId);
+            timerManagementService.cancelTimer(PostStatus.CLOSED + "-" + postId);
+            LocalDate closedDate = post.getClosedDate();
+            long milliSecondsBeforeClosed = (closedDate == null) ? 0 : abs((closedDate.atStartOfDay().plusDays(1)).until(LocalDateTime.now(), ChronoUnit.MILLIS))/convertDayToMinute;
+            long milliSecondsBeforeNearlyClosed = milliSecondsBeforeClosed - milliSecondsBeforeClosedPost;
+            if(closedDate == null) {
+                post.alwaysOpenedPost();
+            } else if (milliSecondsBeforeNearlyClosed > 0) {
+                post.openedPost();
+            } else {post.nearlyClosedPost();}
+            TimerTask nearlyClosedPostTimerTask = new TimerTask() {
+                @Override
+                public void run() {
+                    post.nearlyClosedPost();
+                    postRepository.save(post);
+                }
+            };
+            TimerTask closedPostTimerTask =  new TimerTask() {
+                @Override
+                public void run() {
+                    post.closedPost();
+                    postRepository.save(post);
+                }
+            };
+            if (milliSecondsBeforeClosed > 0) timerManagementService.setTimer((PostStatus.CLOSED + "-" + post.getPostId()), closedPostTimerTask, milliSecondsBeforeClosed);
+            if (milliSecondsBeforeNearlyClosed > 0) timerManagementService.setTimer((PostStatus.NEARLY_CLOSED + "-" + post.getPostId()), nearlyClosedPostTimerTask, milliSecondsBeforeNearlyClosed);
             return new ResponseEntity(new ResponseObject(200, "Edit post id " + postId + " successful.", post),
                     null, HttpStatus.OK);
         } catch (PostNotFoundException ex) {
