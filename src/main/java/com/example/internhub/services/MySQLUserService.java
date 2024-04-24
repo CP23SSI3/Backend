@@ -28,10 +28,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class MySQLUserService implements UserService {
@@ -52,6 +50,7 @@ public class MySQLUserService implements UserService {
     private String USER_PROFILE_BUCKET_NAME;
     @Autowired
     private S3Service s3Service;
+    private ImageConverterService imageConverterService = new ImageConverterService();
     private PasswordEncoder encoder = new BCryptPasswordEncoder();
 
     private void checkIfUserCanModifyUser(HttpServletRequest req, String userId) throws UserModifyUserException {
@@ -139,11 +138,9 @@ public class MySQLUserService implements UserService {
             user.setLastUpdate(editUser.getLastUpdate());
             user.setPhoneNumber(editUser.getPhoneNumber());
             user.setUserDesc(editUser.getUserDesc());
-            System.out.println(!user.getUsername().equals(editUser.getUsername()) && isUsernameExisted(editUser.getUsername()));
             if (!user.getUsername().equals(editUser.getUsername()) && isUsernameExisted(editUser.getUsername())) throw new UsernameExistedException();
             if (!user.getEmail().equals(editUser.getEmail()) && isEmailExisted(editUser.getEmail())) throw new EmailExistedException();
             user.setUsername(editUser.getUsername());
-            user.setUserProfileKey(editUser.getUserProfileKey());
             if (user.getAddress() == null) {
                 editUser.getAddress().setAddressId(UUID.randomUUID().toString());
                 user.setAddress(editUser.getAddress());
@@ -238,8 +235,9 @@ public class MySQLUserService implements UserService {
         try {
             User user = getUserById(userId);
             checkIfUserCanModifyUser(req, userId);
-            String key = s3Service.uploadMultiPartFileWithFilenameToS3(USER_PROFILE_BUCKET_NAME, userId, file);
+            String key = s3Service.uploadMultiPartFilePictureWithFilenameToJPGToS3(USER_PROFILE_BUCKET_NAME, userId, file);
             user.setUserProfileKey(USER_PROFILE_LINK + "/" + key);
+            userRepository.save(user);
             return new ResponseEntity(new ResponseObject(200, "User's profile picture is successfully updated.", null),
                     null, HttpStatus.OK);
         } catch (UserNotFoundException ex) {

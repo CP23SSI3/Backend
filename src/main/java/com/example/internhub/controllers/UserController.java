@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.File;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -69,5 +70,6 @@ public class UserController {
                                                    HttpServletRequest req) {
         return userService.updateUserProfilePicture(userId, file, req);
     }
+
 
 }
