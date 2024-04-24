@@ -37,6 +37,4 @@ public class EditUserDTO {
     @NotNull(message = "Username is required.")
     @Size(max = 50, message = "User's username is too long, 50 characters maximum.")
     String username;
-    @Size(max = 100, message = "User's profile key is too long. 100 characters maximum.")
-    String userProfileKey;
 }
