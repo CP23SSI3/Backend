@@ -1,4 +1,4 @@
-package com.example.internhub.config;
+package com.example.internhub.configs;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

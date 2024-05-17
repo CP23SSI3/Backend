@@ -10,7 +10,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class DecodeBearerTokenService {
 
-    private String secret = "internhub.secret";
+    @Value("jwt.secret")
+    private String secret;
 
 //    @Value("internhub.secret")
 //    private String try;

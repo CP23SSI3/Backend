@@ -1,5 +1,6 @@
-package com.example.internhub.entities;
+package com.example.internhub.services;
 
+import com.example.internhub.entities.User;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

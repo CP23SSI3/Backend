@@ -35,8 +35,8 @@ public class MySQLAuthService implements AuthService{
 
     @Autowired
     private UserService userService;
-//    @Value("internhub.secret")
-    private String secret = "internhub.secret";
+    @Value("jwt.secret")
+    private String secret;
     @Value("${access.token.expired}")
     private Long accessTokenMilliSecondsBeforeExpired;
     @Value("${refresh.token.expired}")

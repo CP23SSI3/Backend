@@ -1,6 +1,6 @@
 package com.example.internhub.services;
 
-import com.example.internhub.config.AwsConfig;
+import com.example.internhub.configs.AwsConfig;
 import com.example.internhub.exception.AmazonSDKException;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;

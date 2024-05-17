@@ -13,7 +13,6 @@ import java.util.List;
 @Entity
 @Table(name = "posts")
 @Getter @Setter
-//@ToString
 @NoArgsConstructor @AllArgsConstructor
 public class Post {
 

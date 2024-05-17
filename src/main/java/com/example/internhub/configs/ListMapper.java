@@ -1,4 +1,4 @@
-package com.example.internhub.config;
+package com.example.internhub.configs;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;

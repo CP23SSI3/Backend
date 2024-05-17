@@ -17,8 +17,6 @@ import java.util.ArrayList;
 public class UserDetailServiceImpl implements UserDetailsService {
 
     @Autowired
-    private UserRepository userRepository;
-    @Autowired
     private UserService userService;
 
     @Override

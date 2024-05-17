@@ -19,17 +19,6 @@ import java.util.TreeMap;
 @ControllerAdvice
 public class ValidationErrorHandlingAdvice {
 
-//    /**
-//     * Handler for {@link MethodArgumentNotValidException}s. These are triggered by
-//     * Spring {@link Validator} implementations being invoked by the Spring MVC
-//     * controllers and returning validation errors.
-//     *
-//     *
-//     * @param ex The {@link MethodArgumentNotValidException} to be handled.
-//     *
-//     * @return {@link Map} keyed by field to which the error is bound and with the
-//     *         value of the field as a value.
-//     */
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public @ResponseBody ResponseObject handleMethodArgumentNotValidException(MethodArgumentNotValidException ex, HttpServletResponse res) {
