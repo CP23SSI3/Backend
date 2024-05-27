@@ -50,6 +50,8 @@ public class PostController {
                                       @RequestParam(defaultValue = "0") Integer month,
                                       @RequestParam(defaultValue = "0") Integer salary,
                                       HttpServletResponse res) {
+                                        System.out.println("check param pagesize");
+                                        System.out.println(pageSize);
         return postService.getAllPostPagination(page, pageSize, q, city, district, status, tags, month, salary, res);
     }
 
